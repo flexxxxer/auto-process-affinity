@@ -1,0 +1,49 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				xmlns:local="clr-namespace:UI.Controls"
+				xmlns:vs="clr-namespace:UI.Views">
+	<Design.PreviewWith>
+		<Border Padding="10">
+			<StackPanel>
+				<vs:DesignModeTitleBar/>
+
+				<StackPanel>
+					<TextBlock Text="Control:"/>
+
+					<local:IconedButton Content="Click me"
+															IconGeometry="{StaticResource AddRegularIcon}"
+															IconFill="Transparent"
+															Padding="6,2,6,2"
+															IconRenderTransform="scale(0.7)"/>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+	</Design.PreviewWith>
+
+	<Style Selector="local|IconedButton">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Button Padding="{TemplateBinding Padding}"
+                Margin="{TemplateBinding Margin}"
+                Command="{TemplateBinding Command}"
+                CommandParameter="{TemplateBinding CommandParameter}"
+                ContextMenu="{TemplateBinding ContextMenu}">
+					<Grid ColumnDefinitions="Auto,Auto">
+						<ContentPresenter Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              VerticalAlignment="Center"/>
+
+						<Path Grid.Column="1"
+                  VerticalAlignment="Center"
+                  Data="{TemplateBinding IconGeometry}"
+                  Fill="{TemplateBinding IconFill}"
+                  StrokeThickness="{TemplateBinding IconStrokeThickness}"
+                  Stroke="{TemplateBinding IconStroke}"
+                  RenderTransform="{TemplateBinding IconRenderTransform}"
+                  RenderTransformOrigin="{TemplateBinding IconRenderTransformOrigin}"/>
+					</Grid>
+				</Button>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+</Styles>

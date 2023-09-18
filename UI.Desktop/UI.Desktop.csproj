@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+		<PackageReference Include="Avalonia.LinuxFramebuffer" Version="$(AvaloniaVersion)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\UI\UI.csproj" />
+	</ItemGroup>
+</Project>
