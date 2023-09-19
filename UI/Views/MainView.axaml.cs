@@ -18,7 +18,7 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
       DataContext = DataContext switch
       {
         MainViewModel mvm => mvm,
-        _ => Locator.Current.GetService<MainViewModel>()
+        _ => Locator.Current.GetRequiredService<MainViewModel>()
       };
     });
   }

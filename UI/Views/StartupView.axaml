@@ -3,9 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 						 xmlns:vm="clr-namespace:UI.ViewModels"
-             xmlns:vs="clr-namespace:UI.Views"
-						 
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             xmlns:vs="clr-namespace:UI"
+						 xmlns:controls="clr-namespace:UI.Controls"
+
+						 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
              x:Class="UI.StartupView"
 						 x:DataType="vm:IStartupViewModel">
 	
@@ -13,7 +14,105 @@
 		<vm:DesignStartupViewModel/>
 	</Design.DataContext>
 
-	<Grid>
-		<vs:DesignModeTitleBar/>
+	<UserControl.Styles>
+		<Styles>
+			<Style Selector="Path[Tag=NotRunning]">
+				<Setter Property="Stroke" Value="{DynamicResource NeutralBrush}"/>
+				<Setter Property="Fill" Value="{DynamicResource NeutralBrush}"/>
+				<Setter Property="Data" Value="{StaticResource CircleIcon}"/>
+				<Setter Property="RenderTransform" Value="scale(1)"/>
+				<Setter Property="RenderTransformOrigin" Value="1,1"/>
+			</Style>
+			<Style Selector="Path[Tag=NotYetApplied]">
+				<Setter Property="Stroke" Value="{DynamicResource WaitingForBrush}"/>
+				<Setter Property="Fill" Value="{DynamicResource WaitingForBrush}"/>
+				<Setter Property="Data" Value="{StaticResource SyncCircleIcon}"/>
+				<Setter Property="RenderTransform" Value="scale(1)"/>
+				<Setter Property="RenderTransformOrigin" Value="1,1"/>
+			</Style>
+			<Style Selector="Path[Tag=AffinityCantBeSet]">
+				<Setter Property="Stroke" Value="{DynamicResource CancelBrush}"/>
+				<Setter Property="Fill" Value="{DynamicResource CancelBrush}"/>
+				<Setter Property="Data" Value="{StaticResource ErrorCircleIcon}"/>
+				<Setter Property="RenderTransform" Value="scale(1)"/>
+				<Setter Property="RenderTransformOrigin" Value="1,1"/>
+			</Style>
+			<Style Selector="Path[Tag=AffinityApplied]">
+				<Setter Property="Stroke" Value="{DynamicResource OkBrush}"/>
+				<Setter Property="Fill" Value="{DynamicResource OkBrush}"/>
+				<Setter Property="Data" Value="{StaticResource CheckmarkCircleIcon}"/>
+				<Setter Property="RenderTransform" Value="scale(0.5)"/>
+				<Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+			</Style>
+		</Styles>
+	</UserControl.Styles>
+
+	<Grid RowDefinitions="*,Auto">
+		<DataGrid Grid.Row="0" ItemsSource="{Binding Processes}">
+
+			<DataGrid.Styles>
+				<Style Selector="DataGridCell:focus /template/ Grid#FocusVisual">
+					<Setter Property="IsVisible" Value="False"/>
+				</Style>
+
+				<!-- fix for missing column separator when changing column widths -->
+				<Style Selector="DataGridColumnHeader /template/ Rectangle#VerticalSeparator">
+					<Setter Property="Margin" Value="0 0 1 0"/>
+				</Style>
+			</DataGrid.Styles>
+
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Process name" Width="Auto"
+                            Binding="{Binding Name}" IsReadOnly="True"/>
+
+				<DataGridTemplateColumn Header="Affinity state" Width="*" IsReadOnly="True" MinWidth="150">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Grid ColumnDefinitions="Auto,10,*">
+								<Path VerticalAlignment="Center" Margin="0 0 0 0"
+                      Height="20" Width="20" Tag="{Binding State}"/>
+								<Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+													 ToolTip.Tip="{Binding State}"
+													 Fill="Transparent"/>
+							</Grid>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTemplateColumn Header="Actions" Width="*" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal" Spacing="1">
+								<controls:IconedButton IconGeometry="{StaticResource EditIcon}"
+                                       IconFill="{DynamicResource OkBrush}"
+                                       IconStroke="{DynamicResource OkBrush}"
+                                       IconStrokeThickness="1"
+                                       Command="{Binding Path=$parent[vs:StartupView].((vm:IStartupViewModel)DataContext).EditMonitoredProcessCommand, FallbackValue={}}"
+                                       CommandParameter="{Binding}"/>
+								<controls:IconedButton IconGeometry="{StaticResource RemoveIcon}"
+                                       IconFill="{DynamicResource CancelBrush}"
+                                       IconStroke="{DynamicResource CancelBrush}"
+                                       IconRenderTransform="scale(0.4)"
+                                       Padding="-8 -8 -5 -6"
+                                       IconStrokeThickness="1"
+                                       Command="{Binding Path=$parent[vs:StartupView].((vm:IStartupViewModel)DataContext).RemoveMonitoredProcessCommand, FallbackValue={}}"
+                                       CommandParameter="{Binding}"/>
+							</StackPanel>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+			</DataGrid.Columns>
+		</DataGrid>
+		 
+		<StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="5" 
+								Orientation="Horizontal" Spacing="10">
+			<Button Content="Add new..." 
+							Command="{Binding AddMonitoredProcessCommand}"/>
+			<Button Content="Remove" IsVisible="False"
+							Command="{Binding RemoveMonitoredProcessCommand}"/>
+			<Button Content="Edit" IsVisible="False"
+							Command="{Binding RemoveMonitoredProcessCommand}"/>
+		</StackPanel>
 	</Grid>
+
 </UserControl>

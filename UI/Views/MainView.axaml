@@ -4,14 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:UI.ViewModels"
              xmlns:vs="clr-namespace:UI.Views"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+						 xmlns:rxui="clr-namespace:Avalonia.ReactiveUI;assembly=Avalonia.ReactiveUI"
+						 xmlns:app="clr-namespace:UI"
+             
+						 mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="UI.Views.MainView"
              x:DataType="vm:IMainViewModel">
   <Design.DataContext>
     <vm:DesignMainViewModel/>
   </Design.DataContext>
 
-	<Grid>
-		<vs:DesignModeTitleBar/>
+	<Grid RowDefinitions="Auto,*">
+		<rxui:RoutedViewHost Router="{Binding Router}">
+			<rxui:RoutedViewHost.ViewLocator>
+				<app:RoutingViewLocator/>
+			</rxui:RoutedViewHost.ViewLocator>
+		</rxui:RoutedViewHost>
 	</Grid>
 </UserControl>

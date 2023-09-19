@@ -22,6 +22,8 @@
 		<ProjectReference Include="..\Domain\Domain.csproj" />
 		
 		<PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+		
+		<PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.4" />
 		<PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
 		<PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
 		<PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
@@ -29,10 +31,17 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
 		<PackageReference Include="Hardware.Info" Version="100.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-		<PackageReference Include="Splat" Version="14.7.1" />
-		<PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="14.7.1" />
-		<PackageReference Include="Splat.Microsoft.Extensions.Logging" Version="14.7.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+		<PackageReference Include="Splat.DependencyInjection.SourceGenerator" Version="1.1.93">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>

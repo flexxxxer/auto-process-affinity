@@ -1,14 +1,11 @@
 ﻿using System.Linq;
-using System.Reactive;
-using System.Reactive.Disposables;
 
 using ReactiveUI;
 
 using Hardware.Info;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Avalonia.Controls;
-using System;
 using System.Reactive.Linq;
+using Splat;
 
 namespace UI.ViewModels;
 

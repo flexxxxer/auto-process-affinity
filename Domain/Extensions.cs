@@ -44,6 +44,12 @@ public static class Extensions
     return str.Contains(text, comparisonType);
   }
 
+  public static string Remove(this string str, string text)
+    => str.Replace(text, string.Empty);
+
+  public static string RemoveVmPostfix(this string str)
+    => str.TrimEnd("ViewModel");
+
   public static IEnumerable<T> ForEachDo<T>(this IEnumerable<T> seq, Action<T> action)
   {
     foreach (var item in seq)

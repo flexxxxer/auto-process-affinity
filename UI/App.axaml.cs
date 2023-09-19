@@ -13,9 +13,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Splat;
-using Splat.Microsoft.Extensions.DependencyInjection;
-using Splat.Microsoft.Extensions.Logging;
 using Hardware.Info;
+using Microsoft.Extensions.Configuration;
+using Domain;
+using Microsoft.Extensions.Options;
+
+using SR = Splat.SplatRegistrations;
 
 namespace UI;
 
@@ -33,46 +36,43 @@ public partial class App : Application
   {
     var host = Host
       .CreateDefaultBuilder()
-      .ConfigureServices(services =>
+      .ConfigureAppConfiguration(cb =>
       {
-        services.UseMicrosoftDependencyResolver();
-        var resolver = Locator.CurrentMutable;
-        resolver.InitializeSplat();
-        resolver.InitializeReactiveUI();
-
-        ConfigureServices(services);
+        cb.AddJsonFile("appsettings.json", false, true);
       })
-      .ConfigureLogging(loggingBuilder =>
+      .ConfigureServices((hb, scs) =>
       {
-        loggingBuilder.AddSplat();
+        scs.Configure<AppSettings>(hb.Configuration.GetSection(""));
       })
       .UseEnvironment(Environments.Development)
       .Build();
 
-    host.Services.UseMicrosoftDependencyResolver();
+    ConfigureMicosoftHostServices(host);
+    ConfigureSplatServices();
   }
 
-  void ConfigureServices(IServiceCollection s)
+  void ConfigureMicosoftHostServices(IHost host)
   {
-    s.AddSingleton<MainWindowViewModel>()
-      .AddSingleton<MainViewModel>()
-      .AddSingleton<StartupViewModel>()
-      .AddSingleton<AddProcessViewModel>()
-      .AddSingleton<SelectCurrentlyRunnableProcessViewModel>()
-      .AddSingleton<MainWindow>(s => new() { DataContext = s.GetService<MainWindowViewModel>() })
-      .AddSingleton<MainView >(s => new() { DataContext = s.GetService<MainViewModel>() })
-      .AddSingleton<StartupView >(s => new() { DataContext = s.GetService<StartupViewModel>() })
-      .AddSingleton<AddProcessView>(s => new() { DataContext = s.GetService<AddProcessViewModel>() })
-      .AddSingleton<SelectCurrentlyRunnableProcessView>(s 
-        => new() { DataContext = s.GetService<SelectCurrentlyRunnableProcessViewModel>() })
-      .AddSingleton<IViewFor<MainWindowViewModel>, MainWindow>(s => s.GetRequiredService<MainWindow>())
-      .AddSingleton<IViewFor<MainViewModel>, MainView>(s => s.GetRequiredService<MainView>())
-      .AddSingleton<IViewFor<StartupViewModel>, StartupView>(s => s.GetRequiredService<StartupView>())
-      .AddSingleton<IViewFor<AddProcessViewModel>, AddProcessView>(s => s.GetRequiredService<AddProcessView>())
-      .AddSingleton<IViewFor<SelectCurrentlyRunnableProcessViewModel>, SelectCurrentlyRunnableProcessView>(s 
-        => s.GetRequiredService<SelectCurrentlyRunnableProcessView>());
+    Locator.CurrentMutable
+      .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptions<AppSettings>>)
+      .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptionsMonitor<AppSettings>>);
+  }
 
-    s.AddTransient<HardwareInfo>(_ => new());
+  void ConfigureSplatServices()
+  {
+    SR.SetupIOC();
+    SR.RegisterLazySingleton<MainWindowViewModel>();
+    SR.RegisterLazySingleton<MainViewModel>();
+    SR.Register<StartupViewModel>();
+    SR.Register<AddProcessViewModel>();
+    SR.Register<SelectCurrentlyRunnableProcessViewModel>();
+    SR.Register<SettingsViewModel>();
+
+    Locator.CurrentMutable
+      .RegisterLazySingletonAnd<MainWindow>(() => new() { DataContext = Locator.Current.GetRequiredService<MainWindowViewModel>() })
+      .RegisterLazySingletonAnd<MainView>(() => new() { DataContext = Locator.Current.GetRequiredService<MainViewModel>() })
+      .RegisterLazySingletonAnd<IScreen>(Locator.Current.GetRequiredService<MainViewModel>)
+      .RegisterLazySingletonAnd<HardwareInfo>(() => new());
   }
 
   public override void OnFrameworkInitializationCompleted()
@@ -80,10 +80,10 @@ public partial class App : Application
     _ = ApplicationLifetime switch
     {
       IClassicDesktopStyleApplicationLifetime desktop => 
-        desktop.MainWindow = Locator.Current.GetService<MainWindow>(),
+        desktop.MainWindow = Locator.Current.GetRequiredService<MainWindow>(),
 
       ISingleViewApplicationLifetime singleViewPlatform =>
-        singleViewPlatform.MainView = Locator.Current.GetService<MainView>(),
+        singleViewPlatform.MainView = Locator.Current.GetRequiredService<MainView>(),
 
       _ when IsDesignMode => null,
       _ => throw new PlatformNotSupportedException()
