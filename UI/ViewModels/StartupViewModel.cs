@@ -1,15 +1,24 @@
-﻿using Avalonia;
+﻿using Domain;
+
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using System.Reactive.Disposables;
+
+using Avalonia;
 using Avalonia.Styling;
+
+using ReactiveUI;
+using ReactiveUI.ExtendedRouting;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Domain;
-using DynamicData;
-using Microsoft.Extensions.Options;
-using ReactiveUI;
+
 using Splat;
-using System.Collections.ObjectModel;
-using System.Reactive;
-using System.Reactive.Disposables;
+
+using Microsoft.Extensions.Options;
+
 using UI.ViewModels.Entities;
 
 namespace UI.ViewModels;
@@ -18,7 +27,7 @@ public interface IStartupViewModel
 {
   ObservableCollection<MonitoredProcess> Processes { get; }
 
-  IRelayCommand AddMonitoredProcessCommand { get; }
+  IAsyncRelayCommand AddMonitoredProcessCommand { get; }
 
   IRelayCommand<MonitoredProcess?> RemoveMonitoredProcessCommand { get; }
 
@@ -27,23 +36,20 @@ public interface IStartupViewModel
 
 public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActivatableViewModel, IRoutableViewModel
 {
+  [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
+
   public ViewModelActivator Activator { get; } = new();
-
   public string? UrlPathSegment { get; } = nameof(StartupViewModel).RemoveVmPostfix();
-
   public IScreen HostScreen { get; }
 
-  [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
-  readonly IOptionsMonitor<AppSettings> _appSettings;
-
-  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings) 
+  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, IScreen screen) 
   {
-    HostScreen = Locator.Current.GetRequiredService<IScreen>();
-    _appSettings = appSettings;
+    HostScreen = screen;
+    appSettings.CurrentValue.Do(HandleAppSettingsChanged);
 
     this.WhenActivated((CompositeDisposable d) =>
     {
-      _appSettings
+      appSettings
         .OnChange(HandleAppSettingsChanged)
         ?.DisposeWith(d);
     });
@@ -51,17 +57,26 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
 
   void HandleAppSettingsChanged(AppSettings newAppSettings)
   {
-
+    newAppSettings.ConfiguredProcesses
+      .Select(MonitoredProcess.CreateFrom)
+      .AddTo(Processes);
   }
 
   [RelayCommand]
-  void AddMonitoredProcess()
+  async Task AddMonitoredProcess()
   {
+    var processesVm = await HostScreen
+      .NavigateTo(Locator.Current.GetRequiredService<AddProcessViewModel>());
+
+    var selectedProcess = await processesVm.Result;
+
+    if (selectedProcess is not null) Processes.Add(MonitoredProcess.CreateFrom(selectedProcess));
   }
 
   [RelayCommand]
   void RemoveMonitoredProcess(MonitoredProcess? p)
   {
+
   }
 
   [RelayCommand]
@@ -88,7 +103,7 @@ public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupView
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
 
   [RelayCommand]
-  void AddMonitoredProcess() { }
+  Task AddMonitoredProcess() => Task.CompletedTask;
 
   [RelayCommand]
   void RemoveMonitoredProcess(MonitoredProcess? p) { }

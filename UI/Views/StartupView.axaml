@@ -3,11 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 						 xmlns:vm="clr-namespace:UI.ViewModels"
-             xmlns:vs="clr-namespace:UI"
 						 xmlns:controls="clr-namespace:UI.Controls"
+						 xmlns:views="clr-namespace:UI.Views"
 
 						 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
-             x:Class="UI.StartupView"
+             x:Class="UI.Views.StartupView"
 						 x:DataType="vm:IStartupViewModel">
 	
 	<Design.DataContext>
@@ -48,7 +48,8 @@
 	</UserControl.Styles>
 
 	<Grid RowDefinitions="*,Auto">
-		<DataGrid Grid.Row="0" ItemsSource="{Binding Processes}">
+		<DataGrid Grid.Row="0" ItemsSource="{Binding Processes}"
+							CanUserResizeColumns="True">
 
 			<DataGrid.Styles>
 				<Style Selector="DataGridCell:focus /template/ Grid#FocusVisual">
@@ -65,10 +66,11 @@
 				<DataGridTextColumn Header="Process name" Width="Auto"
                             Binding="{Binding Name}" IsReadOnly="True"/>
 
-				<DataGridTemplateColumn Header="Affinity state" Width="*" IsReadOnly="True" MinWidth="150">
+				<DataGridTemplateColumn Header="Affinity state" Width="Auto" 
+																IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Grid ColumnDefinitions="Auto,10,*">
+							<Grid>
 								<Path VerticalAlignment="Center" Margin="0 0 0 0"
                       Height="20" Width="20" Tag="{Binding State}"/>
 								<Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
@@ -79,7 +81,7 @@
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 
-				<DataGridTemplateColumn Header="Actions" Width="*" IsReadOnly="True">
+				<DataGridTemplateColumn Header="" Width="Auto" IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal" Spacing="1">
@@ -87,7 +89,7 @@
                                        IconFill="{DynamicResource OkBrush}"
                                        IconStroke="{DynamicResource OkBrush}"
                                        IconStrokeThickness="1"
-                                       Command="{Binding Path=$parent[vs:StartupView].((vm:IStartupViewModel)DataContext).EditMonitoredProcessCommand, FallbackValue={}}"
+                                       Command="{Binding Path=$parent[views:StartupView].((vm:IStartupViewModel)DataContext).EditMonitoredProcessCommand, FallbackValue={}}"
                                        CommandParameter="{Binding}"/>
 								<controls:IconedButton IconGeometry="{StaticResource RemoveIcon}"
                                        IconFill="{DynamicResource CancelBrush}"
@@ -95,7 +97,7 @@
                                        IconRenderTransform="scale(0.4)"
                                        Padding="-8 -8 -5 -6"
                                        IconStrokeThickness="1"
-                                       Command="{Binding Path=$parent[vs:StartupView].((vm:IStartupViewModel)DataContext).RemoveMonitoredProcessCommand, FallbackValue={}}"
+                                       Command="{Binding Path=$parent[views:StartupView].((vm:IStartupViewModel)DataContext).RemoveMonitoredProcessCommand, FallbackValue={}}"
                                        CommandParameter="{Binding}"/>
 							</StackPanel>
 						</DataTemplate>

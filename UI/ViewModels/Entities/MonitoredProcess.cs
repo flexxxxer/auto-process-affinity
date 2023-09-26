@@ -22,7 +22,7 @@ public sealed partial class MonitoredProcess : ObservableObject
     => new()
     {
       Name = configuredProcess.Name,
-      AffinityValue = configuredProcess.AffinityValue,
+      AffinityValue = (nint)configuredProcess.AffinityValue,
       State = StateType.NotRunning
     };
 }
