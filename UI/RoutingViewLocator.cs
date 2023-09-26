@@ -1,10 +1,9 @@
 ﻿using UI.ViewModels;
+using UI.Views;
 
 using System;
 
 using ReactiveUI;
-
-using Splat;
 
 namespace UI;
 

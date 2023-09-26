@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel;
 
-using CommunityToolkit.Mvvm.ComponentModel;
-
 using ReactiveUI;
+
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace UI.ViewModels;
 
-public class ViewModelBase : ObservableObject, IReactiveObject
+public abstract class ViewModelBase : ObservableObject, IReactiveObject
 {
   public void RaisePropertyChanged(PropertyChangedEventArgs args) => OnPropertyChanged(args);
 

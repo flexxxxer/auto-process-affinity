@@ -1,5 +1,9 @@
-﻿using UI.ViewModels;
+﻿using Domain;
+using Domain.Infrastructure;
+
+using UI.ViewModels;
 using UI.Views;
+using UI.DomainWrappers;
 
 using System;
 
@@ -9,20 +13,20 @@ using Avalonia.Markup.Xaml;
 
 using ReactiveUI;
 
+using Splat;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-using Splat;
-using Hardware.Info;
 using Microsoft.Extensions.Configuration;
-using Domain;
 using Microsoft.Extensions.Options;
+
+using Hardware.Info;
 
 using SR = Splat.SplatRegistrations;
 
 namespace UI;
 
-public partial class App : Application
+public class App : Application
 {
   public static bool IsDesignMode => Avalonia.Controls.Design.IsDesignMode;
 
@@ -34,25 +38,24 @@ public partial class App : Application
 
   void Init()
   {
+    if(!IsDesignMode) ConfigureMicrosoftHostServices();
+    ConfigureSplatServices();
+  }
+
+  void ConfigureMicrosoftHostServices()
+  {
     var host = Host
       .CreateDefaultBuilder()
-      .ConfigureAppConfiguration(cb =>
+      .ConfigureAppConfiguration((_, cb) =>
       {
         cb.AddJsonFile("appsettings.json", false, true);
       })
       .ConfigureServices((hb, scs) =>
       {
-        scs.Configure<AppSettings>(hb.Configuration.GetSection(""));
+        scs.Configure<AppSettings>(hb.Configuration.GetSection("AppSettings"));
       })
-      .UseEnvironment(Environments.Development)
       .Build();
 
-    ConfigureMicosoftHostServices(host);
-    ConfigureSplatServices();
-  }
-
-  void ConfigureMicosoftHostServices(IHost host)
-  {
     Locator.CurrentMutable
       .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptions<AppSettings>>)
       .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptionsMonitor<AppSettings>>);
@@ -67,12 +70,19 @@ public partial class App : Application
     SR.Register<AddProcessViewModel>();
     SR.Register<SelectCurrentlyRunnableProcessViewModel>();
     SR.Register<SettingsViewModel>();
+    SR.RegisterLazySingleton<CurrentlyRunnableProcessesService>();
+    SR.RegisterLazySingleton<CurrentlyRunnableProcessesServiceWrapper>();
 
     Locator.CurrentMutable
       .RegisterLazySingletonAnd<MainWindow>(() => new() { DataContext = Locator.Current.GetRequiredService<MainWindowViewModel>() })
       .RegisterLazySingletonAnd<MainView>(() => new() { DataContext = Locator.Current.GetRequiredService<MainViewModel>() })
       .RegisterLazySingletonAnd<IScreen>(Locator.Current.GetRequiredService<MainViewModel>)
       .RegisterLazySingletonAnd<HardwareInfo>(() => new());
+
+    if (!IsDesignMode)
+    {
+      _ = Locator.Current.GetRequiredService<CurrentlyRunnableProcessesServiceWrapper>();
+    }
   }
 
   public override void OnFrameworkInitializationCompleted()
