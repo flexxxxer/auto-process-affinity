@@ -2,11 +2,22 @@
 
 namespace Domain;
 
-public sealed class ConfiguredProcess
+public enum AffinityMode
+{
+  AllEven,
+  FirstNEven,
+  FirstN,
+  LastN,
+  CustomBitmask,
+}
+
+public sealed record ConfiguredProcess
 {
   public string Name { get; set; } = "";
 
-  public int AffinityValue { get; set; }
+  public AffinityMode AffinityMode { get; set; }
+
+  public long AffinityValue { get; set; }
 }
 
 public enum StartupLocationMode
@@ -23,16 +34,16 @@ public enum StartupSizeMode
   Optimal,
 }
 
-public sealed class StartupOptions
+public sealed record StartupOptions
 {
-  public sealed class StartupLocationValues
+  public sealed record StartupLocationValues
   {
     public int X { get; set; }
 
     public int Y { get; set; }
   }
 
-  public sealed class StartupSizeValues
+  public sealed record StartupSizeValues
   {
     public int Height { get; set; }
 
@@ -62,7 +73,7 @@ public sealed class StartupOptions
   };
 }
 
-public class AppSettings
+public sealed record AppSettings
 {
   public TimeSpan RunningProcessesUpdatePeriod { get; set; } = TimeSpan.FromSeconds(2);
 

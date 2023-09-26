@@ -4,6 +4,11 @@
     <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Collections.Pooled" Version="2.0.0-preview.27" />
+    <PackageReference Include="DynamicData" Version="7.14.2" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<SupportedPlatform Include="windows" />
 		<SupportedPlatform Include="linux" />

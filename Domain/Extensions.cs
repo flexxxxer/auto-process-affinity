@@ -65,9 +65,10 @@ public static class Extensions
   public static bool In<T>(this T self, params T[] values) where T : IEquatable<T>
       => values.Contains(self);
 
+  // ReSharper disable once MemberCanBePrivate.Global
   public static string TrimEnd(this string source, string value) 
     => source.EndsWith(value)
-      ? source.Remove(source.LastIndexOf(value))
+      ? source.Remove(source.LastIndexOf(value, StringComparison.Ordinal))
       : source;
 
   public static void NoAwait(this Task? task)
@@ -76,4 +77,14 @@ public static class Extensions
   }
 
   public static async Task<T[]> ProcessQueryAsync<T>(this ParallelQuery<T> query) => await Task.Run(() => query.ToArray());
+
+  public static void AddRange<T>(this Collection<T> where, IEnumerable<T> seq)
+  {
+    foreach (T item in seq)
+    {
+      where.Add(item);
+    }
+  }
+
+  public static void AddTo<T>(this IEnumerable<T> seq, Collection<T> where) => where.AddRange(seq);
 }
