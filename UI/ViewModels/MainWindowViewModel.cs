@@ -2,14 +2,13 @@
 
 using ReactiveUI;
 
-using Hardware.Info;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Reactive.Linq;
-using Splat;
+
+using Hardware.Info;
 
 namespace UI.ViewModels;
 
-public interface IMainWindowViewModel
+public interface IMainWindowViewModel : IScreen
 {
   double WindowHeight { get; }
 
@@ -34,11 +33,19 @@ public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, 
     WindowHeight = verticalRes / 1.8;
     WindowWidth = WindowHeight / 1.5;
   }
+
+  // fake one router: MainWindowViewModel not used as IScreen but implements it cause
+  // if not then will be exception when MainWindow.DataContext will be set (ReactiveUI side problem)
+  RoutingState IScreen.Router => null!;
 }
 
-public sealed partial class DesignMainWindowViewModel : ViewModelBase, IMainWindowViewModel
+public sealed class DesignMainWindowViewModel : ViewModelBase, IMainWindowViewModel
 {
   public double WindowHeight { get; } = 400;
 
   public double WindowWidth { get; } = 266;
+
+  // fake one router: MainWindowViewModel not used as IScreen but implements it cause
+  // if not then will be exception when MainWindow.DataContext will be set (ReactiveUI side problem)
+  RoutingState IScreen.Router => null!;
 }
