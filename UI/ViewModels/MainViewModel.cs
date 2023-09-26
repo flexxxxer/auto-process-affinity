@@ -1,9 +1,11 @@
 ﻿using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Avalonia;
-using Avalonia.Styling;
 
 using ReactiveUI;
+using ReactiveUI.ExtendedRouting;
+
+using Avalonia;
+using Avalonia.Styling;
 
 using Splat;
 
@@ -13,7 +15,7 @@ public interface IMainViewModel : IScreen
 {
 }
 
-public partial class MainViewModel : ReactiveObject, IMainViewModel, IActivatableViewModel
+public class MainViewModel : ReactiveObject, IMainViewModel, IActivatableViewModel
 {
   public ViewModelActivator Activator { get; } = new();
 
@@ -21,19 +23,15 @@ public partial class MainViewModel : ReactiveObject, IMainViewModel, IActivatabl
 
   public MainViewModel() 
   {
+    // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async (CompositeDisposable d) =>
     {
-      _ = await Router.Navigate.Execute(Locator.Current.GetRequiredService<StartupViewModel>()!);
-      ;
-      // ReactiveCommand
-      //   .CreateFromObservable(() => Router.Navigate.Execute(Locator.Current.GetRequiredService<StartupViewModel>()!))
-      //   .DisposeWith(d)
-      //   .Execute();
+      _ = await Router.NavigateTo(Locator.Current.GetRequiredService<StartupViewModel>());
     });
   }
 }
 
-public sealed partial class DesignMainViewModel : ViewModelBase, IMainViewModel
+public sealed class DesignMainViewModel : ViewModelBase, IMainViewModel
 {
   public RoutingState Router { get; } = new RoutingState();
 
