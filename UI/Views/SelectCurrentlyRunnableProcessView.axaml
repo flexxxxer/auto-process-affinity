@@ -3,16 +3,59 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:UI.ViewModels"
-             xmlns:vs="clr-namespace:UI.Views"
+             xmlns:controls="clr-namespace:UI.Controls"
 						 
-						 mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-             x:Class="UI.SelectCurrentlyRunnableProcessView"
-						 x:DataType="vm:ISelectCurrentlyRunnableProcessViewModel">
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="UI.Views.SelectCurrentlyRunnableProcessView"
+             x:DataType="vm:ISelectCurrentlyRunnableProcessViewModel">
+	
 	<Design.DataContext>
 		<vm:DesignSelectCurrentlyRunnableProcessViewModel/>
 	</Design.DataContext>
 
-	<Grid>
-		<vs:DesignModeTitleBar/>
+	<Grid RowDefinitions="Auto,*,Auto">
+
+		<TextBox Grid.Row="0" Text="{Binding SearchText, Mode=TwoWay}" Watermark="Search by name, id or description"
+             AcceptsTab="False" AcceptsReturn="False" x:Name="SearchTextBox"/>
+
+		<DataGrid Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource SystemBaseHighColor}"
+              SelectionMode="Single" ItemsSource="{Binding CurrentlyRunningProcesses}"
+              SelectedItem="{Binding SelectedRunningProcess}"
+              x:Name="ProcessesDataGrid">
+			<DataGrid.Styles>
+				<Style Selector="DataGridCell:focus /template/ Grid#FocusVisual">
+					<Setter Property="IsVisible" Value="False"/>
+				</Style>
+			</DataGrid.Styles>
+
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" IsReadOnly="True" Tag="ProcessNameColumn"/>
+				<DataGridTextColumn Header="Id" Binding="{Binding ProcessId}" Width="0.5*" IsReadOnly="True"/>
+				<DataGridTemplateColumn Header="Description" Width="*" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                         Text="{Binding Description}" ToolTip.Tip="{Binding Description}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<Grid Grid.Row="2" ColumnDefinitions="*,25,*"
+					Margin="0,10,0,0" HorizontalAlignment="Center">
+			<controls:IconedButton HorizontalAlignment="Left" Grid.Column="0"
+                             Content="Cancel" Padding="8,-3,-2,-3" IconFill="{DynamicResource CancelBrush}"
+                             IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource DismissCircleIcon}" 
+                             Command="{Binding CancelCommand}" HotKey="Escape"/>
+
+			<controls:IconedButton HorizontalAlignment="Right" Grid.Column="2"
+                             Content="Choose" Padding="8,-3,-2,-3" IconFill="{DynamicResource OkBrush}"
+                             IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource CheckmarkCircleIcon}" 
+														 Command="{Binding ConfirmChoiceCommand}" HotKey="Enter"/>
+		</Grid>
 	</Grid>
+
 </UserControl>
