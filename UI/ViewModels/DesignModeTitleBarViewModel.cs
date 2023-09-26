@@ -2,12 +2,13 @@
 using Avalonia.Layout;
 using Avalonia.Styling;
 
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using ReactiveUI;
-
 using System.Reactive;
 using System.Reactive.Linq;
+
+using ReactiveUI;
+
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace UI.ViewModels;
 
