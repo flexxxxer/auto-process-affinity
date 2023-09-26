@@ -4,17 +4,76 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:UI.ViewModels"
              xmlns:vs="clr-namespace:UI.Views"
+						 xmlns:controls="clr-namespace:UI.Controls"
+						 xmlns:conv="clr-namespace:UI.Converters"
 						 
 						 mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-             x:Class="UI.AddProcessView"
+             x:Class="UI.Views.AddProcessView"
 						 x:DataType="vm:IAddProcessViewModel">
 
 	<Design.DataContext>
 		<vm:DesignAddProcessViewModel/>
 	</Design.DataContext>
 
-	<Grid>
-		<vs:DesignModeTitleBar/>
+	<Grid RowDefinitions="*,Auto">
+		<Grid Grid.Row="0">
+			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="260">
+				<TextBox Text="{Binding ProcessName, Mode=TwoWay}" Watermark="Enter process name"
+								 HorizontalAlignment="Stretch" x:Name="ProcessNameTextBox"/>
+				<StackPanel Orientation="Horizontal">
+					<Button Content="Or choose from running" Command="{Binding ChooseProcessCommand}"/>
+				</StackPanel>
+				<StackPanel>
+					<StackPanel Orientation="Horizontal" Spacing="10">
+						<RadioButton GroupName="AffinityMode" Content="Even (turns off SMT)"
+												 IsChecked="{Binding IsEvenAffinityModeChosen, Mode=TwoWay}"
+												 x:Name="EvenAffinityModeCheckBox"/>
+						<TextBox IsVisible="{Binding ElementName=EvenAffinityModeCheckBox, Path=IsChecked}"
+										 Text="{Binding EvenAffinityModeFirstNValue, Mode=TwoWay}" Watermark="First few"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" Spacing="10">
+						<RadioButton GroupName="AffinityMode" Content="First N"
+												 IsChecked="{Binding IsFirstNAffinityModeChosen, Mode=TwoWay}"
+												 x:Name="FirstNAffinityModeCheckBox"/>
+						<TextBox IsVisible="{Binding ElementName=FirstNAffinityModeCheckBox, Path=IsChecked}"
+										 Text="{Binding FirstNAffinityModeValue, Mode=TwoWay}" Watermark="Count"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" Spacing="10">
+						<RadioButton GroupName="AffinityMode" Content="Last N"
+												 IsChecked="{Binding IsLastNAffinityModeChosen, Mode=TwoWay}"
+												 x:Name="LastNAffinityModeCheckBox"/>
+						<TextBox IsVisible="{Binding ElementName=LastNAffinityModeCheckBox, Path=IsChecked}"
+										 Text="{Binding LastNAffinityModeValue, Mode=TwoWay}" Watermark="Count"/>
+					</StackPanel>
+					<StackPanel Spacing="10">
+						<RadioButton GroupName="AffinityMode" Content="Custom"
+												 IsChecked="{Binding IsCustomAffinityModeChosen, Mode=TwoWay}"
+												 x:Name="CustomAffinityModeCheckBox"/>
+						<StackPanel Margin="10 -10 0 0" Orientation="Horizontal" 
+												IsVisible="{Binding ElementName=CustomAffinityModeCheckBox, Path=IsChecked}">
+							<TextBlock Text="0x" VerticalAlignment="Center"/>
+							<TextBox Text="{Binding CustomAffinityModeValue, Mode=TwoWay}" Watermark="Enter or paste"/>
+						</StackPanel>
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+		</Grid>
+
+		<Grid Grid.Row="1" ColumnDefinitions="*,15,*"
+					HorizontalAlignment="Stretch">
+			<controls:IconedButton HorizontalAlignment="Right" Grid.Column="0"
+                             Content="Cancel" Padding="8,-3,-2,-3" IconFill="{DynamicResource CancelBrush}"
+                             IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource DismissCircleIcon}"
+													   Command="{Binding CancelCommand}" HotKey="Escape"/>
+
+			<controls:IconedButton HorizontalAlignment="Left" Grid.Column="2"
+                             Content="Add" Padding="8,7,4,7" IconFill="{DynamicResource OkBrush}"
+                             IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource AddRegularIcon}" IconRenderTransform="scale(0.7)"
+														 IconRenderTransformOrigin="50%,40%"
+                             Command="{Binding AddProcessCommand}" HotKey="Enter"/>
+		</Grid>
 	</Grid>
 
 </UserControl>
