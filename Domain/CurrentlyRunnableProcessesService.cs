@@ -99,7 +99,7 @@ public sealed class CurrentlyRunnableProcessesService : IDisposable
     try
     {
       _currentlyRunningProcesses
-        .AsParallel().WithExecutionMode(ParallelExecutionMode.ForceParallelism)
+        .AsParallel()
         .ForAll(p => p.SourceProcess.Refresh());
 
       var processesToRemove = _currentlyRunningProcesses

@@ -1,12 +1,15 @@
 ﻿using Domain;
 
+using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Reactive.Disposables;
+using System.Diagnostics;
 
 using Avalonia;
+using Avalonia.Threading;
 using Avalonia.Styling;
 
 using ReactiveUI;
@@ -42,16 +45,30 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
   public string? UrlPathSegment { get; } = nameof(StartupViewModel).RemoveVmPostfix();
   public IScreen HostScreen { get; }
 
+  readonly DispatcherTimer _timer;
+  readonly object _syncObj = new();
+
   public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, IScreen screen) 
   {
     HostScreen = screen;
     appSettings.CurrentValue.Do(HandleAppSettingsChanged);
 
+    _timer = new() 
+    {
+      Interval = appSettings.CurrentValue.RunningProcessesUpdatePeriod
+    };
+
     this.WhenActivated((CompositeDisposable d) =>
     {
+      _timer.Tick += Refresh;
+      _timer.Start();
+
       appSettings
         .OnChange(HandleAppSettingsChanged)
         ?.DisposeWith(d);
+      Disposable
+        .Create(HandleDeactivation)
+        .DisposeWith(d);
     });
   }
 
@@ -60,6 +77,34 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
     newAppSettings.ConfiguredProcesses
       .Select(MonitoredProcess.CreateFrom)
       .AddTo(Processes);
+  }
+
+  void HandleDeactivation()
+  {
+    _timer.Tick -= Refresh;
+    _timer.Stop();
+  }
+
+  void Refresh(object? _, EventArgs __)
+  {
+    static MonitoredProcess.StateType TrySetAffinity(Process p, long affinity)
+      => ProcessApi.TrySetProcessorAffinity(p, (nint)affinity)
+          ? MonitoredProcess.StateType.AffinityApplied
+          : MonitoredProcess.StateType.AffinityCantBeSet;
+
+    foreach(var p in Processes)
+    {
+      var normalizedName = p.Name.TrimEnd(".exe");
+
+      var sourceProcess = Process.GetProcessesByName(p.Name).FirstOrDefault() 
+        ?? Process.GetProcessesByName(normalizedName).FirstOrDefault();
+
+      p.State = sourceProcess switch
+      {
+        null => MonitoredProcess.StateType.NotRunning,
+        not null => TrySetAffinity(sourceProcess, p.AffinityValue),
+      };
+    }
   }
 
   [RelayCommand]

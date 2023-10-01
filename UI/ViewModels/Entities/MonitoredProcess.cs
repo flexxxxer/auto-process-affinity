@@ -23,6 +23,6 @@ public sealed partial class MonitoredProcess : ObservableObject
     {
       Name = configuredProcess.Name,
       AffinityValue = (nint)configuredProcess.AffinityValue,
-      State = StateType.NotRunning
+      State = StateType.NotYetApplied
     };
 }
