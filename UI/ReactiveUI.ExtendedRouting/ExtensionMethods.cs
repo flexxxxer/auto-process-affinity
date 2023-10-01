@@ -6,11 +6,11 @@ namespace ReactiveUI.ExtendedRouting;
 
 public static class ExtensionMethods
 {
-  public static IObservable<T> NavigateTo<T>(this RoutingState routingState, T vm)
-    where T : IRoutableViewModel
-    => routingState.Navigate.Execute(vm).Cast<T>();
-
-  public static IObservable<T> NavigateTo<T>(this IScreen screen, T vm)
+  public static IObservable<T> RouteThrought<T>(this T vm, IScreen screen)
     where T : IRoutableViewModel
     => screen.Router.Navigate.Execute(vm).Cast<T>();
+
+  public static IObservable<T> RouteThrought<T>(this T vm, RoutingState routingState)
+    where T : IRoutableViewModel
+    => routingState.Navigate.Execute(vm).Cast<T>();
 }

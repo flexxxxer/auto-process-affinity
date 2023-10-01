@@ -26,7 +26,9 @@ public class MainViewModel : ReactiveObject, IMainViewModel, IActivatableViewMod
     // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async (CompositeDisposable d) =>
     {
-      _ = await Router.NavigateTo(Locator.Current.GetRequiredService<StartupViewModel>());
+      _ = await Locator.Current
+        .GetRequiredService<StartupViewModel>()
+        .RouteThrought(Router);
     });
   }
 }

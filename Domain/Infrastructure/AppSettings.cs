@@ -84,3 +84,7 @@ public sealed record AppSettings
   public static AppSettings Default => new();
 }
 
+public sealed record AppSettingsWrapperForHostOptions
+{
+  public required AppSettings AppSettings { get; set; }
+}

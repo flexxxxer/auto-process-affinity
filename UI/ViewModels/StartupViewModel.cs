@@ -1,5 +1,8 @@
 ﻿using Domain;
 
+using UI.ViewModels.Entities;
+using UI.DomainWrappers;
+
 using System;
 using System.Linq;
 using System.Reactive.Linq;
@@ -7,9 +10,9 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Reactive.Disposables;
 using System.Diagnostics;
+using System.Reactive.Concurrency;
 
 using Avalonia;
-using Avalonia.Threading;
 using Avalonia.Styling;
 
 using ReactiveUI;
@@ -22,7 +25,6 @@ using Splat;
 
 using Microsoft.Extensions.Options;
 
-using UI.ViewModels.Entities;
 
 namespace UI.ViewModels;
 
@@ -45,27 +47,26 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
   public string? UrlPathSegment { get; } = nameof(StartupViewModel).RemoveVmPostfix();
   public IScreen HostScreen { get; }
 
-  readonly DispatcherTimer _timer;
-  readonly object _syncObj = new();
+  IDisposable? _periodicUpdateStick = null;
+  readonly IOptionsMonitor<AppSettings> _appSettings;
+  readonly AppSettingSaveService _settingSaveService;
 
-  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, IScreen screen) 
+  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, AppSettingSaveService settingSaveService, IScreen screen) 
   {
     HostScreen = screen;
-    appSettings.CurrentValue.Do(HandleAppSettingsChanged);
+    _appSettings = appSettings;
+    _settingSaveService = settingSaveService;
 
-    _timer = new() 
-    {
-      Interval = appSettings.CurrentValue.RunningProcessesUpdatePeriod
-    };
+    var handleAppSettingsChanged = HandleAppSettingsChanged;
+    handleAppSettingsChanged = handleAppSettingsChanged.InvokeOn(RxApp.MainThreadScheduler);
 
     this.WhenActivated((CompositeDisposable d) =>
     {
-      _timer.Tick += Refresh;
-      _timer.Start();
-
       appSettings
-        .OnChange(HandleAppSettingsChanged)
+        .Do(s => s.CurrentValue.Do(handleAppSettingsChanged))
+        .Pipe(s => s.OnChange(handleAppSettingsChanged))
         ?.DisposeWith(d);
+
       Disposable
         .Create(HandleDeactivation)
         .DisposeWith(d);
@@ -74,6 +75,11 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
 
   void HandleAppSettingsChanged(AppSettings newAppSettings)
   {
+    _periodicUpdateStick?.Dispose();
+    _periodicUpdateStick = RxApp.MainThreadScheduler
+      .SchedulePeriodic(newAppSettings.RunningProcessesUpdatePeriod, Refresh);
+
+    Processes.Clear();
     newAppSettings.ConfiguredProcesses
       .Select(MonitoredProcess.CreateFrom)
       .AddTo(Processes);
@@ -81,28 +87,28 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
 
   void HandleDeactivation()
   {
-    _timer.Tick -= Refresh;
-    _timer.Stop();
   }
 
-  void Refresh(object? _, EventArgs __)
+  void Refresh()
   {
     static MonitoredProcess.StateType TrySetAffinity(Process p, long affinity)
       => ProcessApi.TrySetProcessorAffinity(p, (nint)affinity)
           ? MonitoredProcess.StateType.AffinityApplied
           : MonitoredProcess.StateType.AffinityCantBeSet;
 
-    foreach(var p in Processes)
+    foreach(var process in Processes)
     {
-      var normalizedName = p.Name.TrimEnd(".exe");
+      var normalizedName = process.Name.EndsWith(".exe") 
+        ? process.Name.Remove(".exe")
+        : process.Name + ".exe";
 
-      var sourceProcess = Process.GetProcessesByName(p.Name).FirstOrDefault() 
-        ?? Process.GetProcessesByName(normalizedName).FirstOrDefault();
+      var sourceProcess = Process.GetProcessesByName(normalizedName).FirstOrDefault() 
+        ?? Process.GetProcessesByName(process.Name).FirstOrDefault();
 
-      p.State = sourceProcess switch
+      process.State = sourceProcess switch
       {
         null => MonitoredProcess.StateType.NotRunning,
-        not null => TrySetAffinity(sourceProcess, p.AffinityValue),
+        not null => TrySetAffinity(sourceProcess, process.AffinityValue),
       };
     }
   }
@@ -110,12 +116,23 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
   [RelayCommand]
   async Task AddMonitoredProcess()
   {
-    var processesVm = await HostScreen
-      .NavigateTo(Locator.Current.GetRequiredService<AddProcessViewModel>());
+    var processesVm = await Locator.Current
+      .GetRequiredService<AddProcessViewModel>()
+      .RouteThrought(HostScreen);
 
     var selectedProcess = await processesVm.Result;
 
-    if (selectedProcess is not null) Processes.Add(MonitoredProcess.CreateFrom(selectedProcess));
+    if (selectedProcess is not null)
+    {
+      var newAppSettingss = _appSettings.CurrentValue with
+      {
+        ConfiguredProcesses = _appSettings.CurrentValue.ConfiguredProcesses
+          .Append(selectedProcess)
+          .ToArray()
+      };
+
+      await _settingSaveService.SaveNewAppSetting(newAppSettingss);
+    }
   }
 
   [RelayCommand]

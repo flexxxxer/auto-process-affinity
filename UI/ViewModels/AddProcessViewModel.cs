@@ -163,7 +163,10 @@ public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessView
   [RelayCommand]
   async Task ChooseProcess()
   {
-    var vm = await HostScreen.NavigateTo(Locator.Current.GetRequiredService<SelectCurrentlyRunnableProcessViewModel>());
+    var vm = await Locator.Current
+      .GetRequiredService<SelectCurrentlyRunnableProcessViewModel>()
+      .RouteThrought(HostScreen);
+
     var selectedProcess = await vm.Result;
 
     if (selectedProcess is not null) ProcessName = selectedProcess.Name;

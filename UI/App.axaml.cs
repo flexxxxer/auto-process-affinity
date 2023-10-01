@@ -58,7 +58,9 @@ public class App : Application
 
     Locator.CurrentMutable
       .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptions<AppSettings>>)
-      .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptionsMonitor<AppSettings>>);
+      .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptionsMonitor<AppSettings>>)
+      .RegisterLazySingletonAnd(host.Services.GetRequiredService<IHostEnvironment>)
+      ;
   }
 
   void ConfigureSplatServices()
@@ -72,6 +74,7 @@ public class App : Application
     SR.Register<SettingsViewModel>();
     SR.RegisterLazySingleton<CurrentlyRunnableProcessesService>();
     SR.RegisterLazySingleton<CurrentlyRunnableProcessesServiceWrapper>();
+    SR.RegisterLazySingleton<AppSettingSaveService>();
 
     Locator.CurrentMutable
       .RegisterLazySingletonAnd<MainWindow>(() => new() { DataContext = Locator.Current.GetRequiredService<MainWindowViewModel>() })

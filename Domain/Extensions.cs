@@ -87,4 +87,7 @@ public static class Extensions
   }
 
   public static void AddTo<T>(this IEnumerable<T> seq, Collection<T> where) => where.AddRange(seq);
+
+  public static AppSettingsWrapperForHostOptions WrapBeforeSerialization(this AppSettings appSettings)
+    => new() { AppSettings = appSettings };
 }
