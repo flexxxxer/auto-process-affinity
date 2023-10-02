@@ -103,7 +103,7 @@ public sealed class CurrentlyRunnableProcessesService : IDisposable
         .ForAll(p => p.SourceProcess.Refresh());
 
       var processesToRemove = _currentlyRunningProcesses
-        .Where(p => p.SourceProcess.HasExited)
+        .Where(p => p.SourceProcess.HasExited || ProcessNamesToExclude.ContainsKey(p.Name))
         .ToArray();
 
       _currentlyRunningProcesses.RemoveMany(processesToRemove);

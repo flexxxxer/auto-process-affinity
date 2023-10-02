@@ -3,6 +3,8 @@
 using System;
 
 using Microsoft.Extensions.Options;
+using System.Reactive.Disposables;
+using System.Linq;
 
 namespace UI.DomainWrappers;
 
@@ -15,15 +17,20 @@ class CurrentlyRunnableProcessesServiceWrapper : IDisposable
   {
     _processesService = processesService;
     HandleSettingsChanged(options.CurrentValue);
-    options.OnChange(HandleSettingsChanged);
+
+    options
+      .OnChange(HandleSettingsChanged)
+      ?.DisposeWith(App.AppLifetimeDisposable);
   }
 
   void HandleSettingsChanged(AppSettings newSettings)
   {
     _processesService.UpdateInterval = newSettings.RunningProcessesUpdatePeriod;
-    newSettings
-      .ConfiguredProcesses
-      .ForEach(p => _processesService.ProcessNamesToExclude.TryAdd(p.Name, default));
+    var processNamesToExclude = _processesService.ProcessNamesToExclude;
+    newSettings.ConfiguredProcesses
+      .Select(p => p.Name)
+      .SelectMany(name => new[] { name, name.Remove(".exe") })
+      .ForEach(name => processNamesToExclude.TryAdd(name, default));
   }
 
   public void Dispose() => _processesService.Dispose();
