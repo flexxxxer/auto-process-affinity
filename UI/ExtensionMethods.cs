@@ -45,20 +45,6 @@ public static class ExtensionMethods
     return (arg) => methodPick.OnNext(arg);
   }
 
-  public static Func<T, Task> ThrottleInvokes<T>(this Func<T, Task> action, TimeSpan throttleTimeout)
-  {
-    Subject<T> methodPick = new();
-
-    methodPick.Throttle(throttleTimeout)
-      .Subscribe(async arg => await action(arg))
-      .DisposeWith(App.AppLifetimeDisposable);
-
-    return async arg => 
-    {
-      methodPick.OnNext(arg);
-    };
-  }
-
   public static Action InvokeOn(this Func<Task> action, Dispatcher dispatcher)
     => () => dispatcher.InvokeAsync(action);
 }
