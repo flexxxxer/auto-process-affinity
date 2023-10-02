@@ -1,13 +1,14 @@
 ﻿using Domain;
-using Domain.Infrastructure;
 
 using UI.ViewModels;
 using UI.Views;
 using UI.DomainWrappers;
 
 using System;
+using System.Reactive.Disposables;
 
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
@@ -23,12 +24,15 @@ using Microsoft.Extensions.Options;
 using Hardware.Info;
 
 using SR = Splat.SplatRegistrations;
+using IApplicationLifetime = Avalonia.Controls.ApplicationLifetimes.IApplicationLifetime;
 
 namespace UI;
 
 public class App : Application
 {
-  public static bool IsDesignMode => Avalonia.Controls.Design.IsDesignMode;
+  public static bool IsDesignMode => Design.IsDesignMode;
+
+  public static CompositeDisposable AppLifetimeDisposable { get; } = new();
 
   public override void Initialize()
   {
@@ -74,7 +78,7 @@ public class App : Application
     SR.Register<SettingsViewModel>();
     SR.RegisterLazySingleton<CurrentlyRunnableProcessesService>();
     SR.RegisterLazySingleton<CurrentlyRunnableProcessesServiceWrapper>();
-    SR.RegisterLazySingleton<AppSettingSaveService>();
+    SR.RegisterLazySingleton<AppSettingChangeService>();
 
     Locator.CurrentMutable
       .RegisterLazySingletonAnd<MainWindow>(() => new() { DataContext = Locator.Current.GetRequiredService<MainWindowViewModel>() })
@@ -90,18 +94,21 @@ public class App : Application
 
   public override void OnFrameworkInitializationCompleted()
   {
-    _ = ApplicationLifetime switch
+    IApplicationLifetime? _ = ApplicationLifetime switch
     {
       IClassicDesktopStyleApplicationLifetime desktop => 
-        desktop.MainWindow = Locator.Current.GetRequiredService<MainWindow>(),
+        desktop.Do(d => d.MainWindow = Locator.Current.GetRequiredService<MainWindow>())
+          .Do(d => d.Exit += (_, _) => HandleAppExit()),
 
       ISingleViewApplicationLifetime singleViewPlatform =>
-        singleViewPlatform.MainView = Locator.Current.GetRequiredService<MainView>(),
+        singleViewPlatform.Do(svp => svp.MainView = Locator.Current.GetRequiredService<MainView>()),
 
       _ when IsDesignMode => null,
       _ => throw new PlatformNotSupportedException()
     };
-    
+
     base.OnFrameworkInitializationCompleted();
   }
+
+  void HandleAppExit() => AppLifetimeDisposable.Dispose();
 }

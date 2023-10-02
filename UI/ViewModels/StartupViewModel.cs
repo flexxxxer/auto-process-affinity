@@ -24,7 +24,7 @@ using CommunityToolkit.Mvvm.Input;
 using Splat;
 
 using Microsoft.Extensions.Options;
-
+using DynamicData;
 
 namespace UI.ViewModels;
 
@@ -34,7 +34,7 @@ public interface IStartupViewModel
 
   IAsyncRelayCommand AddMonitoredProcessCommand { get; }
 
-  IRelayCommand<MonitoredProcess?> RemoveMonitoredProcessCommand { get; }
+  IAsyncRelayCommand<MonitoredProcess?> RemoveMonitoredProcessCommand { get; }
 
   IRelayCommand<MonitoredProcess?> EditMonitoredProcessCommand { get; }
 }
@@ -49,22 +49,23 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
 
   IDisposable? _periodicUpdateStick = null;
   readonly IOptionsMonitor<AppSettings> _appSettings;
-  readonly AppSettingSaveService _settingSaveService;
+  readonly AppSettingChangeService _appSettingService;
 
-  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, AppSettingSaveService settingSaveService, IScreen screen) 
+  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, AppSettingChangeService appSettingService, IScreen screen) 
   {
     HostScreen = screen;
     _appSettings = appSettings;
-    _settingSaveService = settingSaveService;
+    _appSettingService = appSettingService;
 
-    var handleAppSettingsChanged = HandleAppSettingsChanged;
-    handleAppSettingsChanged = handleAppSettingsChanged.InvokeOn(RxApp.MainThreadScheduler);
+    HandleAppSettingsChanged(appSettings.CurrentValue);
+    var handleAppSettingsChangedSpecial = ((Action<AppSettings>)HandleAppSettingsChanged)
+        .ThrottleInvokes(TimeSpan.FromSeconds(1))
+        .InvokeOn(RxApp.MainThreadScheduler);
 
     this.WhenActivated((CompositeDisposable d) =>
     {
       appSettings
-        .Do(s => s.CurrentValue.Do(handleAppSettingsChanged))
-        .Pipe(s => s.OnChange(handleAppSettingsChanged))
+        .OnChange(handleAppSettingsChangedSpecial)
         ?.DisposeWith(d);
 
       Disposable
@@ -75,14 +76,21 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
 
   void HandleAppSettingsChanged(AppSettings newAppSettings)
   {
+    static string ProcessName(MonitoredProcess p) => p.Name;
+
     _periodicUpdateStick?.Dispose();
     _periodicUpdateStick = RxApp.MainThreadScheduler
       .SchedulePeriodic(newAppSettings.RunningProcessesUpdatePeriod, Refresh);
 
-    Processes.Clear();
-    newAppSettings.ConfiguredProcesses
+    var newProcesses = newAppSettings.ConfiguredProcesses
       .Select(MonitoredProcess.CreateFrom)
-      .AddTo(Processes);
+      .ToArray();
+
+    var removeFromExisting = Processes.ExceptBy(newProcesses.Select(ProcessName), p => p.Name);
+    var addToExisting = newProcesses.ExceptBy(Processes.Select(ProcessName), p => p.Name);
+
+    Processes.RemoveMany(removeFromExisting);
+    Processes.AddRange(addToExisting);
   }
 
   void HandleDeactivation()
@@ -124,21 +132,38 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
 
     if (selectedProcess is not null)
     {
-      var newAppSettingss = _appSettings.CurrentValue with
-      {
-        ConfiguredProcesses = _appSettings.CurrentValue.ConfiguredProcesses
-          .Append(selectedProcess)
-          .ToArray()
-      };
+      Processes.Add(MonitoredProcess.CreateFrom(selectedProcess));
 
-      await _settingSaveService.SaveNewAppSetting(newAppSettingss);
+      await _appSettingService.MakeChangeAsync(previousSettings =>
+      {
+        return previousSettings with
+        {
+          ConfiguredProcesses = previousSettings.ConfiguredProcesses
+            .Append(selectedProcess)
+            .ToArray()
+        };
+      });
     }
   }
 
   [RelayCommand]
-  void RemoveMonitoredProcess(MonitoredProcess? p)
+  async Task RemoveMonitoredProcess(MonitoredProcess? p)
   {
+    if (p is not null)
+    {
+      Processes.Remove(p);
 
+      await _appSettingService.MakeChangeAsync(previousSettings =>
+      {
+        var removedProcessName = p.Name;
+        return previousSettings with
+        {
+          ConfiguredProcesses = previousSettings.ConfiguredProcesses
+            .Where(cp => cp.Name != removedProcessName)
+            .ToArray()
+        };
+      });
+    }
   }
 
   [RelayCommand]
@@ -168,7 +193,7 @@ public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupView
   Task AddMonitoredProcess() => Task.CompletedTask;
 
   [RelayCommand]
-  void RemoveMonitoredProcess(MonitoredProcess? p) { }
+  Task RemoveMonitoredProcess(MonitoredProcess? p) => Task.CompletedTask;
 
   [RelayCommand]
   void EditMonitoredProcess(MonitoredProcess? p) { }
