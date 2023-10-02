@@ -15,6 +15,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Splat;
 using System.Collections.Generic;
 using System;
+using Hardware.Info;
 
 namespace UI.ViewModels;
 
@@ -65,91 +66,65 @@ public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessView
   readonly TaskCompletionSource<ConfiguredProcess?> _resultSource = new();
   public Task<ConfiguredProcess?> Result => _resultSource.Task;
 
-  AffinityMode _affinityMode = AffinityMode.AllEven;
+  AffinityMode _affinityMode;
 
   public AddProcessViewModel(IScreen screen) 
   {
     HostScreen = screen;
   }
 
-  partial void OnIsEvenAffinityModeChosenChanged(bool value)
+  void HandleAffinityModeChange()
   {
-    if(value is false)
+    (AffinityValue, _affinityMode) = (null as object) switch
     {
-      return;
-    }
-    _affinityMode = value ? AffinityMode.AllEven : _affinityMode;
-    if (!EvenAffinityModeFirstNValue.IsNullOrWhiteSpace())
-    {
-      AffinityValue = long.TryParse(EvenAffinityModeFirstNValue, out var firstNEven)
-        ? AffinityApi.FillFirstNEvenOnly((int)firstNEven)
-        : AffinityValue;
-    }
-    else 
-    {
-      AffinityValue = AffinityApi.FillFirstNEvenOnly(Environment.ProcessorCount / 2);
-    }
+      _ when IsEvenAffinityModeChosen => EvenAffinityModeFirstNValue switch
+      {
+        { } str when int.TryParse(str, out var firstNEven) => (AffinityApi.FillFirstNEvenOnly(firstNEven), AffinityMode.FirstNEven),
+        null or "" => (AffinityApi.FillFirstNEvenOnly(Environment.ProcessorCount / 2), AffinityMode.AllEven),
+        _ => (AffinityValue, _affinityMode),
+      },
+
+      _ when IsFirstNAffinityModeChosen => FirstNAffinityModeValue switch
+      {
+        { } str when int.TryParse(str, out var firstN) => (AffinityApi.FillFirstN(firstN), AffinityMode.FirstN),
+        null or "" or _ => (AffinityValue, _affinityMode),
+      },
+
+      _ when IsLastNAffinityModeChosen => LastNAffinityModeValue switch
+      {
+        { } str when int.TryParse(str, out var lastN) => (AffinityApi.FillLastN(lastN), AffinityMode.LastN),
+        null or "" or _ => (AffinityValue, _affinityMode),
+      },
+
+      _ when IsCustomAffinityModeChosen => CustomAffinityModeValue switch
+      {
+        { } str when long.TryParse(str.Remove("0x"), System.Globalization.NumberStyles.HexNumber, null, out var newMask)
+          => (AffinityApi.FromCustom(newMask), AffinityMode.CustomBitmask),
+
+        null or "" or _ => (AffinityValue, _affinityMode)
+      },
+
+      _ => (AffinityValue, _affinityMode)
+    };
   }
 
-  partial void OnIsFirstNAffinityModeChosenChanged(bool value)
-  {
-    if (value is false)
-    {
-      return;
-    }
-    _affinityMode = AffinityMode.FirstN;
-    if (!FirstNAffinityModeValue.IsNullOrWhiteSpace())
-    {
-      AffinityValue = long.TryParse(FirstNAffinityModeValue, out var firstN)
-        ? AffinityApi.FillFirstN((int)firstN)
-        : AffinityValue;
-    }
-  }
+  partial void OnIsEvenAffinityModeChosenChanged(bool value) => HandleAffinityModeChange();
 
-  partial void OnIsLastNAffinityModeChosenChanged(bool value)
-  {
-    if (value is false)
-    {
-      return;
-    }
-    _affinityMode = AffinityMode.LastN;
-    if (!LastNAffinityModeValue.IsNullOrWhiteSpace())
-    {
-      AffinityValue = long.TryParse(LastNAffinityModeValue, out var lastN)
-        ? AffinityApi.FillLastN((int)lastN)
-        : AffinityValue;
-    }
-  }
+  partial void OnIsFirstNAffinityModeChosenChanged(bool value) => HandleAffinityModeChange();
 
-  partial void OnIsCustomAffinityModeChosenChanged(bool value)
-    => _affinityMode = value ? AffinityMode.CustomBitmask : _affinityMode;
+  partial void OnIsLastNAffinityModeChosenChanged(bool value) => HandleAffinityModeChange();
 
-  partial void OnEvenAffinityModeFirstNValueChanged(string value)
-  {
-    if (long.TryParse(value, out var firstNEven))
-    {
-      AffinityValue = AffinityApi.FillFirstNEvenOnly((int)firstNEven);
-      _affinityMode = AffinityMode.FirstNEven;
-    }
-  }
+  partial void OnIsCustomAffinityModeChosenChanged(bool value) => HandleAffinityModeChange();
 
-  partial void OnFirstNAffinityModeValueChanged(string value)
-    => AffinityValue = long.TryParse(value, out var firstN)
-      ? AffinityApi.FillLastN((int)firstN)
-      : AffinityValue;
+  partial void OnEvenAffinityModeFirstNValueChanged(string value) => HandleAffinityModeChange();
 
-  partial void OnLastNAffinityModeValueChanged(string value)
-    => AffinityValue = long.TryParse(value, out var lastN)
-      ? AffinityApi.FillLastN((int)lastN)
-      : AffinityValue;
+  partial void OnFirstNAffinityModeValueChanged(string value) => HandleAffinityModeChange();
 
-  partial void OnAffinityValueChanged(long value)
-    => CustomAffinityModeValue = AffinityValue.ToString("X");
+  partial void OnLastNAffinityModeValueChanged(string value) => HandleAffinityModeChange();
 
-  partial void OnCustomAffinityModeValueChanged(string value)
-    => AffinityValue = long.TryParse(value.Remove("0x"), System.Globalization.NumberStyles.HexNumber, null, out var newMask)
-      ? AffinityApi.FromCustom(newMask)
-      : AffinityValue;
+  partial void OnCustomAffinityModeValueChanged(string value) => HandleAffinityModeChange();
+
+  partial void OnAffinityValueChanged(long value) => CustomAffinityModeValue = AffinityValue.ToString("X");
 
   bool CanAddProcess() =>
     !ProcessName.IsNullOrWhiteSpace()

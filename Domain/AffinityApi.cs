@@ -14,14 +14,14 @@ public static class AffinityApi
       AffinityMode.CustomBitmask or _ => FromCustom(value)
     };
 
-  public static long FillFirstNEvenOnly(int bitNumber)
+  public static long FillFirstNEvenOnly(int count)
   {
     long result = 0;
 
-    for (byte i = 0; bitNumber != 0; i += 2)
+    for (byte i = 0; count != 0; i += 2)
     {
       result |= 1L << i;
-      bitNumber--;
+      count--;
     }
 
     return result;
