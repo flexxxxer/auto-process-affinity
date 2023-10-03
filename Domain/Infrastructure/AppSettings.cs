@@ -13,11 +13,11 @@ public enum AffinityMode
 
 public sealed record ConfiguredProcess
 {
-  public string Name { get; set; } = "";
+  public string Name { get; init; } = "";
 
-  public AffinityMode AffinityMode { get; set; }
+  public AffinityMode AffinityMode { get; init; }
 
-  public long AffinityValue { get; set; }
+  public long AffinityValue { get; init; }
 }
 
 public enum StartupLocationMode
@@ -38,29 +38,29 @@ public sealed record StartupOptions
 {
   public sealed record StartupLocationValues
   {
-    public int X { get; set; }
+    public int X { get; init; }
 
-    public int Y { get; set; }
+    public int Y { get; init; }
   }
 
   public sealed record StartupSizeValues
   {
-    public int Height { get; set; }
+    public int Height { get; init; }
 
-    public int Width { get; set; }
+    public int Width { get; init; }
   }
 
-  public bool Autostart { get; set; }
+  public bool Autostart { get; init; }
 
-  public bool Minimized { get; set; }
+  public bool Minimized { get; init; }
 
-  public StartupLocationMode StartupLocationMode { get; set; }
+  public StartupLocationMode StartupLocationMode { get; init; }
 
-  public StartupLocationValues StartupLocation { get; set; } = new();
+  public StartupLocationValues StartupLocation { get; init; } = new();
 
-  public StartupSizeMode StartupSizeMode { get; set; }
+  public StartupSizeMode StartupSizeMode { get; init; }
 
-  public StartupSizeValues StartupSize { get; set; } = new();
+  public StartupSizeValues StartupSize { get; init; } = new();
 
   public static StartupOptions Default => new()
   {
@@ -75,16 +75,16 @@ public sealed record StartupOptions
 
 public sealed record AppSettings
 {
-  public TimeSpan RunningProcessesUpdatePeriod { get; set; } = TimeSpan.FromSeconds(2);
+  public TimeSpan RunningProcessesUpdatePeriod { get; init; } = TimeSpan.FromSeconds(2);
 
-  public ConfiguredProcess[] ConfiguredProcesses { get; set; } = Array.Empty<ConfiguredProcess>();
+  public ConfiguredProcess[] ConfiguredProcesses { get; init; } = Array.Empty<ConfiguredProcess>();
 
-  public StartupOptions StartupOptions { get; set; } = StartupOptions.Default;
+  public StartupOptions StartupOptions { get; init; } = StartupOptions.Default;
 
   public static AppSettings Default => new();
 }
 
 public sealed record AppSettingsWrapperForHostOptions
 {
-  public required AppSettings AppSettings { get; set; }
+  public required AppSettings AppSettings { get; init; }
 }
