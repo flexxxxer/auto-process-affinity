@@ -57,7 +57,6 @@ public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessView
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _firstNAffinityModeValue = "";
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _lastNAffinityModeValue = "";
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _customAffinityModeValue = "";
-  [ObservableProperty] long _affinityValue = 0;
 
   public ViewModelActivator Activator { get; } = new();
   public string UrlPathSegment => nameof(AddProcessViewModel).RemoveVmPostfix();
@@ -67,6 +66,7 @@ public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessView
   public Task<ConfiguredProcess?> Result => _resultSource.Task;
 
   AffinityMode _affinityMode;
+  long _affinityValue;
 
   public AddProcessViewModel(IScreen screen) 
   {
@@ -75,37 +75,29 @@ public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessView
 
   void HandleAffinityModeChange()
   {
-    (AffinityValue, _affinityMode) = (null as object) switch
+    (_affinityValue, _affinityMode) = (null as object) switch
     {
       _ when IsEvenAffinityModeChosen => EvenAffinityModeFirstNValue switch
       {
-        { } str when int.TryParse(str, out var firstNEven) => (AffinityApi.FillFirstNEvenOnly(firstNEven), AffinityMode.FirstNEven),
-        null or "" => (AffinityApi.FillFirstNEvenOnly(Environment.ProcessorCount / 2), AffinityMode.AllEven),
-        _ => (AffinityValue, _affinityMode),
+        { } str when int.TryParse(str, out var firstNEven) => (firstNEven, AffinityMode.FirstNEven),
+        null or "" => (0 /* any value not matter */, AffinityMode.AllEven),
+        _ => (_affinityValue, _affinityMode),
       },
 
-      _ when IsFirstNAffinityModeChosen => FirstNAffinityModeValue switch
-      {
-        { } str when int.TryParse(str, out var firstN) => (AffinityApi.FillFirstN(firstN), AffinityMode.FirstN),
-        null or "" or _ => (AffinityValue, _affinityMode),
-      },
+      _ when IsFirstNAffinityModeChosen && int.TryParse(FirstNAffinityModeValue, out var firstN) 
+        => (firstN, AffinityMode.FirstN),
 
-      _ when IsLastNAffinityModeChosen => LastNAffinityModeValue switch
-      {
-        { } str when int.TryParse(str, out var lastN) => (AffinityApi.FillLastN(lastN), AffinityMode.LastN),
-        null or "" or _ => (AffinityValue, _affinityMode),
-      },
+      _ when IsLastNAffinityModeChosen && int.TryParse(LastNAffinityModeValue, out var lastN) 
+        => (lastN, AffinityMode.LastN),
 
-      _ when IsCustomAffinityModeChosen => CustomAffinityModeValue switch
-      {
-        { } str when long.TryParse(str.Remove("0x"), System.Globalization.NumberStyles.HexNumber, null, out var newMask)
-          => (AffinityApi.FromCustom(newMask), AffinityMode.CustomBitmask),
+      _ when IsCustomAffinityModeChosen 
+        && long.TryParse(CustomAffinityModeValue.Remove("0x"), System.Globalization.NumberStyles.HexNumber, null, out var newMask)
+        => (newMask, AffinityMode.CustomBitmask),
 
-        null or "" or _ => (AffinityValue, _affinityMode)
-      },
-
-      _ => (AffinityValue, _affinityMode)
+      _ => (_affinityValue, _affinityMode)
     };
+
+    CustomAffinityModeValue = AffinityApi.BitmaskFrom(_affinityMode, _affinityValue).ToString("X");
   }
 
   partial void OnIsEvenAffinityModeChosenChanged(bool value) => HandleAffinityModeChange();
@@ -123,8 +115,6 @@ public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessView
   partial void OnLastNAffinityModeValueChanged(string value) => HandleAffinityModeChange();
 
   partial void OnCustomAffinityModeValueChanged(string value) => HandleAffinityModeChange();
-
-  partial void OnAffinityValueChanged(long value) => CustomAffinityModeValue = AffinityValue.ToString("X");
 
   bool CanAddProcess() =>
     !ProcessName.IsNullOrWhiteSpace()
@@ -154,7 +144,7 @@ public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessView
     {
       Name = ProcessName,
       AffinityMode = _affinityMode,
-      AffinityValue = AffinityValue
+      AffinityValue = _affinityValue
     });
     HostScreen.Router.NavigateBack.Execute();
   }
