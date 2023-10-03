@@ -80,7 +80,7 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
 
     _periodicUpdateStick?.Dispose();
     _periodicUpdateStick = RxApp.MainThreadScheduler
-      .SchedulePeriodic(newAppSettings.RunningProcessesUpdatePeriod, Refresh);
+      .SchedulePeriodic(null as object, newAppSettings.RunningProcessesUpdatePeriod, async _ => await Refresh());
 
     var configuredProcesses = newAppSettings.ConfiguredProcesses;
 
@@ -106,28 +106,50 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
   {
   }
 
-  void Refresh()
+  async Task Refresh()
   {
     static MonitoredProcess.StateType TrySetAffinity(Process p, long affinity)
       => ProcessApi.TrySetProcessorAffinity(p, (nint)affinity)
           ? MonitoredProcess.StateType.AffinityApplied
           : MonitoredProcess.StateType.AffinityCantBeSet;
 
-    foreach(var process in Processes)
+    static Process? GetSourceProcess(MonitoredProcess p)
     {
-      var normalizedName = process.Name.EndsWith(".exe") 
-        ? process.Name.Remove(".exe")
-        : process.Name + ".exe";
+      var processName = p.Name;
+      var normalizedName = processName.EndsWith(".exe")
+        ? processName.Remove(".exe")
+        : processName + ".exe";
 
-      var sourceProcess = Process.GetProcessesByName(normalizedName).FirstOrDefault()
-        ?? Process.GetProcessesByName(process.Name).FirstOrDefault();
-
-      process.State = sourceProcess switch
-      {
-        null => MonitoredProcess.StateType.NotRunning,
-        not null => TrySetAffinity(sourceProcess, process.AffinityValue),
-      };
+      return Process.GetProcessesByName(normalizedName).FirstOrDefault()
+        ?? Process.GetProcessesByName(processName).FirstOrDefault();
     }
+
+    static MonitoredProcess.StateType SetAffinityAndGetStateType(nint affinityValue, Process? sourceProcess)
+      => sourceProcess switch
+      {
+        not null => TrySetAffinity(sourceProcess, affinityValue),
+        null => MonitoredProcess.StateType.NotRunning,
+      };
+
+    var sourceProcesses = await Processes
+      .AsParallel()
+      .AsOrdered()
+      .Select(GetSourceProcess)
+      .PipeUsingTaskRun(q => q.ToArray());
+
+    var processesAffinityToSet = await Processes
+      .Select(p => p.AffinityValue)
+      .Zip(sourceProcesses)
+      .AsParallel()
+      .AsOrdered()
+      .Select(tuple => SetAffinityAndGetStateType(tuple.First, tuple.Second))
+      .PipeUsingTaskRun(q => q.ToArray());
+
+    Processes
+      .Zip(processesAffinityToSet)
+      .ForEach((monitoredProcess, state) => monitoredProcess.State = state);
+
+    await Task.Delay(TimeSpan.FromSeconds(5));
   }
 
   [RelayCommand]

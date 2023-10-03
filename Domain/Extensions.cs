@@ -21,13 +21,24 @@ public static class Extensions
   }
 
   public static TOut Pipe<TIn, TOut>(this TIn self, Func<TIn, TOut> func)
-      => func(self);
+    => func(self);
+
+  public static async Task<TOut> PipeUsingTaskRun<TIn, TOut>(this TIn self, Func<TIn, TOut> func)
+    => await Task.Run(() => func(self));
 
   public static void ForEach<T>(this IEnumerable<T> seq, Action<T> action)
   {
     foreach (var item in seq)
     {
       action(item);
+    }
+  }
+
+  public static void ForEach<T1, T2>(this IEnumerable<(T1, T2)> seq, Action<T1, T2> action)
+  {
+    foreach (var (arg1, arg2) in seq)
+    {
+      action(arg1, arg2);
     }
   }
 
@@ -75,8 +86,6 @@ public static class Extensions
   {
     task?.ContinueWith(_ => { }, TaskContinuationOptions.ExecuteSynchronously);
   }
-
-  public static async Task<T[]> ProcessQueryAsync<T>(this ParallelQuery<T> query) => await Task.Run(() => query.ToArray());
 
   public static void AddRange<T>(this Collection<T> where, IEnumerable<T> seq)
   {
