@@ -39,6 +39,8 @@ public interface IAddProcessViewModel
 
   string CustomAffinityModeValue { get; set; }
 
+  ConfiguredProcess? ToEdit { get; }
+
   IAsyncRelayCommand ChooseProcessCommand { get; }
 
   IRelayCommand AddProcessCommand { get; }
@@ -57,6 +59,8 @@ public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessView
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _firstNAffinityModeValue = "";
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _lastNAffinityModeValue = "";
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _customAffinityModeValue = "";
+
+  [ObservableProperty] ConfiguredProcess? _toEdit;
 
   public ViewModelActivator Activator { get; } = new();
   public string UrlPathSegment => nameof(AddProcessViewModel).RemoveVmPostfix();
@@ -116,6 +120,36 @@ public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessView
 
   partial void OnCustomAffinityModeValueChanged(string value) => HandleAffinityModeChange();
 
+  partial void OnToEditChanged(ConfiguredProcess? value)
+  {
+    if(value is not null)
+    {
+      ToEdit = value;
+      ProcessName = value.Name;
+
+      (IsEvenAffinityModeChosen, EvenAffinityModeFirstNValue) = value.AffinityMode switch
+      {
+        AffinityMode.AllEven => (true, ""),
+        AffinityMode.FirstNEven => (true, value.AffinityValue.ToString()),
+        _ => (false, "")
+      };
+
+      (IsFirstNAffinityModeChosen, FirstNAffinityModeValue) = value.AffinityMode is AffinityMode.FirstN
+        ? (true, value.AffinityValue.ToString())
+        : (false, "");
+
+      (IsLastNAffinityModeChosen, LastNAffinityModeValue) = value.AffinityMode is AffinityMode.LastN
+        ? (true, value.AffinityValue.ToString())
+        : (false, "");
+
+      (IsCustomAffinityModeChosen, CustomAffinityModeValue) = value.AffinityMode is AffinityMode.CustomBitmask
+        ? (true, value.AffinityValue.ToString("X"))
+        : (false, "");
+
+      HandleAffinityModeChange();
+    }
+  }
+
   bool CanAddProcess() =>
     !ProcessName.IsNullOrWhiteSpace()
     && (
@@ -168,6 +202,7 @@ public sealed partial class DesignAddProcessViewModel : ViewModelBase, IAddProce
   [ObservableProperty] string _firstNAffinityModeValue = "";
   [ObservableProperty] string _lastNAffinityModeValue = "";
   [ObservableProperty] string _customAffinityModeValue = "";
+  [ObservableProperty] ConfiguredProcess? _toEdit = null;
 
   public DesignAddProcessViewModel()
   {
@@ -180,6 +215,9 @@ public sealed partial class DesignAddProcessViewModel : ViewModelBase, IAddProce
   [RelayCommand]
   void AddProcess()
   {
+    ToEdit = ToEdit is not null
+      ? null
+      : new();
   }
 
   [RelayCommand]

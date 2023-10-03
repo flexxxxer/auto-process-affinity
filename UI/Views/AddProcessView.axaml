@@ -17,10 +17,11 @@
 
 	<Grid RowDefinitions="*,Auto">
 		<Grid Grid.Row="0">
-			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="260">
+			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="260" Spacing="2">
 				<TextBox Text="{Binding ProcessName, Mode=TwoWay}" Watermark="Enter process name"
+								 IsEnabled="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}}"
 								 HorizontalAlignment="Stretch" x:Name="ProcessNameTextBox"/>
-				<StackPanel Orientation="Horizontal">
+				<StackPanel Orientation="Horizontal" IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}}">
 					<Button Content="Or choose from running" Command="{Binding ChooseProcessCommand}"/>
 				</StackPanel>
 				<StackPanel>
@@ -72,6 +73,14 @@
                              IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
                              IconGeometry="{StaticResource AddRegularIcon}" IconRenderTransform="scale(0.7)"
 														 IconRenderTransformOrigin="50%,40%"
+														 IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}"
+                             Command="{Binding AddProcessCommand}" HotKey="Enter"/>
+
+			<controls:IconedButton HorizontalAlignment="Left" Grid.Column="2"
+                             Content="Apply" Padding="8,-3,-2,-3" IconFill="{DynamicResource OkBrush}"
+                             IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource CheckmarkCircleIcon}"
+														 IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNotNull}}"
                              Command="{Binding AddProcessCommand}" HotKey="Enter"/>
 		</Grid>
 	</Grid>
