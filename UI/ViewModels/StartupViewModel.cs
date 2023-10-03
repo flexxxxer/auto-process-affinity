@@ -36,7 +36,7 @@ public interface IStartupViewModel
 
   IAsyncRelayCommand<MonitoredProcess?> RemoveMonitoredProcessCommand { get; }
 
-  IRelayCommand<MonitoredProcess?> EditMonitoredProcessCommand { get; }
+  IAsyncRelayCommand<MonitoredProcess?> EditMonitoredProcessCommand { get; }
 }
 
 public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActivatableViewModel, IRoutableViewModel
@@ -59,8 +59,8 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
 
     HandleAppSettingsChanged(appSettings.CurrentValue);
     var handleAppSettingsChangedSpecial = ((Action<AppSettings>)HandleAppSettingsChanged)
-      .ThrottleInvokes(TimeSpan.FromSeconds(1))
-      .InvokeOn(RxApp.MainThreadScheduler);
+      .InvokeOn(RxApp.MainThreadScheduler)
+      .ThrottleInvokes(TimeSpan.FromSeconds(1));
 
     this.WhenActivated((CompositeDisposable d) =>
     {
@@ -155,22 +155,22 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
   [RelayCommand]
   async Task AddMonitoredProcess()
   {
-    var processesVm = await Locator.Current
+    var addProcessVm = await Locator.Current
       .GetRequiredService<AddProcessViewModel>()
       .RouteThrought(HostScreen);
 
-    var selectedProcess = await processesVm.Result;
+    var configuredProcess = await addProcessVm.Result;
 
-    if (selectedProcess is not null)
+    if (configuredProcess is not null)
     {
-      Processes.Add(MonitoredProcess.CreateFrom(selectedProcess));
+      Processes.Add(MonitoredProcess.CreateFrom(configuredProcess));
 
       await _appSettingService.MakeChangeAsync(previousSettings =>
       {
         return previousSettings with
         {
           ConfiguredProcesses = previousSettings.ConfiguredProcesses
-            .Append(selectedProcess)
+            .Append(configuredProcess)
             .ToArray()
         };
       });
@@ -198,8 +198,32 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
   }
 
   [RelayCommand]
-  void EditMonitoredProcess(MonitoredProcess? p)
+  async Task EditMonitoredProcess(MonitoredProcess? p)
   {
+    if(p is not null)
+    {
+      var addProcessVm = Locator.Current
+        .GetRequiredService<AddProcessViewModel>()
+        .Do(vm => vm.ToEdit = _appSettings.CurrentValue
+          .ConfiguredProcesses
+          .FirstOrDefault(cp => cp.Name == p.Name));
+
+      var processesVm = await addProcessVm.RouteThrought(HostScreen);
+      var configuredProcess = await processesVm.Result;
+
+      if (configuredProcess is not null)
+      {
+        await _appSettingService.MakeChangeAsync(previousSettings =>
+        {
+          return previousSettings with
+          {
+            ConfiguredProcesses = previousSettings.ConfiguredProcesses
+              .Select(cp => cp.Name == configuredProcess.Name ? configuredProcess : cp)
+              .ToArray()
+          };
+        });
+      }
+    }
   }
 }
 
@@ -227,5 +251,5 @@ public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupView
   Task RemoveMonitoredProcess(MonitoredProcess? p) => Task.CompletedTask;
 
   [RelayCommand]
-  void EditMonitoredProcess(MonitoredProcess? p) { }
+  Task EditMonitoredProcess(MonitoredProcess? p) => Task.CompletedTask;
 }
