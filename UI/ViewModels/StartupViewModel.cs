@@ -59,8 +59,8 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
 
     HandleAppSettingsChanged(appSettings.CurrentValue);
     var handleAppSettingsChangedSpecial = ((Action<AppSettings>)HandleAppSettingsChanged)
-        .ThrottleInvokes(TimeSpan.FromSeconds(1))
-        .InvokeOn(RxApp.MainThreadScheduler);
+      .ThrottleInvokes(TimeSpan.FromSeconds(1))
+      .InvokeOn(RxApp.MainThreadScheduler);
 
     this.WhenActivated((CompositeDisposable d) =>
     {
@@ -82,15 +82,24 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
     _periodicUpdateStick = RxApp.MainThreadScheduler
       .SchedulePeriodic(newAppSettings.RunningProcessesUpdatePeriod, Refresh);
 
-    var newProcesses = newAppSettings.ConfiguredProcesses
+    var configuredProcesses = newAppSettings.ConfiguredProcesses;
+
+    var newProcesses = configuredProcesses
       .Select(MonitoredProcess.CreateFrom)
       .ToArray();
 
-    var removeFromExisting = Processes.ExceptBy(newProcesses.Select(ProcessName), p => p.Name);
-    var addToExisting = newProcesses.ExceptBy(Processes.Select(ProcessName), p => p.Name);
+    var removeFromExisting = Processes.ExceptBy(newProcesses.Select(ProcessName), ProcessName);
+    var addToExisting = newProcesses.ExceptBy(Processes.Select(ProcessName), ProcessName);
 
     Processes.RemoveMany(removeFromExisting);
     Processes.AddRange(addToExisting);
+
+    foreach(var p in Processes)
+    {
+      configuredProcesses
+        .FirstOrDefault(cp => cp.Name == p.Name)
+        ?.Do(cp => p.AffinityValue = (nint)AffinityApi.BitmaskFrom(cp.AffinityMode, cp.AffinityValue));
+    }
   }
 
   void HandleDeactivation()
@@ -110,7 +119,7 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
         ? process.Name.Remove(".exe")
         : process.Name + ".exe";
 
-      var sourceProcess = Process.GetProcessesByName(normalizedName).FirstOrDefault() 
+      var sourceProcess = Process.GetProcessesByName(normalizedName).FirstOrDefault()
         ?? Process.GetProcessesByName(process.Name).FirstOrDefault();
 
       process.State = sourceProcess switch
