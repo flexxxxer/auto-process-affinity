@@ -137,7 +137,7 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
       .Select(GetSourceProcess)
       .PipeUsingTaskRun(q => q.ToArray());
 
-    var processesAffinityToSet = await Processes
+    var processesStateTypeToSet = await Processes
       .Select(p => p.AffinityValue)
       .Zip(sourceProcesses)
       .AsParallel()
@@ -146,7 +146,7 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
       .PipeUsingTaskRun(q => q.ToArray());
 
     Processes
-      .Zip(processesAffinityToSet)
+      .Zip(processesStateTypeToSet)
       .ForEach((monitoredProcess, state) => monitoredProcess.State = state);
 
     await Task.Delay(TimeSpan.FromSeconds(5));
