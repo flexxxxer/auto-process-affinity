@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.Options;
 using System.Reactive.Disposables;
 using System.Linq;
+using System.Diagnostics;
 
 namespace UI.DomainWrappers;
 
@@ -29,6 +30,7 @@ class CurrentlyRunnableProcessesServiceWrapper : IDisposable
     var processNamesToExclude = _processesService.ProcessNamesToExclude;
     newSettings.ConfiguredProcesses
       .Select(p => p.Name)
+      .Append(Process.GetCurrentProcess().ProcessName)
       .SelectMany(name => new[] { name, name.Remove(".exe") })
       .ForEach(name => processNamesToExclude.TryAdd(name, default));
   }
