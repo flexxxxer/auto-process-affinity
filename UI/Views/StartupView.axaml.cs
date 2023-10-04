@@ -4,7 +4,7 @@ using Avalonia.ReactiveUI;
 
 namespace UI.Views;
 
-public partial class StartupView : ReactiveUserControl<StartupViewModel>
+public partial class StartupView : ReactiveUserControl<IStartupViewModel>
 {
   public StartupView()
   {

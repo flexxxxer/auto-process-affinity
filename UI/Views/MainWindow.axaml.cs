@@ -4,7 +4,7 @@ using Avalonia.ReactiveUI;
 
 namespace UI.Views;
 
-public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
+public partial class MainWindow : ReactiveWindow<IMainWindowViewModel>
 {
   public MainWindow()
   {

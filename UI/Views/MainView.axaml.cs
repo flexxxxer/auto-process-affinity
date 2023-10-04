@@ -2,24 +2,19 @@
 
 using Avalonia.ReactiveUI;
 
-using ReactiveUI;
-
 using Splat;
 
 namespace UI.Views;
 
-public partial class MainView : ReactiveUserControl<MainViewModel>
+public partial class MainView : ReactiveUserControl<IMainViewModel>
 {
   public MainView()
   {
     InitializeComponent();
-    this.WhenActivated(d =>
+    DataContext = DataContext switch
     {
-      DataContext = DataContext switch
-      {
-        { } mvm when mvm is MainViewModel or DesignMainViewModel => mvm,
-        _ => Locator.Current.GetRequiredService<MainViewModel>()
-      };
-    });
+      not DesignMainViewModel when App.IsDesignMode => new DesignMainViewModel(),
+      _ => Locator.Current.GetRequiredService<MainViewModel>()
+    };
   }
 }

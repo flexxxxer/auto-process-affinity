@@ -8,7 +8,7 @@ using Avalonia.ReactiveUI;
 
 namespace UI.Views;
 
-public partial class SelectCurrentlyRunnableProcessView : ReactiveUserControl<SelectCurrentlyRunnableProcessViewModel>
+public partial class SelectCurrentlyRunnableProcessView : ReactiveUserControl<ISelectCurrentlyRunnableProcessViewModel>
 {
   public SelectCurrentlyRunnableProcessView()
   {

@@ -14,9 +14,21 @@ public static class Extensions
     return self;
   }
 
+  public static T DoIf<T>(this T self, bool @if, Action whatToDo)
+  {
+    if(@if) whatToDo();
+    return self;
+  }
+
   public static T Do<T>(this T self, Action<T> whatToDo)
   {
     whatToDo(self);
+    return self;
+  }
+
+  public static T DoIf<T>(this T self, bool @if, Action<T> whatToDo)
+  {
+    if(@if) whatToDo(self);
     return self;
   }
 

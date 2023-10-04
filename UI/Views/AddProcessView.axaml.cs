@@ -4,7 +4,7 @@ using Avalonia.ReactiveUI;
 
 namespace UI.Views;
 
-public partial class AddProcessView : ReactiveUserControl<AddProcessViewModel>
+public partial class AddProcessView : ReactiveUserControl<IAddProcessViewModel>
 {
   public AddProcessView()
   {
