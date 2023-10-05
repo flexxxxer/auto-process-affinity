@@ -42,7 +42,26 @@ public sealed class CurrentlyRunnableProcessesService : IDisposable
 
   public record UpdateChangeset(CurrentlyRunnedProcessDto[] Dead, CurrentlyRunnedProcessDto[] Created);
 
-  public event EventHandler<UpdateChangeset>? Update;
+  EventHandler<UpdateChangeset>? _updateEvent;
+  public event EventHandler<UpdateChangeset>? Update
+  {
+    add
+    {
+      if(_updateEvent is null && _isInitialed is 1)
+      {
+        _refreshProcessesTimer.Start();
+      }
+      _updateEvent += value;
+    }
+    remove
+    {
+      _updateEvent -= value;
+      if(_updateEvent is null)
+      {
+        _refreshProcessesTimer.Stop();
+      }
+    }
+  }
 
   public List<CurrentlyRunnedProcessDto> CurrentlyRunningProcesses
   {
@@ -88,7 +107,7 @@ public sealed class CurrentlyRunnableProcessesService : IDisposable
     if(Interlocked.CompareExchange(ref _isInitialed, 1, 0) == 0)
     {
       await Task.Run(() => Refresh(null!, null!));
-      _refreshProcessesTimer.Start();
+      if (_updateEvent is not null) _refreshProcessesTimer.Start();
     }
   }
 
@@ -120,7 +139,7 @@ public sealed class CurrentlyRunnableProcessesService : IDisposable
       _currentlyRunningProcesses.AddRange(processesToAdd);
       processesToAdd.ForEach(p => _currentlyRunningProcessesProcessIdKeyed.Add(p.ProcessId, p));
 
-      Update?.Invoke(this, new(processesToRemove, processesToAdd));
+      _updateEvent?.Invoke(this, new(processesToRemove, processesToAdd));
     }
     finally
     {
