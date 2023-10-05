@@ -149,8 +149,6 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
     Processes
       .Zip(processesStateTypeToSet)
       .ForEach((monitoredProcess, state) => monitoredProcess.State = state);
-
-    await Task.Delay(TimeSpan.FromSeconds(5));
   }
 
   [RelayCommand]
