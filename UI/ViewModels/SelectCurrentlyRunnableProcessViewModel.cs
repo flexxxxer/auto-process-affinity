@@ -76,24 +76,25 @@ public partial class SelectCurrentlyRunnableProcessViewModel : ViewModelBase,
         .RefCount()
         .Filter(filterOnlyMatchingText)
         .ObserveOn(RxApp.MainThreadScheduler)
-        .Bind(out _currentlyRunningProcesses)
+        .Bind(out _currentlyRunningProcesses) // must be initialized in constructor
         .DisposeMany()
         .Subscribe(_ => { }, RxApp.DefaultExceptionHandler.OnNext);
-
-    var updateProcessesAction = Observable
-      .FromEventPattern<CurrentlyRunnableProcessesService.UpdateChangeset>(h => processesService.Update += h, h => processesService.Update -= h)
-      .ObserveOn(RxApp.MainThreadScheduler)
-      .Subscribe(eventPattern => HandleCurrentlyRunningProcessesChangeset(eventPattern.EventArgs));
 
     // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async d =>
     {
-      searchTextAction.DisposeWith(d);
-      processesSourceObservable.DisposeWith(d);
-      updateProcessesAction.DisposeWith(d);
-
       await processesService.InitAsync();
       _currentlyRunningProcessesSource.AddRange(processesService.CurrentlyRunningProcesses);
+
+      // must be after previous line
+      Observable
+        .FromEventPattern<CurrentlyRunnableProcessesService.UpdateChangeset>(h => processesService.Update += h, h => processesService.Update -= h)
+        .ObserveOn(RxApp.MainThreadScheduler)
+        .Subscribe(eventPattern => HandleCurrentlyRunningProcessesChangeset(eventPattern.EventArgs))
+        .DisposeWith(d);
+
+      searchTextAction.DisposeWith(d);
+      processesSourceObservable.DisposeWith(d);
     });
   }
 
