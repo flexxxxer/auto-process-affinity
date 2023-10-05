@@ -84,7 +84,9 @@ public class App : Application
       .RegisterLazySingletonAnd<MainWindow>(() => new() { DataContext = Locator.Current.GetRequiredService<MainWindowViewModel>() })
       .RegisterLazySingletonAnd<MainView>(() => new() { DataContext = Locator.Current.GetRequiredService<MainViewModel>() })
       .RegisterLazySingletonAnd<IScreen>(Locator.Current.GetRequiredService<MainViewModel>)
-      .RegisterLazySingletonAnd<HardwareInfo>(() => new());
+      .RegisterLazySingletonAnd<HardwareInfo>(() => new())
+      .RegisterLazySingletonAnd<AdminPrivilegesStatus>()
+      ;
 
     if (!IsDesignMode)
     {

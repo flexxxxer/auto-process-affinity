@@ -10,7 +10,7 @@
 				
 				x:Class="UI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="UI"
+        Title="{Binding WindowTitleText}"
 				x:DataType="vm:IMainWindowViewModel">
 
 	<Design.DataContext>

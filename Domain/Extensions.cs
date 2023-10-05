@@ -35,6 +35,19 @@ public static class Extensions
   public static TOut Pipe<TIn, TOut>(this TIn self, Func<TIn, TOut> func)
     => func(self);
 
+  public static TOut PipeThenDispose<TIn, TOut>(this TIn self, Func<TIn, TOut> func)
+    where TIn : IDisposable
+  {
+    try
+    {
+      return func(self);
+    }
+    finally
+    {
+      self.Dispose();
+    }
+  }
+
   public static async Task<TOut> PipeUsingTaskRun<TIn, TOut>(this TIn self, Func<TIn, TOut> func)
     => await Task.Run(() => func(self));
 

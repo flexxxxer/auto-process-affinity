@@ -1,4 +1,6 @@
-﻿using System.Reactive.Disposables;
+﻿using System;
+using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 using ReactiveUI;
@@ -15,17 +17,32 @@ public interface IMainViewModel : IScreen
 {
 }
 
-public class MainViewModel : ReactiveObject, IMainViewModel, IActivatableViewModel
+public class MainViewModel : ViewModelBase, IMainViewModel, IActivatableViewModel
 {
   public ViewModelActivator Activator { get; } = new();
 
   public RoutingState Router { get; } = new RoutingState();
 
-  public MainViewModel() 
+  public MainViewModel(MainWindowViewModel mainWindowViewModel) 
   {
     // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async (CompositeDisposable d) =>
     {
+      Router.CurrentViewModel
+        .Where(vm => vm is not null)
+        .Select(vm => vm!)
+        .Subscribe(vm =>
+        {
+          mainWindowViewModel.WindowTitleText = vm switch
+          {
+            AddProcessViewModel => "New process rule",
+            SelectCurrentlyRunnableProcessViewModel => "Selecting process",
+            ISettingsViewModel => "Settings",
+            StartupViewModel or _ => mainWindowViewModel.DefaultWindowTitleText,
+          };
+        })
+        .DisposeWith(d);
+
       _ = await Locator.Current
         .GetRequiredService<StartupViewModel>()
         .RouteThrought(Router);
