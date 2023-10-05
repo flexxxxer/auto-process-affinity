@@ -5,7 +5,6 @@
              xmlns:vm="clr-namespace:UI.ViewModels"
              xmlns:vs="clr-namespace:UI.Views"
 						 xmlns:controls="clr-namespace:UI.Controls"
-						 xmlns:conv="clr-namespace:UI.Converters"
 						 
 						 mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="UI.Views.AddProcessView"
@@ -19,9 +18,9 @@
 		<Grid Grid.Row="0">
 			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="260" Spacing="2">
 				<TextBox Text="{Binding ProcessName, Mode=TwoWay}" Watermark="Enter process name"
-								 IsEnabled="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}}"
+								 IsEnabled="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}"
 								 HorizontalAlignment="Stretch" x:Name="ProcessNameTextBox"/>
-				<StackPanel Orientation="Horizontal" IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}}">
+				<StackPanel Orientation="Horizontal" IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}">
 					<Button Content="Or choose from running" Command="{Binding ChooseProcessCommand}"/>
 				</StackPanel>
 				<StackPanel>
