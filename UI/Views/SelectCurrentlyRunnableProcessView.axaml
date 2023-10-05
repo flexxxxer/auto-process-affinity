@@ -4,7 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:UI.ViewModels"
              xmlns:controls="clr-namespace:UI.Controls"
-						 
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:ic="using:Avalonia.Xaml.Interactions.Custom"
+             
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="UI.Views.SelectCurrentlyRunnableProcessView"
              x:DataType="vm:ISelectCurrentlyRunnableProcessViewModel">
@@ -27,6 +30,12 @@
 					<Setter Property="IsVisible" Value="False"/>
 				</Style>
 			</DataGrid.Styles>
+			
+			<i:Interaction.Behaviors>
+				<ia:EventTriggerBehavior EventName="DoubleTapped">
+					<ia:InvokeCommandAction Command="{Binding ConfirmChoiceCommand}"/>
+				</ia:EventTriggerBehavior>
+			</i:Interaction.Behaviors>
 
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" IsReadOnly="True" Tag="ProcessNameColumn"/>
