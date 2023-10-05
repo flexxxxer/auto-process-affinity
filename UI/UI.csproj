@@ -30,7 +30,7 @@
 		<PackageReference Include="Hardware.Info" Version="100.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-		<PackageReference Include="DynamicData" Version="7.14.2" />
+		<PackageReference Include="DynamicData" Version="8.0.2" />
 		<PackageReference Include="Splat.DependencyInjection.SourceGenerator" Version="1.1.93">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
