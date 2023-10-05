@@ -104,6 +104,7 @@ public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActiv
 
   void HandleDeactivation()
   {
+    _periodicUpdateStick?.Dispose();
   }
 
   async Task Refresh()
