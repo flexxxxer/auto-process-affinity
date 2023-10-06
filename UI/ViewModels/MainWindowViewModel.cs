@@ -27,6 +27,8 @@ namespace UI.ViewModels;
 
 public interface IMainWindowViewModel : IScreen
 {
+  PixelPoint WindowPosition { get; set; }
+  
   double WindowHeight { get; set; }
 
   double WindowWidth { get; set; }
@@ -43,6 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, 
   [ObservableProperty] double _windowHeight;
   [ObservableProperty] double _windowWidth;
   [ObservableProperty] string _windowTitleText = "";
+  [ObservableProperty] PixelPoint _windowPosition;
   [ObservableProperty] WindowStartupLocation _windowStartupLocationMode;
 
   public string DefaultWindowTitleText { get; }
@@ -52,6 +55,7 @@ public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, 
   public Interaction<PixelPoint, Unit> SetWindowPosition { get; } = new();
 
   IDisposable? _rememberLastSizeStick = null;
+  IDisposable? _rememberLastPositionStick = null;
   readonly AppSettingChangeService _appSettingsService;
 
   public MainWindowViewModel(HardwareInfo hwInfo, AdminPrivilegesStatus privilegesStatus, 
@@ -125,11 +129,35 @@ public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, 
           });
         })
     };
+
+    _rememberLastPositionStick = (newAppSettings.StartupOptions.StartupLocationMode, _rememberLastPositionStick) switch
+    {
+      (not StartupLocationMode.RememberLast, _) => DisposeAndGetNull(_rememberLastPositionStick),
+      (StartupLocationMode.RememberLast, { } stick) => stick,
+      (StartupLocationMode.RememberLast, null) => this.WhenPropertyChanged(vm => vm.WindowPosition)
+        .Throttle(TimeSpan.FromSeconds(0.5))
+        .WhereNotNull()
+        .Subscribe(async propertyChanged =>
+        {
+          var position = propertyChanged.Value;
+          await _appSettingsService.MakeChangeAsync(appSettings =>
+          {
+            return appSettings with
+            {
+              StartupOptions = appSettings.StartupOptions with
+              {
+                StartupLocation = new() { X = position.X, Y = position.Y }
+              }
+            };
+          });
+        })
+    };
   }
 
   void HandleDeactivation()
   {
     _rememberLastSizeStick?.Dispose();
+    _rememberLastPositionStick?.Dispose();
   }
 
   static (int, int) TupleFrom(StartupOptions.StartupLocationValues locationValues)
@@ -172,6 +200,8 @@ public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, 
 
 public sealed class DesignMainWindowViewModel : ViewModelBase, IMainWindowViewModel
 {
+  public PixelPoint WindowPosition { get; set; }
+  
   public double WindowHeight { get; set; } = 400;
   
   public double WindowWidth { get; set; } = 266;

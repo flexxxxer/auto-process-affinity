@@ -1,9 +1,14 @@
 ﻿using UI.ViewModels;
 
-using Avalonia.ReactiveUI;
-using ReactiveUI;
-using System.Reactive.Disposables;
 using System;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+
+using Avalonia.Controls;
+using Avalonia.ReactiveUI;
+
+using ReactiveUI;
+
 
 namespace UI.Views;
 
@@ -25,6 +30,12 @@ public partial class MainWindow : ReactiveWindow<IMainWindowViewModel>
               Position = interaction.Input;
               interaction.SetOutput(default);
             })
+            .DisposeWith(d);
+
+          Observable
+            .FromEventPattern<PixelPointEventArgs>(h => PositionChanged += h, h => PositionChanged -= h)
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(eventPattern => vm.WindowPosition = eventPattern.EventArgs.Point)
             .DisposeWith(d);
         })
         .DisposeWith(d);
