@@ -28,6 +28,7 @@ class CurrentlyRunnableProcessesServiceWrapper : IDisposable
   {
     _processesService.UpdateInterval = newSettings.RunningProcessesUpdatePeriod;
     var processNamesToExclude = _processesService.ProcessNamesToExclude;
+    processNamesToExclude.Clear();
     newSettings.ConfiguredProcesses
       .Select(p => p.Name)
       .Append(Process.GetCurrentProcess().ProcessName)
