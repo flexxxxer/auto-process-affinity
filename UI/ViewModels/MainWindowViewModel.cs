@@ -97,10 +97,15 @@ public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, 
 
   void HandleAppSettingsChanged(AppSettings newAppSettings)
   {
+    static IDisposable? DisposeAndGetNull(IDisposable? disposable)
+    {
+      disposable?.Dispose();
+      return null;
+    }
+
     _rememberLastSizeStick = (newAppSettings.StartupOptions.StartupSizeMode, _rememberLastSizeStick) switch
     {
-      (not StartupSizeMode.RememberLast, null) => null,
-      (not StartupSizeMode.RememberLast, { } stick) => stick.Do(s => s.Dispose()),
+      (not StartupSizeMode.RememberLast, _) => DisposeAndGetNull(_rememberLastSizeStick),
       (StartupSizeMode.RememberLast, { } stick) => stick,
       (StartupSizeMode.RememberLast, null) => this.WhenAnyPropertyChanged(nameof(WindowHeight), nameof(WindowWidth))
         .Throttle(TimeSpan.FromSeconds(0.5))
