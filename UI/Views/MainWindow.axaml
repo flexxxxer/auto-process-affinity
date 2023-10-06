@@ -7,8 +7,8 @@
 				mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
         
 				WindowStartupLocation="{Binding WindowStartupLocationMode}"
-				Height="{Binding WindowHeight}"
-				Width="{Binding WindowWidth}"
+				Height="{Binding WindowHeight, Mode=TwoWay}"
+				Width="{Binding WindowWidth, Mode=TwoWay}"
 				
 				x:Class="UI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"

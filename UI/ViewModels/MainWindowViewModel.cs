@@ -21,6 +21,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using DynamicData.Binding;
 
 namespace UI.ViewModels;
 
@@ -50,8 +51,13 @@ public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, 
 
   public Interaction<PixelPoint, Unit> SetWindowPosition { get; } = new();
 
-  public MainWindowViewModel(HardwareInfo hwInfo, AdminPrivilegesStatus privilegesStatus, IOptionsMonitor<AppSettings> appSettings) 
+  IDisposable? _rememberLastSizeStick = null;
+  readonly AppSettingChangeService _appSettingsService;
+
+  public MainWindowViewModel(HardwareInfo hwInfo, AdminPrivilegesStatus privilegesStatus, 
+    IOptionsMonitor<AppSettings> appSettings, AppSettingChangeService appSettingsService) 
   {
+    _appSettingsService = appSettingsService;
     var startupOptions = appSettings.CurrentValue.StartupOptions;
     WindowTitleText = DefaultWindowTitleText = MakeDefaultTitlePostfix(privilegesStatus);
     (WindowHeight, WindowWidth) = startupOptions.StartupSizeMode switch
@@ -65,14 +71,60 @@ public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, 
       StartupLocationMode.RememberLast => (TupleFrom(startupOptions.StartupLocation), WindowStartupLocation.Manual),
       StartupLocationMode.Default or _ => (null, WindowStartupLocation.Manual),
     };
+
+    HandleAppSettingsChanged(appSettings.CurrentValue);
+    var handleAppSettingsChangedSpecial = ((Action<AppSettings>)HandleAppSettingsChanged)
+        .InvokeOn(RxApp.MainThreadScheduler)
+        .ThrottleInvokes(TimeSpan.FromSeconds(1));
+
     this.WhenActivated(async (CompositeDisposable d) =>
     {
-      if(locationValues is (var x, var y))
+      appSettings
+        .OnChange(handleAppSettingsChangedSpecial)
+        ?.DisposeWith(d);
+
+      if (locationValues is (var x, var y))
       {
         await Task.Yield(); // "wait" for full view activation (and interaction registrations)
         await SetWindowPosition.Handle(new(x, y));
       }
+
+      Disposable
+        .Create(HandleDeactivation)
+        .DisposeWith(d);
     });
+  }
+
+  void HandleAppSettingsChanged(AppSettings newAppSettings)
+  {
+    _rememberLastSizeStick = (newAppSettings.StartupOptions.StartupSizeMode, _rememberLastSizeStick) switch
+    {
+      (not StartupSizeMode.RememberLast, null) => null,
+      (not StartupSizeMode.RememberLast, { } stick) => stick.Do(s => s.Dispose()),
+      (StartupSizeMode.RememberLast, { } stick) => stick,
+      (StartupSizeMode.RememberLast, null) => this.WhenAnyPropertyChanged(nameof(WindowHeight), nameof(WindowWidth))
+        .Throttle(TimeSpan.FromSeconds(0.5))
+        .WhereNotNull()
+        .Subscribe(async vm =>
+        {
+          var (height, width) = (vm.WindowHeight, vm.WindowWidth);
+          await _appSettingsService.MakeChangeAsync(appSettings =>
+          {
+            return appSettings with
+            {
+              StartupOptions = appSettings.StartupOptions with
+              {
+                StartupSize = new() { Height = height, Width = width }
+              }
+            };
+          });
+        })
+    };
+  }
+
+  void HandleDeactivation()
+  {
+    _rememberLastSizeStick?.Dispose();
   }
 
   static (int, int) TupleFrom(StartupOptions.StartupLocationValues locationValues)
