@@ -63,7 +63,7 @@
 			</DataGrid.Styles>
 
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Process name" Width="Auto"
+				<DataGridTextColumn Header="Process name" Width="*"
                             Binding="{Binding Name}" IsReadOnly="True"/>
 
 				<DataGridTemplateColumn Header="Affinity state" Width="Auto" 
