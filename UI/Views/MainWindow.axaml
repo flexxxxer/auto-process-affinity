@@ -5,8 +5,10 @@
         xmlns:vm="clr-namespace:UI.ViewModels"
         xmlns:vs="clr-namespace:UI.Views"
 				mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-        Width="{Binding WindowWidth}" Height="{Binding WindowHeight}"
-				WindowStartupLocation="CenterScreen"
+        
+				WindowStartupLocation="{Binding WindowStartupLocationMode}"
+				Height="{Binding WindowHeight}"
+				Width="{Binding WindowWidth}"
 				
 				x:Class="UI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
