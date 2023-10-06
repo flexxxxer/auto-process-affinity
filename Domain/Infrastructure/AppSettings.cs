@@ -45,9 +45,9 @@ public sealed record StartupOptions
 
   public sealed record StartupSizeValues
   {
-    public int Height { get; init; }
+    public double Height { get; init; }
 
-    public int Width { get; init; }
+    public double Width { get; init; }
   }
 
   public bool Autostart { get; init; }
@@ -66,7 +66,7 @@ public sealed record StartupOptions
   {
     Autostart = false,
     Minimized = false,
-    StartupLocationMode = StartupLocationMode.Default,
+    StartupLocationMode = StartupLocationMode.CenterScreen,
     StartupLocation = new(),
     StartupSizeMode = StartupSizeMode.Optimal,
     StartupSize = new(),
