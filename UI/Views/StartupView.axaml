@@ -3,8 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 						 xmlns:vm="clr-namespace:UI.ViewModels"
+						 xmlns:vme="clr-namespace:UI.ViewModels.Entities"
 						 xmlns:controls="clr-namespace:UI.Controls"
 						 xmlns:views="clr-namespace:UI.Views"
+						 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
 
 						 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
              x:Class="UI.Views.StartupView"
@@ -48,8 +51,8 @@
 	</UserControl.Styles>
 
 	<Grid RowDefinitions="*,Auto">
-		<DataGrid Grid.Row="0" ItemsSource="{Binding Processes}"
-							CanUserResizeColumns="True">
+		<DataGrid Grid.Row="0" CanUserResizeColumns="True"
+		          ItemsSource="{Binding Processes}" x:Name="MonitoredProcessesDataGrid">
 
 			<DataGrid.Styles>
 				<Style Selector="DataGridCell:focus /template/ Grid#FocusVisual">
@@ -61,6 +64,13 @@
 					<Setter Property="Margin" Value="0 0 1 0"/>
 				</Style>
 			</DataGrid.Styles>
+
+			<i:Interaction.Behaviors>
+				<ia:EventTriggerBehavior EventName="DoubleTapped">
+					<ia:InvokeCommandAction Command="{Binding EditMonitoredProcessCommand}"
+					                        CommandParameter="{Binding #MonitoredProcessesDataGrid.SelectedItem}"/>
+				</ia:EventTriggerBehavior>
+			</i:Interaction.Behaviors>
 
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="Process name" Width="*"
