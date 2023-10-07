@@ -26,12 +26,7 @@
 		          BorderBrush="{DynamicResource SystemBaseHighColor}"
 		          SelectionMode="Single" ItemsSource="{Binding CurrentlyRunningProcesses}"
               SelectedItem="{Binding SelectedRunningProcess}">
-			<DataGrid.Styles>
-				<Style Selector="DataGridCell:focus /template/ Grid#FocusVisual">
-					<Setter Property="IsVisible" Value="False"/>
-				</Style>
-			</DataGrid.Styles>
-			
+
 			<i:Interaction.Behaviors>
 				<ia:EventTriggerBehavior EventName="DoubleTapped">
 					<ia:InvokeCommandAction Command="{Binding ConfirmChoiceCommand}"/>

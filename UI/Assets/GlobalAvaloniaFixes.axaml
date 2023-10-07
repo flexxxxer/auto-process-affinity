@@ -1,0 +1,14 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<!-- disable border on selected DataGridCell -->
+	<Style Selector="DataGridCell:focus /template/ Grid#FocusVisual">
+		<Setter Property="IsVisible" Value="False"/>
+	</Style>
+	
+	<!-- fix for missing column separator after changing column widths -->
+	<Style Selector="DataGridColumnHeader /template/ Rectangle#VerticalSeparator">
+		<Setter Property="Margin" Value="0 0 1 0"/>
+	</Style>
+	
+</Styles>

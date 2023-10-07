@@ -54,17 +54,6 @@
 		<DataGrid Grid.Row="0" CanUserResizeColumns="True"
 		          ItemsSource="{Binding Processes}" x:Name="MonitoredProcessesDataGrid">
 
-			<DataGrid.Styles>
-				<Style Selector="DataGridCell:focus /template/ Grid#FocusVisual">
-					<Setter Property="IsVisible" Value="False"/>
-				</Style>
-
-				<!-- fix for missing column separator when changing column widths -->
-				<Style Selector="DataGridColumnHeader /template/ Rectangle#VerticalSeparator">
-					<Setter Property="Margin" Value="0 0 1 0"/>
-				</Style>
-			</DataGrid.Styles>
-
 			<i:Interaction.Behaviors>
 				<ia:EventTriggerBehavior EventName="DoubleTapped">
 					<ia:InvokeCommandAction Command="{Binding EditMonitoredProcessCommand}"
