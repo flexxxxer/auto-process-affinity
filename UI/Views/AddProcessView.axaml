@@ -28,21 +28,21 @@
 						<RadioButton GroupName="AffinityMode" Content="Even (turns off SMT)"
 												 IsChecked="{Binding IsEvenAffinityModeChosen, Mode=TwoWay}"
 												 x:Name="EvenAffinityModeCheckBox"/>
-						<TextBox IsVisible="{Binding ElementName=EvenAffinityModeCheckBox, Path=IsChecked}"
+						<TextBox IsVisible="{Binding #EvenAffinityModeCheckBox.IsChecked}"
 										 Text="{Binding EvenAffinityModeFirstNValue, Mode=TwoWay}" Watermark="First few"/>
 					</StackPanel>
 					<StackPanel Orientation="Horizontal" Spacing="10">
 						<RadioButton GroupName="AffinityMode" Content="First N"
 												 IsChecked="{Binding IsFirstNAffinityModeChosen, Mode=TwoWay}"
 												 x:Name="FirstNAffinityModeCheckBox"/>
-						<TextBox IsVisible="{Binding ElementName=FirstNAffinityModeCheckBox, Path=IsChecked}"
+						<TextBox IsVisible="{Binding #FirstNAffinityModeCheckBox.IsChecked}"
 										 Text="{Binding FirstNAffinityModeValue, Mode=TwoWay}" Watermark="Count"/>
 					</StackPanel>
 					<StackPanel Orientation="Horizontal" Spacing="10">
 						<RadioButton GroupName="AffinityMode" Content="Last N"
 												 IsChecked="{Binding IsLastNAffinityModeChosen, Mode=TwoWay}"
 												 x:Name="LastNAffinityModeCheckBox"/>
-						<TextBox IsVisible="{Binding ElementName=LastNAffinityModeCheckBox, Path=IsChecked}"
+						<TextBox IsVisible="{Binding #LastNAffinityModeCheckBox.IsChecked}"
 										 Text="{Binding LastNAffinityModeValue, Mode=TwoWay}" Watermark="Count"/>
 					</StackPanel>
 					<StackPanel Spacing="10">
@@ -50,7 +50,7 @@
 												 IsChecked="{Binding IsCustomAffinityModeChosen, Mode=TwoWay}"
 												 x:Name="CustomAffinityModeCheckBox"/>
 						<StackPanel Margin="10 -10 0 0" Orientation="Horizontal" 
-												IsVisible="{Binding ElementName=CustomAffinityModeCheckBox, Path=IsChecked}">
+												IsVisible="{Binding #CustomAffinityModeCheckBox.IsChecked}">
 							<TextBlock Text="0x" VerticalAlignment="Center"/>
 							<TextBox Text="{Binding CustomAffinityModeValue, Mode=TwoWay}" Watermark="Enter or paste"/>
 						</StackPanel>
