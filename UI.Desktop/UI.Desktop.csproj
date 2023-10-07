@@ -4,6 +4,8 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<AssemblyName>AutoProcessAffinity</AssemblyName>
+		<ApplicationIcon>..\UI\Assets\app-logo.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>

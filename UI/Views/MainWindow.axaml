@@ -11,7 +11,7 @@
 				Width="{Binding WindowWidth, Mode=TwoWay}"
 				
 				x:Class="UI.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/app-logo.ico"
         Title="{Binding WindowTitleText}"
 				x:DataType="vm:IMainWindowViewModel">
 
