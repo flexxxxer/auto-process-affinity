@@ -14,7 +14,7 @@
     <vm:DesignMainViewModel/>
   </Design.DataContext>
 
-	<Grid Margin="1">
+	<Grid>
 		<rxui:RoutedViewHost Router="{Binding Router}" PageTransition="{x:Null}">
 			<rxui:RoutedViewHost.ViewLocator>
 				<app:RoutingViewLocator/>
