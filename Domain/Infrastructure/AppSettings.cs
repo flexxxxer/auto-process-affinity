@@ -75,13 +75,18 @@ public sealed record StartupOptions
 
 public sealed record AppSettings
 {
-  public TimeSpan RunningProcessesUpdatePeriod { get; init; } = TimeSpan.FromSeconds(2);
+  public required TimeSpan RunningProcessesUpdatePeriod { get; init; }
 
-  public ConfiguredProcess[] ConfiguredProcesses { get; init; } = Array.Empty<ConfiguredProcess>();
+  public required ConfiguredProcess[] ConfiguredProcesses { get; init; }
 
-  public StartupOptions StartupOptions { get; init; } = StartupOptions.Default;
+  public required StartupOptions StartupOptions { get; init; }
 
-  public static AppSettings Default => new();
+  public static AppSettings Default => new()
+  {
+    RunningProcessesUpdatePeriod = TimeSpan.FromSeconds(2),
+    ConfiguredProcesses = Array.Empty<ConfiguredProcess>(),
+    StartupOptions = StartupOptions.Default,
+  };
 }
 
 public sealed record AppSettingsWrapperForHostOptions
