@@ -73,6 +73,35 @@ public sealed record StartupOptions
   };
 }
 
+public sealed record UxOptions
+{
+  public required bool UseOldScoolAddEditStyle { get; init; }
+
+  public required bool HideProcessDescriptionFromSelectingProcessView { get; init; }
+
+  public required bool HideToTrayInsteadOfClosing { get; init; }
+
+  public static UxOptions Default => new()
+  {
+    UseOldScoolAddEditStyle = false,
+    HideProcessDescriptionFromSelectingProcessView = false,
+    HideToTrayInsteadOfClosing = true,
+  };
+}
+
+public sealed record SystemLevelStartupOptions
+{
+  public required bool StartOnSystemStartup { get; init; }
+  
+  public required bool RunWithAdminOrRootPrivileges { get; init; }
+
+  public static SystemLevelStartupOptions Default => new()
+  {
+    StartOnSystemStartup = false,
+    RunWithAdminOrRootPrivileges = false,
+  };
+}
+
 public sealed record AppSettings
 {
   public required TimeSpan RunningProcessesUpdatePeriod { get; init; }
@@ -81,11 +110,17 @@ public sealed record AppSettings
 
   public required StartupOptions StartupOptions { get; init; }
 
+  public required UxOptions UxOptions { get; init; }
+
+  public required SystemLevelStartupOptions SystemLevelStartupOptions { get; init; }
+
   public static AppSettings Default => new()
   {
     RunningProcessesUpdatePeriod = TimeSpan.FromSeconds(2),
     ConfiguredProcesses = Array.Empty<ConfiguredProcess>(),
     StartupOptions = StartupOptions.Default,
+    UxOptions = UxOptions.Default,
+    SystemLevelStartupOptions = SystemLevelStartupOptions.Default,
   };
 }
 
