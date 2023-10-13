@@ -47,9 +47,8 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   readonly IOptionsMonitor<AppSettings> _appSettings;
   readonly AppSettingChangeService _appSettingService;
 
-  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, AppSettingChangeService appSettingService, IScreen screen) 
+  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, AppSettingChangeService appSettingService) 
   {
-    HostScreen = screen;
     _appSettings = appSettings;
     _appSettingService = appSettingService;
 
