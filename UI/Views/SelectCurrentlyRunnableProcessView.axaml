@@ -22,10 +22,15 @@
 		         Text="{Binding SearchText, Mode=TwoWay}" 
 		         Watermark="Search by name, id or description" AcceptsTab="False" AcceptsReturn="False" />
 
+		<TextBlock Grid.Row="1" Text="No match found"
+							 IsVisible="{Binding !CurrentlyRunningProcesses.Count}"
+							 HorizontalAlignment="Center" FontSize="14"
+							 Margin="0 40 0 0"/>
 		<DataGrid Grid.Row="1" x:Name="ProcessesDataGrid" BorderThickness="0,0,0,1" 
 		          BorderBrush="{DynamicResource SystemBaseHighColor}"
 		          SelectionMode="Single" ItemsSource="{Binding CurrentlyRunningProcesses}"
-              SelectedItem="{Binding SelectedRunningProcess}">
+              SelectedItem="{Binding SelectedRunningProcess}"
+							IsVisible="{Binding !!CurrentlyRunningProcesses.Count}">
 
 			<i:Interaction.Behaviors>
 				<ia:EventTriggerBehavior EventName="DoubleTapped">

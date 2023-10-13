@@ -16,6 +16,8 @@ using CommunityToolkit.Mvvm.Input;
 
 using DynamicData;
 using DynamicData.Binding;
+using System.Diagnostics;
+using System.Linq;
 
 namespace UI.ViewModels;
 
@@ -131,6 +133,14 @@ public sealed partial class DesignSelectCurrentlyRunnableProcessViewModel : View
   public DesignSelectCurrentlyRunnableProcessViewModel()
   {
     if (App.IsDesignMode) Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
+
+    var exampleProcesses = Process.GetProcesses()
+      .OrderBy(p => p.ProcessName)
+      .Skip(5)
+      .Take(15)
+      .Select(p => new CurrentlyRunnedProcessDto(p));
+
+    CurrentlyRunningProcesses = new(new(exampleProcesses));
   }
 
   [RelayCommand]
