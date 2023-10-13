@@ -1,4 +1,7 @@
-﻿using ReactiveUI;
+﻿using Avalonia;
+using Avalonia.Styling;
+
+using ReactiveUI;
 
 namespace UI.ViewModels;
 
@@ -13,7 +16,10 @@ public class SettingsViewModel : ViewModelBase, ISettingsViewModel, IActivatable
   public SettingsViewModel() { }
 }
 
-public sealed partial class DesignStartupViewModel : ViewModelBase, ISettingsViewModel
+public sealed partial class DesignSettingsViewModel : ViewModelBase, ISettingsViewModel
 {
-
+  public DesignSettingsViewModel()
+  {
+    if (App.IsDesignMode) Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
+  }
 }
