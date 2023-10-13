@@ -21,7 +21,7 @@ public sealed class CurrentlyRunnedProcessDto
 
   internal Process SourceProcess { get; }
 
-  internal CurrentlyRunnedProcessDto(Process sourceProcess)
+  public CurrentlyRunnedProcessDto(Process sourceProcess)
   {
     SourceProcess = sourceProcess;
     Name = sourceProcess.ProcessName();
