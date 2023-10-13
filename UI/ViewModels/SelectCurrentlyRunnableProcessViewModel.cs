@@ -132,7 +132,7 @@ public sealed partial class DesignSelectCurrentlyRunnableProcessViewModel : View
 
   public DesignSelectCurrentlyRunnableProcessViewModel()
   {
-    if (App.IsDesignMode) Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
+    Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
 
     var exampleProcesses = Process.GetProcesses()
       .OrderBy(p => p.ProcessName)

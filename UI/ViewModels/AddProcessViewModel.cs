@@ -206,7 +206,7 @@ public sealed partial class DesignAddProcessViewModel : ViewModelBase, IAddProce
 
   public DesignAddProcessViewModel()
   {
-    if (App.IsDesignMode) Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
+    Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
   }
 
   [RelayCommand]

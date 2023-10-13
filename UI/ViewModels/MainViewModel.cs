@@ -174,7 +174,7 @@ public sealed class DesignMainViewModel : ViewModelBase, IMainViewModel
 
   public DesignMainViewModel()
   {
-    if (App.IsDesignMode) Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
+    Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
   }
 }
 

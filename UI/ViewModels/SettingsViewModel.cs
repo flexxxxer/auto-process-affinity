@@ -20,6 +20,6 @@ public sealed partial class DesignSettingsViewModel : ViewModelBase, ISettingsVi
 {
   public DesignSettingsViewModel()
   {
-    if (App.IsDesignMode) Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
+    Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
   }
 }

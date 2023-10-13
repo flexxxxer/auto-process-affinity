@@ -230,7 +230,7 @@ public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupView
 {
   public DesignStartupViewModel()
   {
-    if (App.IsDesignMode) Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
+    Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
 
     Processes.AddRange(new[]
     {
