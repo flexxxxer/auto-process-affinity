@@ -40,7 +40,7 @@ public interface IMainWindowViewModel : IScreen
   Interaction<PixelPoint, Unit> SetWindowPosition { get; }
 }
 
-public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, IActivatableViewModel
+public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindowViewModel
 {
   [ObservableProperty] double _windowHeight;
   [ObservableProperty] double _windowWidth;
@@ -49,8 +49,6 @@ public partial class MainWindowViewModel : ViewModelBase, IMainWindowViewModel, 
   [ObservableProperty] WindowStartupLocation _windowStartupLocationMode;
 
   public string DefaultWindowTitleText { get; }
-
-  public ViewModelActivator Activator { get; } = new();
 
   public Interaction<PixelPoint, Unit> SetWindowPosition { get; } = new();
 

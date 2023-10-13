@@ -34,8 +34,8 @@ public interface ISelectCurrentlyRunnableProcessViewModel
   IRelayCommand CancelCommand { get; }
 }
 
-public partial class SelectCurrentlyRunnableProcessViewModel : ViewModelBase,
-  ISelectCurrentlyRunnableProcessViewModel, IActivatableViewModel, IRoutableViewModel
+public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActivatableViewModelBase,
+  ISelectCurrentlyRunnableProcessViewModel
 {
   [ObservableProperty] string _searchText = "";
   [ObservableProperty] ReadOnlyObservableCollection<CurrentlyRunnedProcessDto> _currentlyRunningProcesses;
@@ -45,17 +45,11 @@ public partial class SelectCurrentlyRunnableProcessViewModel : ViewModelBase,
   [NotifyCanExecuteChangedFor(nameof(ConfirmChoiceCommand))]
   CurrentlyRunnedProcessDto? _selectedRunningProcess;
 
-  public IScreen HostScreen { get; }
-  public ViewModelActivator Activator { get; } = new();
-  public string? UrlPathSegment { get; } = nameof(SelectCurrentlyRunnableProcessViewModel).RemoveVmPostfix();
-
   readonly TaskCompletionSource<CurrentlyRunnedProcessDto?> _resultSource = new();
   public Task<CurrentlyRunnedProcessDto?> Result => _resultSource.Task;
 
-  public SelectCurrentlyRunnableProcessViewModel(CurrentlyRunnableProcessesService processesService, IScreen screen)
+  public SelectCurrentlyRunnableProcessViewModel(CurrentlyRunnableProcessesService processesService)
   {
-    HostScreen = screen;
-
     static Func<CurrentlyRunnedProcessDto, bool> BuildFilter(string? searchText)
         => string.IsNullOrWhiteSpace(searchText)
             ? (_ => true)

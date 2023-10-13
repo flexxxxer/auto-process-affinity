@@ -48,7 +48,7 @@ public interface IAddProcessViewModel
   IRelayCommand CancelCommand { get; }
 }
 
-public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessViewModel, IActivatableViewModel, IRoutableViewModel
+public sealed partial class AddProcessViewModel : RoutableAndActivatableViewModelBase, IAddProcessViewModel
 {
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _processName = "";
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isEvenAffinityModeChosen;
@@ -62,20 +62,11 @@ public sealed partial class AddProcessViewModel : ViewModelBase, IAddProcessView
 
   [ObservableProperty] ConfiguredProcess? _toEdit;
 
-  public ViewModelActivator Activator { get; } = new();
-  public string UrlPathSegment => nameof(AddProcessViewModel).RemoveVmPostfix();
-  public IScreen HostScreen { get; }
-
   readonly TaskCompletionSource<ConfiguredProcess?> _resultSource = new();
   public Task<ConfiguredProcess?> Result => _resultSource.Task;
 
   AffinityMode _affinityMode;
   long _affinityValue;
-
-  public AddProcessViewModel(IScreen screen) 
-  {
-    HostScreen = screen;
-  }
 
   void HandleAffinityModeChange()
   {

@@ -39,13 +39,9 @@ public interface IStartupViewModel
   IAsyncRelayCommand<MonitoredProcess?> EditMonitoredProcessCommand { get; }
 }
 
-public partial class StartupViewModel : ViewModelBase, IStartupViewModel, IActivatableViewModel, IRoutableViewModel
+public partial class StartupViewModel : RoutableAndActivatableViewModelBase, IStartupViewModel
 {
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
-
-  public ViewModelActivator Activator { get; } = new();
-  public string? UrlPathSegment { get; } = nameof(StartupViewModel).RemoveVmPostfix();
-  public IScreen HostScreen { get; }
 
   IDisposable? _periodicUpdateStick = null;
   readonly IOptionsMonitor<AppSettings> _appSettings;

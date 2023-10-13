@@ -23,10 +23,8 @@ public interface IMainViewModel : IScreen
 {
 }
 
-public class MainViewModel : ViewModelBase, IMainViewModel, IActivatableViewModel
+public class MainViewModel : ActivatableViewModelBase, IMainViewModel
 {
-  public ViewModelActivator Activator { get; } = new();
-
   public RoutingState Router { get; } = new RoutingState();
 
   public MainViewModel(MainWindowViewModel mainWindowViewModel, AppSettingChangeService appSettingService,
