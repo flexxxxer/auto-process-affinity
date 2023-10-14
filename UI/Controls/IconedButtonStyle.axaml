@@ -34,8 +34,6 @@
                               ContentTemplate="{TemplateBinding ContentTemplate}"
                               VerticalAlignment="Center"/>
 
-						<Rectangle Grid.Column="0" Fill="Blue"/>
-						<Rectangle Grid.Column="1" Fill="Green"/>
 						<Path Grid.Column="0"
                   VerticalAlignment="Center"
                   Data="{TemplateBinding IconGeometry}"
