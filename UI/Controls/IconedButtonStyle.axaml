@@ -34,14 +34,18 @@
                               ContentTemplate="{TemplateBinding ContentTemplate}"
                               VerticalAlignment="Center"/>
 
+						<Rectangle Grid.Column="0" Fill="Blue"/>
+						<Rectangle Grid.Column="1" Fill="Green"/>
 						<Path Grid.Column="0"
                   VerticalAlignment="Center"
                   Data="{TemplateBinding IconGeometry}"
                   Fill="{TemplateBinding IconFill}"
+								  UseLayoutRounding="True"
                   StrokeThickness="{TemplateBinding IconStrokeThickness}"
                   Stroke="{TemplateBinding IconStroke}"
                   RenderTransform="{TemplateBinding IconRenderTransform}"
-                  RenderTransformOrigin="{TemplateBinding IconRenderTransformOrigin}"/>
+                  RenderTransformOrigin="{TemplateBinding IconRenderTransformOrigin}"
+									Margin="{TemplateBinding IconMargin}"/>
 					</Grid>
 				</Button>
 			</ControlTemplate>

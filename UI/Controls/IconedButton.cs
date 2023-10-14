@@ -24,6 +24,9 @@ public class IconedButton : Button
   public static readonly StyledProperty<IBrush> IconFillProperty =
       AvaloniaProperty.Register<IconedButton, IBrush>(nameof(IconFillProperty));
 
+  public static readonly StyledProperty<Thickness> IconMarginProperty =
+      AvaloniaProperty.Register<IconedButton, Thickness>(nameof(IconMarginProperty));
+
   public StreamGeometry IconGeometry
   {
     get => GetValue(IconGeometryProperty);
@@ -60,6 +63,12 @@ public class IconedButton : Button
     set => SetValue(IconFillProperty, value);
   }
 
+  public Thickness IconMargin
+  {
+    get => GetValue(IconMarginProperty);
+    set => SetValue(IconMarginProperty, value);
+  }
+
   public IconedButton()
   {
     IconStroke = Brushes.White;
@@ -67,6 +76,7 @@ public class IconedButton : Button
     IconRenderTransform = new ScaleTransform(0.5, 0.5);
     IconRenderTransformOrigin = new RelativePoint(0.5, 0.5, RelativeUnit.Relative);
     Margin = new Thickness(0, 0, 0, 0);
+    IconMargin = new Thickness(0, 0, 0, 0);
     MaxHeight = double.PositiveInfinity;
     ContentTemplate = null;
     ContextMenu = null;
