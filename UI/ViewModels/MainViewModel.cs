@@ -42,7 +42,7 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
           {
             AddProcessViewModel => "New process rule",
             SelectCurrentlyRunnableProcessViewModel => "Selecting process",
-            ISettingsViewModel => "Settings",
+            SettingsViewModel => "Settings",
             StartupViewModel or _ => mainWindowViewModel.DefaultWindowTitleText,
           };
         })

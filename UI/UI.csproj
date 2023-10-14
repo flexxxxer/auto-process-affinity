@@ -8,6 +8,7 @@
 		<SupportedPlatform Include="windows" />
 		<SupportedPlatform Include="linux" />
 		<AvaloniaResource Include="Assets\**" />
+		<AvaloniaResource Remove="Assets\ForAvaloniaControlsStyles.axaml" />
 		<AvaloniaResource Remove="Assets\GlobalAvaloniaFixes.axaml" />
 		<AvaloniaResource Remove="Assets\Icons.axaml" />
 		<AvaloniaResource Remove="Assets\ThemeDependentResources.axaml" />
@@ -18,6 +19,9 @@
 			<SubType>Designer</SubType>
 		</AvaloniaXaml>
 		<AvaloniaXaml Update="Assets\GlobalAvaloniaFixes.axaml">
+			<SubType>Designer</SubType>
+		</AvaloniaXaml>
+		<AvaloniaXaml Update="Assets\ForAvaloniaControlsStyles.axaml">
 			<SubType>Designer</SubType>
 		</AvaloniaXaml>
 	</ItemGroup>
@@ -41,12 +45,6 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-
-  <ItemGroup>
-    <AvaloniaXaml Update="Assets\GlobalAvaloniaFixes.axaml">
-      <SubType>Designer</SubType>
-    </AvaloniaXaml>
-  </ItemGroup>
 
   <ItemGroup>
     <None Update="appsettings.json">

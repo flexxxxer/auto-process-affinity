@@ -1,3 +1,6 @@
+
+
+
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -16,5 +19,39 @@
 	<Design.DataContext>
 		<vm:DesignSettingsViewModel/>
 	</Design.DataContext>
+
+	<Grid RowDefinitions="*,Auto">
+		<ScrollViewer Grid.Row="0">
+			<StackPanel Spacing="150">
+				
+				<!-- general -->
+				<StackPanel>
+					<TextBlock Classes="h1" Text="General"/>
+					
+				</StackPanel>
+
+				<!-- ux -->
+				<StackPanel>
+					<TextBlock Classes="h1" Text="UX"/>
+					
+				</StackPanel>
+				
+				<!-- startup -->
+				<StackPanel>
+					<TextBlock Classes="h1" Text="Startup"/>
+					
+				</StackPanel>
+				
+			</StackPanel>
+		</ScrollViewer>
+
+		<Grid Grid.Row="1" HorizontalAlignment="Stretch">
+			<controls:IconedButton HorizontalAlignment="Center"
+                             Content="Go back" Padding="8,-3,-2,-3" IconFill="{DynamicResource NeutralBrush}"
+                             IconStroke="{DynamicResource NeutralBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource ArrowLeftIcon}"
+													   Command="{Binding GoBackCommand}" HotKey="Escape"/>
+		</Grid>
+	</Grid>
 	
 </UserControl>

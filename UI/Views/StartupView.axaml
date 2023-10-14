@@ -56,12 +56,39 @@
 			<Menu DockPanel.Dock="Top">
 				<MenuItem Header="_App">
 					<MenuItem Header="Export config to...">
-						<MenuItem Header="File"/>
-						<MenuItem Header="Folder"/>
+						<MenuItem.Icon>
+							<Path Data="{StaticResource ExportIcon}" Fill="{DynamicResource NeutralBrush}"/>
+						</MenuItem.Icon>
+						<MenuItem Header="File">
+							<MenuItem.Icon>
+								<Path Data="{StaticResource DocumentIcon}" Fill="{DynamicResource NeutralBrush}"/>
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Header="Folder">
+							<MenuItem.Icon>
+								<Path Data="{StaticResource FolderRegular}" Fill="{DynamicResource NeutralBrush}"/>
+							</MenuItem.Icon>
+						</MenuItem>
 					</MenuItem>
-					<MenuItem Header="Import config from file"/>
-					<MenuItem Header="Settings"/>
-					<MenuItem Header="Exit"/>
+					<MenuItem Header="Import config from file">
+						<MenuItem.Icon>
+							<Path Data="{StaticResource ExportIcon}" Fill="{DynamicResource NeutralBrush}">
+								<Path.RenderTransform>
+									<RotateTransform Angle="180"/>
+								</Path.RenderTransform>
+							</Path>
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="Settings" Command="{Binding GoToSettingsCommand}">
+						<MenuItem.Icon>
+							<Path Data="{StaticResource SettingsIcon}" Fill="{DynamicResource NeutralBrush}"/>
+						</MenuItem.Icon>
+					</MenuItem>
+					<MenuItem Header="Exit" Command="{Binding ExitCommand}">
+						<MenuItem.Icon>
+							<Path Data="{StaticResource ExitIcon}" Fill="{DynamicResource NeutralBrush}"/>
+						</MenuItem.Icon>
+					</MenuItem>
 				</MenuItem>
 				<MenuItem Header="A_bout"/>
 			</Menu>

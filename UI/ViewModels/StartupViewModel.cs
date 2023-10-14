@@ -25,6 +25,7 @@ using Splat;
 
 using Microsoft.Extensions.Options;
 using DynamicData;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace UI.ViewModels;
 
@@ -37,6 +38,10 @@ public interface IStartupViewModel
   IAsyncRelayCommand<MonitoredProcess?> RemoveMonitoredProcessCommand { get; }
 
   IAsyncRelayCommand<MonitoredProcess?> EditMonitoredProcessCommand { get; }
+
+  IAsyncRelayCommand GoToSettingsCommand { get; }
+
+  IRelayCommand ExitCommand { get; }
 }
 
 public partial class StartupViewModel : RoutableAndActivatableViewModelBase, IStartupViewModel
@@ -47,7 +52,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   readonly IOptionsMonitor<AppSettings> _appSettings;
   readonly AppSettingChangeService _appSettingService;
 
-  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, AppSettingChangeService appSettingService) 
+  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, AppSettingChangeService appSettingService)
   {
     _appSettings = appSettings;
     _appSettingService = appSettingService;
@@ -89,7 +94,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     Processes.RemoveMany(removeFromExisting);
     Processes.AddRange(addToExisting);
 
-    foreach(var p in Processes)
+    foreach (var p in Processes)
     {
       configuredProcesses
         .FirstOrDefault(cp => cp.Name == p.Name)
@@ -194,7 +199,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   [RelayCommand]
   async Task EditMonitoredProcess(MonitoredProcess? p)
   {
-    if(p is not null)
+    if (p is not null)
     {
       var addProcessVm = Locator.Current
         .GetRequiredService<AddProcessViewModel>()
@@ -219,6 +224,18 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
       }
     }
   }
+
+  [RelayCommand]
+  async Task GoToSettings()
+    => await Locator.Current
+      .GetRequiredService<SettingsViewModel>()
+      .RouteThrought(HostScreen);
+
+  [RelayCommand]
+  void Exit() => Application.Current
+    ?.ApplicationLifetime
+    ?.CastTo<IClassicDesktopStyleApplicationLifetime>()
+    ?.Shutdown();
 }
 
 public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupViewModel
@@ -246,4 +263,10 @@ public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupView
 
   [RelayCommand]
   Task EditMonitoredProcess(MonitoredProcess? p) => Task.CompletedTask;
+
+  [RelayCommand]
+  Task GoToSettings() => Task.CompletedTask;
+
+  [RelayCommand]
+  void Exit() { }
 }
