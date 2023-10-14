@@ -15,21 +15,6 @@
   </Design.DataContext>
 
 	<Grid RowDefinitions="Auto,*">
-		<DockPanel Grid.Row="0" x:Name="MenuDockPanel">
-			<Menu DockPanel.Dock="Top">
-				<MenuItem Header="_App">
-					<MenuItem Header="Export config to...">
-						<MenuItem Header="File"/>
-						<MenuItem Header="Folder"/>
-					</MenuItem>
-					<MenuItem Header="Import config from file"/>
-					<MenuItem Header="Settings"/>
-					<MenuItem Header="Exit"/>
-				</MenuItem>
-				<MenuItem Header="A_bout"/>
-			</Menu>
-		</DockPanel>
-		
 		<rxui:RoutedViewHost Grid.Row="1"
 												 Router="{Binding Router}" 
 												 PageTransition="{x:Null}">

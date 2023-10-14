@@ -50,8 +50,24 @@
 		</Styles>
 	</UserControl.Styles>
 
-	<Grid RowDefinitions="*,Auto">
-		<DataGrid Grid.Row="0" CanUserResizeColumns="True"
+	<Grid RowDefinitions="Auto,*,Auto">
+
+		<DockPanel Grid.Row="0" x:Name="MenuDockPanel">
+			<Menu DockPanel.Dock="Top">
+				<MenuItem Header="_App">
+					<MenuItem Header="Export config to...">
+						<MenuItem Header="File"/>
+						<MenuItem Header="Folder"/>
+					</MenuItem>
+					<MenuItem Header="Import config from file"/>
+					<MenuItem Header="Settings"/>
+					<MenuItem Header="Exit"/>
+				</MenuItem>
+				<MenuItem Header="A_bout"/>
+			</Menu>
+		</DockPanel>
+		
+		<DataGrid Grid.Row="1" CanUserResizeColumns="True"
 		          ItemsSource="{Binding Processes}" x:Name="MonitoredProcessesDataGrid">
 
 			<i:Interaction.Behaviors>
@@ -105,7 +121,7 @@
 			</DataGrid.Columns>
 		</DataGrid>
 		 
-		<StackPanel Grid.Row="1" HorizontalAlignment="Center"
+		<StackPanel Grid.Row="2" HorizontalAlignment="Center"
 								Orientation="Horizontal" Spacing="10">
 			<Button Content="Add new..." 
 							Command="{Binding AddMonitoredProcessCommand}"/>
