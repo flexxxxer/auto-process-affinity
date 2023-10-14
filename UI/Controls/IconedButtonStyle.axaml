@@ -29,11 +29,12 @@
                 CommandParameter="{TemplateBinding CommandParameter}"
                 ContextMenu="{TemplateBinding ContextMenu}">
 					<Grid ColumnDefinitions="Auto,Auto">
-						<ContentPresenter Content="{TemplateBinding Content}"
+						<ContentPresenter Grid.Column="1"
+															Content="{TemplateBinding Content}"
                               ContentTemplate="{TemplateBinding ContentTemplate}"
                               VerticalAlignment="Center"/>
 
-						<Path Grid.Column="1"
+						<Path Grid.Column="0"
                   VerticalAlignment="Center"
                   Data="{TemplateBinding IconGeometry}"
                   Fill="{TemplateBinding IconFill}"
