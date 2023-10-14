@@ -150,12 +150,30 @@
 		 
 		<StackPanel Grid.Row="2" HorizontalAlignment="Center"
 								Orientation="Horizontal" Spacing="10">
-			<Button Content="Add new..." 
-							Command="{Binding AddMonitoredProcessCommand}"/>
-			<Button Content="Remove" IsVisible="False"
-							Command="{Binding RemoveMonitoredProcessCommand}"/>
-			<Button Content="Edit" IsVisible="False"
-							Command="{Binding RemoveMonitoredProcessCommand}"/>
+
+			<controls:IconedButton HorizontalAlignment="Left" Grid.Column="2"
+                             Content="Add new..." IconFill="{DynamicResource OkBrush}"
+														 IconMargin="3" Padding="0 1.6 6 0"
+                             IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource AddRegularIcon}" IconRenderTransform="scale(0.7)"
+														 IconRenderTransformOrigin="50%,40%"
+                             Command="{Binding AddMonitoredProcessCommand}"/>
+
+			<controls:IconedButton HorizontalAlignment="Left" Grid.Column="2" IsVisible="False"
+                             Content="Remove" IconFill="{DynamicResource CancelBrush}"
+														 IconMargin="-6" Padding="0 1 6 0"
+                             IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource RemoveIcon}" IconRenderTransform="scale(0.5)"
+														 IconRenderTransformOrigin="50%,40%"
+                             Command="{Binding RemoveMonitoredProcessCommand}"/>
+
+			<controls:IconedButton HorizontalAlignment="Left" Grid.Column="2" IsVisible="False"
+                             Content="Edit" IconFill="{DynamicResource OkBrush}"
+													   IconMargin="1" Padding="0 0.5 6 0"
+                             IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource EditIcon}" IconRenderTransform="scale(0.5)"
+														 IconRenderTransformOrigin="50%,40%"
+                             Command="{Binding EditMonitoredProcessCommand}"/>
 		</StackPanel>
 	</Grid>
 
