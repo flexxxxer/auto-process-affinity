@@ -58,15 +58,18 @@
 		<Grid Grid.Row="2" ColumnDefinitions="*,25,*"
 					Margin="0,10,0,0" HorizontalAlignment="Center">
 			<controls:IconedButton HorizontalAlignment="Left" Grid.Column="0"
-                             Content="Cancel" Padding="8,-3,-2,-3" IconFill="{DynamicResource CancelBrush}"
+														 IconMargin="-6" Padding="0 0 6 0"
+                             Content="Cancel" IconFill="{DynamicResource CancelBrush}"
                              IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
                              IconGeometry="{StaticResource DismissCircleIcon}" 
                              Command="{Binding CancelCommand}" HotKey="Escape"/>
 
 			<controls:IconedButton HorizontalAlignment="Right" Grid.Column="2"
-                             Content="Choose" Padding="8,-3,-2,-3" IconFill="{DynamicResource OkBrush}"
+														 IconMargin="-6" Padding="0 0 6 0"
+                             Content="Choose" IconFill="{DynamicResource OkBrush}"
                              IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
-                             IconGeometry="{StaticResource CheckmarkCircleIcon}" 
+													   IconRenderTransformOrigin="50%,50%"
+														 IconGeometry="{StaticResource CheckmarkCircleIcon}" 
 														 Command="{Binding ConfirmChoiceCommand}" HotKey="Enter"/>
 		</Grid>
 	</Grid>
