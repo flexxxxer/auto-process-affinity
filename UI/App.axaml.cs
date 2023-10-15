@@ -98,12 +98,13 @@ public class App : Application
   {
     IApplicationLifetime? _ = ApplicationLifetime switch
     {
-      IClassicDesktopStyleApplicationLifetime desktop => 
-        desktop.Do(d => d.MainWindow = Locator.Current.GetRequiredService<MainWindow>())
-          .Do(d => d.Exit += (_, _) => HandleAppExit()),
+      IClassicDesktopStyleApplicationLifetime desktop => desktop
+        .Do(d => d.MainWindow = Locator.Current.GetRequiredService<MainWindow>())
+        .Do(d => d.ShutdownRequested += HandleAppShutdown)
+        .Do(d => d.Exit += HandleAppExit),
 
-      ISingleViewApplicationLifetime singleViewPlatform =>
-        singleViewPlatform.Do(svp => svp.MainView = Locator.Current.GetRequiredService<MainView>()),
+      ISingleViewApplicationLifetime singleViewPlatform => singleViewPlatform
+        .Do(svp => svp.MainView = Locator.Current.GetRequiredService<MainView>()),
 
       _ when IsDesignMode => null,
       _ => throw new PlatformNotSupportedException()
@@ -112,5 +113,9 @@ public class App : Application
     base.OnFrameworkInitializationCompleted();
   }
 
-  void HandleAppExit() => Lifetime.Dispose();
+  void HandleAppShutdown(object? _, ShutdownRequestedEventArgs args)
+  { }
+  
+  void HandleAppExit(object? _, ControlledApplicationLifetimeExitEventArgs args)
+    => Lifetime.Dispose();
 }
