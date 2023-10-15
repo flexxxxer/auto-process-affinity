@@ -5,7 +5,7 @@
 		<Setter Property="TextWrapping" Value="Wrap" />
 	</Style>
 	<Style Selector="TextBlock.h1">
-		<Setter Property="FontSize" Value="24" />
+		<Setter Property="FontSize" Value="27" />
 		<Setter Property="FontWeight" Value="Heavy" />
 	</Style>
 	<Style Selector="TextBlock.h2">
