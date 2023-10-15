@@ -12,7 +12,7 @@
 						 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
 
-						 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
+						 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:Class="UI.SettingsView"
 						 x:DataType="vm:ISettingsViewModel">
 
@@ -25,8 +25,10 @@
 			<StackPanel Spacing="15">
 				
 				<!-- general -->
-				<StackPanel>
-					<TextBlock Classes="h1" Text="General"/>
+				<Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
+					<Expander.Header>
+						<TextBlock Classes="h1" Text="General"/>
+					</Expander.Header>
 					<StackPanel Spacing="5">
 						<StackPanel>
 							<TextBlock Classes="h2" Text="Processes update rate"/>
@@ -39,11 +41,13 @@
 														 Margin="5"/>
 						</StackPanel>
 					</StackPanel>
-				</StackPanel>
+				</Expander>
 
 				<!-- ux -->
-				<StackPanel>
-					<TextBlock Classes="h1" Text="UX"/>
+				<Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
+					<Expander.Header>
+						<TextBlock Classes="h1" Text="UX"/>
+					</Expander.Header>
 					<StackPanel Spacing="5">
 						<StackPanel>
 							<TextBlock Classes="h2" Text="Use old-school add/edit style"/>
@@ -70,11 +74,13 @@
 														Margin="5"/>
 						</StackPanel>
 					</StackPanel>
-				</StackPanel>
+				</Expander>
 				
 				<!-- startup -->
-				<StackPanel>
-					<TextBlock Classes="h1" Text="Startup"/>
+				<Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
+					<Expander.Header>
+						<TextBlock Classes="h1" Text="Startup"/>
+					</Expander.Header>
 					<StackPanel Spacing="5">
 						<StackPanel>
 							<TextBlock Classes="h2" Text="Load on system startup"/>
@@ -126,12 +132,11 @@
 														OffContent="Off"
 														Margin="5"/>
 						</StackPanel>
-						
 					</StackPanel>
-				</StackPanel>
+				</Expander>
 
 				<!-- reset -->
-				<StackPanel>
+				<StackPanel Margin="15 0 0 0">
 					<TextBlock Classes="h2" Text="Reset settings"/>
 					<TextBlock Classes="info"
 										 Text="Hold this button 3 seconds to reset config to defaults."/>
