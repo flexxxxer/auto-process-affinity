@@ -91,13 +91,10 @@ public sealed record UxOptions
 
 public sealed record SystemLevelStartupOptions
 {
-  public required bool StartOnSystemStartup { get; init; }
-  
   public required bool RunWithAdminOrRootPrivileges { get; init; }
 
   public static SystemLevelStartupOptions Default => new()
   {
-    StartOnSystemStartup = false,
     RunWithAdminOrRootPrivileges = false,
   };
 }
