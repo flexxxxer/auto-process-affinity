@@ -38,7 +38,7 @@ public enum AppTheme
 {
   Dark,
   Light,
-  Default,
+  System,
 }
 
 public enum AppDarkThemeVariant
@@ -108,14 +108,14 @@ public sealed record UiOptions
 {
   public required bool ShowSystemTitleBar { get; init; }
 
-  public required AppTheme AppTheme { get; init; }
+  public required AppTheme Theme { get; init; }
 
   public required AppDarkThemeVariant DarkThemeVariant { get; init; }
 
   public static UiOptions Default => new()
   {
     ShowSystemTitleBar = true,
-    AppTheme = AppTheme.Default,
+    Theme = AppTheme.System,
     DarkThemeVariant = AppDarkThemeVariant.LowDark,
   };
 }

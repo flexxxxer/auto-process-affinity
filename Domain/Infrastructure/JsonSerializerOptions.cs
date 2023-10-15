@@ -13,6 +13,8 @@ public static class SerializerOptions
         new JsonEnumStringConverter<AffinityMode>(),
         new JsonEnumStringConverter<StartupLocationMode>(),
         new JsonEnumStringConverter<StartupSizeMode>(),
+        new JsonEnumStringConverter<AppTheme>(),
+        new JsonEnumStringConverter<AppDarkThemeVariant>(),
       }
     };
 }
