@@ -34,6 +34,21 @@ public enum StartupSizeMode
   Optimal,
 }
 
+public enum AppTheme
+{
+  Dark,
+  Light,
+  Default,
+}
+
+public enum AppDarkThemeVariant
+{
+  AmoledDark,
+  Dark,
+  MediumDark,
+  LowDark,
+}
+
 public sealed record StartupOptions
 {
   public sealed record StartupLocationValues
@@ -89,6 +104,22 @@ public sealed record UxOptions
   };
 }
 
+public sealed record UiOptions
+{
+  public required bool ShowSystemTitleBar { get; init; }
+
+  public required AppTheme AppTheme { get; init; }
+
+  public required AppDarkThemeVariant DarkThemeVariant { get; init; }
+
+  public static UiOptions Default => new()
+  {
+    ShowSystemTitleBar = true,
+    AppTheme = AppTheme.Default,
+    DarkThemeVariant = AppDarkThemeVariant.LowDark,
+  };
+}
+
 public sealed record SystemLevelStartupOptions
 {
   public required bool RunWithAdminOrRootPrivileges { get; init; }
@@ -109,6 +140,8 @@ public sealed record AppSettings
 
   public required UxOptions UxOptions { get; init; }
 
+  public required UiOptions UiOptions { get; init; }
+
   public required SystemLevelStartupOptions SystemLevelStartupOptions { get; init; }
 
   public static AppSettings Default => new()
@@ -117,6 +150,7 @@ public sealed record AppSettings
     ConfiguredProcesses = Array.Empty<ConfiguredProcess>(),
     StartupOptions = StartupOptions.Default,
     UxOptions = UxOptions.Default,
+    UiOptions = UiOptions.Default,
     SystemLevelStartupOptions = SystemLevelStartupOptions.Default,
   };
 }
