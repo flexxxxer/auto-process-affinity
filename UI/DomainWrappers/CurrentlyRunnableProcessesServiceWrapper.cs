@@ -21,7 +21,7 @@ class CurrentlyRunnableProcessesServiceWrapper : IDisposable
 
     options
       .OnChange(HandleSettingsChanged)
-      ?.DisposeWith(App.AppLifetimeDisposable);
+      ?.DisposeWith(App.Lifetime);
   }
 
   void HandleSettingsChanged(AppSettings newSettings)

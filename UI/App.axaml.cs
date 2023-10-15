@@ -32,7 +32,7 @@ public class App : Application
 {
   public static bool IsDesignMode => Design.IsDesignMode;
 
-  public static CompositeDisposable AppLifetimeDisposable { get; } = new();
+  public static CompositeDisposable Lifetime { get; } = new();
 
   public override void Initialize()
   {
@@ -112,5 +112,5 @@ public class App : Application
     base.OnFrameworkInitializationCompleted();
   }
 
-  void HandleAppExit() => AppLifetimeDisposable.Dispose();
+  void HandleAppExit() => Lifetime.Dispose();
 }

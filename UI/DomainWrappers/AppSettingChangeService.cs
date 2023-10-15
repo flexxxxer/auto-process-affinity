@@ -11,7 +11,6 @@ using System.Text.Json;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System.Reactive.Disposables;
-using ReactiveUI;
 
 namespace UI.DomainWrappers;
 
@@ -28,8 +27,8 @@ public sealed class AppSettingChangeService
 
     appSettings
       .OnChange(((Action<AppSettings>)HandleAppSettingsChanged)
-        .ThrottleInvokes(TimeSpan.FromSeconds(1)))
-      ?.DisposeWith(App.AppLifetimeDisposable);
+      .ThrottleInvokes(TimeSpan.FromSeconds(1)))
+      ?.DisposeWith(App.Lifetime);
   }
 
   void HandleAppSettingsChanged(AppSettings newAppSettings)

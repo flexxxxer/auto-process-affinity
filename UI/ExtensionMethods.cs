@@ -40,7 +40,7 @@ public static class ExtensionMethods
 
     methodPick.Throttle(throttleTimeout)
       .Subscribe(action)
-      .DisposeWith(App.AppLifetimeDisposable);
+      .DisposeWith(App.Lifetime);
 
     return (arg) => methodPick.OnNext(arg);
   }
