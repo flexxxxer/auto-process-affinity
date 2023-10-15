@@ -73,7 +73,7 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
 
     static AppSettings ValidateStartupOptions(AppSettings appSettings)
     {
-      static AppSettings ValidateStartupOptionsIsNotNull(AppSettings appSettings)
+      static AppSettings ValidateIsNotNull(AppSettings appSettings)
         => appSettings.StartupOptions is null
           ? appSettings with { StartupOptions = StartupOptions.Default }
           : appSettings;
@@ -133,7 +133,7 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
       }
 
       return appSettings
-        .Pipe(ValidateStartupOptionsIsNotNull)
+        .Pipe(ValidateIsNotNull)
         .Pipe(ValidateStartupLocation)
         .Pipe(ValidateStartupSize)
         ;
@@ -146,6 +146,55 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
         _ => appSettings
       };
 
+    static AppSettings ValidateUiOptions(AppSettings appSettings)
+    {
+      static AppSettings ValidateIsNotNull(AppSettings appSettings)
+        => appSettings.UiOptions is null
+          ? appSettings with { UiOptions = UiOptions.Default }
+          : appSettings;
+
+      static AppSettings ValidateTheme(AppSettings appSettings)
+      {
+        var fixedAppTheme = appSettings.UiOptions.Theme switch
+        {
+          not AppTheme.Dark
+            and not AppTheme.Light
+            and not AppTheme.System => AppTheme.System,
+
+          var theme => theme,
+        };
+
+        return appSettings with
+        {
+          UiOptions = appSettings.UiOptions with { Theme = fixedAppTheme }
+        };
+      }
+
+      static AppSettings ValidateDarkThemeVariant(AppSettings appSettings)
+      {
+        var fixedDarkThemeVariant = appSettings.UiOptions.DarkThemeVariant switch
+        {
+          not AppDarkThemeVariant.AmoledDark
+            and not AppDarkThemeVariant.Dark
+            and not AppDarkThemeVariant.MediumDark
+            and not AppDarkThemeVariant.LowDark => AppDarkThemeVariant.LowDark,
+
+          var darkThemeVariant => darkThemeVariant,
+        };
+
+        return appSettings with
+        {
+          UiOptions = appSettings.UiOptions with { DarkThemeVariant = fixedDarkThemeVariant }
+        };
+      }
+
+      return appSettings
+        .Pipe(ValidateIsNotNull)
+        .Pipe(ValidateTheme)
+        .Pipe(ValidateDarkThemeVariant)
+        ;
+    }
+
     static AppSettings ValidateSystemLevelStartupOptions(AppSettings appSettings)
       => appSettings.SystemLevelStartupOptions switch
       {
@@ -157,6 +206,7 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
       .Pipe(ValidateRunningProcessesUpdatePeriod)
       .Pipe(ValidateStartupOptions)
       .Pipe(ValidateUxOptions)
+      .Pipe(ValidateUiOptions)
       .Pipe(ValidateSystemLevelStartupOptions)
       ;
 
