@@ -21,25 +21,121 @@
 	</Design.DataContext>
 
 	<Grid RowDefinitions="*,Auto">
-		<ScrollViewer Grid.Row="0">
-			<StackPanel Spacing="150">
+		<ScrollViewer Grid.Row="0" AllowAutoHide="True">
+			<StackPanel Spacing="15">
 				
 				<!-- general -->
 				<StackPanel>
 					<TextBlock Classes="h1" Text="General"/>
-					
+					<StackPanel Spacing="5">
+						<StackPanel>
+							<TextBlock Classes="h2" Text="Processes update rate"/>
+							<TextBlock Classes="info"
+												 Text="How often the status of processes and the processes themselves will be updated in the system, specified in seconds"/>
+							<NumericUpDown HorizontalAlignment="Left" MinWidth="250"
+														 Watermark="Time period, in seconds"
+														 FormatString="0 seconds"
+														 Minimum="0" Maximum="86400" Increment="1"
+														 Margin="5"/>
+						</StackPanel>
+					</StackPanel>
 				</StackPanel>
 
 				<!-- ux -->
 				<StackPanel>
 					<TextBlock Classes="h1" Text="UX"/>
-					
+					<StackPanel Spacing="5">
+						<StackPanel>
+							<TextBlock Classes="h2" Text="Use old-school add/edit style"/>
+							<TextBlock Classes="info"
+												 Text="Instead of using a column of buttons in the table, separate buttons for editing and deleting will be available (usually at the bottom of the application window)."/>
+							<ToggleSwitch OnContent="On"
+														OffContent="Off"
+														Margin="5"/>
+						</StackPanel>
+						<StackPanel>
+							<TextBlock Classes="h2" Text="Hide process description"/>
+							<TextBlock Classes="info"
+												 Text="Process description column will be hidden in the process selection view."/>
+							<ToggleSwitch OnContent="On"
+														OffContent="Off"
+														Margin="5"/>
+						</StackPanel>
+						<StackPanel>
+							<TextBlock Classes="h2" Text="Hide in tray instead of closing"/>
+							<TextBlock Classes="info"
+												 Text="The application will minimise to tray instead of closing if the close window button is pressed."/>
+							<ToggleSwitch OnContent="On"
+														OffContent="Off"
+														Margin="5"/>
+						</StackPanel>
+					</StackPanel>
 				</StackPanel>
 				
 				<!-- startup -->
 				<StackPanel>
 					<TextBlock Classes="h1" Text="Startup"/>
-					
+					<StackPanel Spacing="5">
+						<StackPanel>
+							<TextBlock Classes="h2" Text="Load on system startup"/>
+							<TextBlock Classes="info"
+												 Text="The application will be started at system startup."/>
+							<ToggleSwitch OnContent="On"
+														OffContent="Off"
+														Margin="5"/>
+						</StackPanel>
+						<StackPanel>
+							<TextBlock Classes="h2" Text="Minimized"/>
+							<TextBlock Classes="info"
+												 Text="The application will run in a minimised state."/>
+							<ToggleSwitch OnContent="On"
+														OffContent="Off"
+														Margin="5"/>
+						</StackPanel>
+						<StackPanel>
+							<TextBlock Classes="h2" Text="Startup location mode"/>
+							<TextBlock Classes="info"
+												 Text="Specifying the application location mode at startup."/>
+							<StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
+								<ComboBox>
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock/>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</StackPanel>
+						</StackPanel>
+						<StackPanel>
+							<TextBlock Classes="h2" Text="Startup size mode"/>
+							<TextBlock Classes="info"
+												 Text="Specifying the application size mode at startup."/>
+							<StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
+								<ComboBox>
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock/>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</StackPanel>
+						</StackPanel>
+						<StackPanel>
+							<TextBlock Classes="h2" Text="Run with administrator or root privileges"/>
+							<ToggleSwitch OnContent="On"
+														OffContent="Off"
+														Margin="5"/>
+						</StackPanel>
+						
+					</StackPanel>
+				</StackPanel>
+
+				<!-- reset -->
+				<StackPanel>
+					<TextBlock Classes="h2" Text="Reset settings"/>
+					<TextBlock Classes="info"
+										 Text="Hold this button 3 seconds to reset config to defaults."/>
+					<Button Content="Reset settings" Margin="5"/>
 				</StackPanel>
 				
 			</StackPanel>
