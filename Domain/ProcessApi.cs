@@ -74,10 +74,10 @@ public static class ProcessApi
 
   public static bool? IsCurrentProcessRunningWithAdminOrRootPrivileges()
   {
-    return OSTypeApi.CurrentOS switch
+    return OsTypeApi.CurrentOs switch
     {
-      OSType.Windows => CheckIfAdmin(),
-      OSType.Linux => CheckIfRootV1() ? true : CheckIfRootV2(),
+      OsType.Windows => CheckIfAdmin(),
+      OsType.Linux => CheckIfRootV1() ? true : CheckIfRootV2(),
       _ => null
     };
 

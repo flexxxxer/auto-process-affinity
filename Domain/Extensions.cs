@@ -1,12 +1,17 @@
-﻿using System;
+﻿using DynamicData.Kernel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Domain.Infrastructure;
 
 namespace Domain;
 
-public static class Extensions
+public static partial class Extensions
 {
   public static T Do<T>(this T self, Action whatToDo)
   {
@@ -124,4 +129,16 @@ public static class Extensions
 
   public static AppSettingsWrapperForHostOptions WrapBeforeSerialization(this AppSettings appSettings)
     => new() { AppSettings = appSettings };
+
+  public static char ToUpper(this char c) => char.ToUpper(c);
+  
+  public static char ToLower(this char c) => char.ToLower(c);
+
+  [GeneratedRegex("(\\B[A-Z])")]
+  private static partial Regex WordsRegex();
+  
+  public static string ToFriendlyString<T>(this T enumValue) where T : Enum => enumValue.ToString()
+    .Pipe(enumAsStr => WordsRegex().Replace(enumAsStr, " $1"))
+    .Pipe(enumAsStr => enumAsStr.ToLower())
+    .Pipe(enumAsStr => enumAsStr[0].ToUpper() + enumAsStr[1..]);
 }

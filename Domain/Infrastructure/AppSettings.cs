@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain;
+namespace Domain.Infrastructure;
 
 public enum AffinityMode
 {
@@ -90,7 +90,7 @@ public sealed record StartupOptions
 
 public sealed record UxOptions
 {
-  public required bool UseOldScoolAddEditStyle { get; init; }
+  public required bool UseOldSchoolAddEditStyle { get; init; }
 
   public required bool HideProcessDescriptionFromSelectingProcessView { get; init; }
 
@@ -98,7 +98,7 @@ public sealed record UxOptions
 
   public static UxOptions Default => new()
   {
-    UseOldScoolAddEditStyle = false,
+    UseOldSchoolAddEditStyle = false,
     HideProcessDescriptionFromSelectingProcessView = false,
     HideToTrayInsteadOfClosing = true,
   };

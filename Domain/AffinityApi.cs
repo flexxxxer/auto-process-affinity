@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Infrastructure;
 
 namespace Domain;
 

@@ -2,7 +2,7 @@
 
 namespace Domain.Infrastructure;
 
-public enum OSType
+public enum OsType
 {
   Windows,
   Linux,
@@ -10,12 +10,12 @@ public enum OSType
   Unknown
 }
 
-public static class OSTypeApi
+public static class OsTypeApi
 {
-  public static OSType CurrentOS => (null as object) switch
+  public static OsType CurrentOs => (null as object) switch
   {
-    _ when RuntimeInformation.IsOSPlatform(OSPlatform.Windows) => OSType.Windows,
-    _ when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => OSType.Linux,
-    _ => OSType.Unknown
+    _ when RuntimeInformation.IsOSPlatform(OSPlatform.Windows) => OsType.Windows,
+    _ when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => OsType.Linux,
+    _ => OsType.Unknown
   };
 }
