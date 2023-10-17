@@ -105,50 +105,56 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
       return null;
     }
 
+    void UpdateStartupSize(MainWindowViewModel vm)
+    {
+      var (height, width) = (vm.WindowHeight, vm.WindowWidth);
+      _appSettingsService
+        .MakeChangeAsync(appSettings => appSettings with
+        {
+          StartupOptions = appSettings.StartupOptions with
+          {
+            StartupSize = new() { Height = height, Width = width }
+          }
+        })
+        .NoAwait();
+    }
+
+    void UpdateStartupLocation(PixelPoint position)
+    {
+      _appSettingsService
+        .MakeChangeAsync(appSettings => appSettings with
+        {
+          StartupOptions = appSettings.StartupOptions with
+          {
+            StartupLocation = new() { X = position.X, Y = position.Y }
+          }
+        })
+        .NoAwait();
+    }
+
     _rememberLastSizeStick = (newAppSettings.StartupOptions.StartupSizeMode, _rememberLastSizeStick) switch
     {
       (not StartupSizeMode.RememberLast, _) => DisposeAndGetNull(_rememberLastSizeStick),
       (StartupSizeMode.RememberLast, { } stick) => stick,
-      (StartupSizeMode.RememberLast, null) => this.WhenAnyPropertyChanged(nameof(WindowHeight), nameof(WindowWidth))
+      (StartupSizeMode.RememberLast, null) => this
+        .Do(UpdateStartupSize)
+        .WhenAnyPropertyChanged(nameof(WindowHeight), nameof(WindowWidth))
         .Throttle(TimeSpan.FromSeconds(0.5))
         .WhereNotNull()
-        .Subscribe(async vm =>
-        {
-          var (height, width) = (vm.WindowHeight, vm.WindowWidth);
-          await _appSettingsService.MakeChangeAsync(appSettings =>
-          {
-            return appSettings with
-            {
-              StartupOptions = appSettings.StartupOptions with
-              {
-                StartupSize = new() { Height = height, Width = width }
-              }
-            };
-          });
-        })
+        .Subscribe(UpdateStartupSize)
     };
 
     _rememberLastPositionStick = (newAppSettings.StartupOptions.StartupLocationMode, _rememberLastPositionStick) switch
     {
       (not StartupLocationMode.RememberLast, _) => DisposeAndGetNull(_rememberLastPositionStick),
       (StartupLocationMode.RememberLast, { } stick) => stick,
-      (StartupLocationMode.RememberLast, null) => this.WhenPropertyChanged(vm => vm.WindowPosition)
+      (StartupLocationMode.RememberLast, null) => this
+        .Do(vm => UpdateStartupLocation(vm.WindowPosition))
+        .WhenPropertyChanged(vm => vm.WindowPosition)
         .Throttle(TimeSpan.FromSeconds(0.5))
         .WhereNotNull()
-        .Subscribe(async propertyChanged =>
-        {
-          var position = propertyChanged.Value;
-          await _appSettingsService.MakeChangeAsync(appSettings =>
-          {
-            return appSettings with
-            {
-              StartupOptions = appSettings.StartupOptions with
-              {
-                StartupLocation = new() { X = position.X, Y = position.Y }
-              }
-            };
-          });
-        })
+        .Select(propertyChanged => propertyChanged.Value)
+        .Subscribe(UpdateStartupLocation)
     };
   }
 
