@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Infrastructure;
 
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -13,9 +14,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using Splat;
-using System.Collections.Generic;
-using System;
-using Hardware.Info;
 
 namespace UI.ViewModels;
 

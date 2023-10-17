@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Infrastructure;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 

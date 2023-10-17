@@ -1,19 +1,24 @@
 ﻿using Domain;
+using Domain.Infrastructure;
 
 using UI.DomainWrappers;
+
+using System;
+using System.Reactive.Linq;
+using System.Collections.ObjectModel;
+using System.Reactive.Disposables;
 
 using Avalonia;
 using Avalonia.Styling;
 
-using Microsoft.Extensions.Options;
 using ReactiveUI;
-using System.Reactive.Disposables;
+
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+
 using DynamicData.Binding;
-using System;
-using System.Reactive.Linq;
-using System.Collections.ObjectModel;
+
+using Microsoft.Extensions.Options;
 
 namespace UI.ViewModels;
 
@@ -31,7 +36,7 @@ public interface ISettingsViewModel
   StartupSizeMode StartupSizeMode { get; set; }
   double StartupWindowWidth { get; set; }
   double StartupWindowHeight { get; set; }
-  bool RunWithAdministratorOrRootPrivieges { get; set; }
+  bool RunWithAdministratorOrRootPrivileges { get; set; }
   ReadOnlyObservableCollection<StartupLocationMode> StartupLocationModes { get; }
   ReadOnlyObservableCollection<StartupSizeMode> StartupSizeModes { get; }
 
@@ -52,7 +57,7 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
   [ObservableProperty] StartupSizeMode _startupSizeMode;
   [ObservableProperty] double _startupWindowWidth;
   [ObservableProperty] double _startupWindowHeight;
-  [ObservableProperty] bool _runWithAdministratorOrRootPrivieges;
+  [ObservableProperty] bool _runWithAdministratorOrRootPrivileges;
   [ObservableProperty] ReadOnlyObservableCollection<StartupLocationMode> _startupLocationModes;
   [ObservableProperty] ReadOnlyObservableCollection<StartupSizeMode> _startupSizeModes;
 
@@ -92,7 +97,7 @@ public sealed partial class DesignSettingsViewModel : ViewModelBase, ISettingsVi
   [ObservableProperty] StartupSizeMode _startupSizeMode;
   [ObservableProperty] double _startupWindowWidth;
   [ObservableProperty] double _startupWindowHeight;
-  [ObservableProperty] bool _runWithAdministratorOrRootPrivieges;
+  [ObservableProperty] bool _runWithAdministratorOrRootPrivileges;
   [ObservableProperty] ReadOnlyObservableCollection<StartupLocationMode> _startupLocationModes;
   [ObservableProperty] ReadOnlyObservableCollection<StartupSizeMode> _startupSizeModes;
 

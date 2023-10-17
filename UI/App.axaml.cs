@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Infrastructure;
 
 using UI.ViewModels;
 using UI.Views;
@@ -11,7 +12,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-
 using ReactiveUI;
 
 using Splat;

@@ -166,10 +166,10 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
 
   static string MakeDefaultTitlePostfix(AdminPrivilegesStatus privilegesStatus)
   {
-    var defaultTitlePostfix = OSTypeApi.CurrentOS switch
+    var defaultTitlePostfix = OsTypeApi.CurrentOs switch
     {
-      OSType.Linux when privilegesStatus.IsAdmin => " (Root)",
-      OSType.Windows when privilegesStatus.IsAdmin => " (Administrator)",
+      OsType.Linux when privilegesStatus.IsAdmin => " (Root)",
+      OsType.Windows when privilegesStatus.IsAdmin => " (Administrator)",
       _ => ""
     };
 

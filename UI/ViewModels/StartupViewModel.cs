@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Infrastructure;
 
 using UI.ViewModels.Entities;
 using UI.DomainWrappers;
@@ -14,6 +15,7 @@ using System.Reactive.Concurrency;
 
 using Avalonia;
 using Avalonia.Styling;
+using Avalonia.Controls.ApplicationLifetimes;
 
 using ReactiveUI;
 using ReactiveUI.ExtendedRouting;
@@ -21,11 +23,11 @@ using ReactiveUI.ExtendedRouting;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DynamicData;
+
 using Splat;
 
 using Microsoft.Extensions.Options;
-using DynamicData;
-using Avalonia.Controls.ApplicationLifetimes;
 
 namespace UI.ViewModels;
 
