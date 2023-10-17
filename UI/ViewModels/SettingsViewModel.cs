@@ -57,19 +57,68 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
   [ObservableProperty] ReadOnlyObservableCollection<StartupLocationMode> _startupLocationModes;
   [ObservableProperty] ReadOnlyObservableCollection<StartupSizeMode> _startupSizeModes;
 
+  readonly AppSettingChangeService _settingChangeService;
+
   public SettingsViewModel(AppSettingChangeService settingChangeService,
     IOptionsSnapshot<AppSettings> appSettings) 
   {
+    _settingChangeService = settingChangeService;
     StartupLocationModes = new(new(Enum.GetValues<StartupLocationMode>()));
     StartupSizeModes = new(new(Enum.GetValues<StartupSizeMode>()));
 
+    FillFromAppSettings(appSettings.Value);
     this.WhenActivated((CompositeDisposable d) =>
     {
       this.WhenAnyPropertyChanged(Array.Empty<string>())
-        .Throttle(TimeSpan.FromSeconds(1))
-        .Subscribe(_ => { })
+        .Throttle(TimeSpan.FromSeconds(0.5))
+        .Subscribe(_ => UpdateAppSettings())
         .DisposeWith(d);
     });
+  }
+
+  void FillFromAppSettings(AppSettings appSettings)
+  {
+    ProcessesUpdateRateInSeconds = (int)appSettings.RunningProcessesUpdatePeriod.TotalSeconds;
+    UseOldSchoolAddEditStyle = appSettings.UxOptions.UseOldSchoolAddEditStyle;
+    HideProcessDescription = appSettings.UxOptions.HideProcessDescriptionFromSelectingProcessView;
+    HideInTrayInsteadOfClosing = appSettings.UxOptions.HideToTrayInsteadOfClosing;
+    LoadOnSystemStartup = appSettings.StartupOptions.Autostart;
+    RunMinimized = appSettings.StartupOptions.Minimized;
+    StartupLocationMode = appSettings.StartupOptions.StartupLocationMode;
+    StartupSizeMode = appSettings.StartupOptions.StartupSizeMode;
+    StartupWindowWidth = appSettings.StartupOptions.StartupSize.Width;
+    StartupWindowHeight = appSettings.StartupOptions.StartupSize.Height;
+    RunWithAdministratorOrRootPrivileges = appSettings.SystemLevelStartupOptions.RunWithAdminOrRootPrivileges;
+  }
+
+  void UpdateAppSettings()
+  {
+    AppSettings Update(AppSettings appSettings) => appSettings with
+    {
+      RunningProcessesUpdatePeriod = TimeSpan.FromSeconds(ProcessesUpdateRateInSeconds),
+      UxOptions = appSettings.UxOptions with
+      {
+        UseOldSchoolAddEditStyle = UseOldSchoolAddEditStyle,
+        HideProcessDescriptionFromSelectingProcessView = HideProcessDescription,
+        HideToTrayInsteadOfClosing = HideInTrayInsteadOfClosing,
+      },
+      StartupOptions = appSettings.StartupOptions with
+      {
+        Autostart = LoadOnSystemStartup,
+        Minimized = RunMinimized,
+        StartupLocationMode = StartupLocationMode,
+        StartupSizeMode = StartupSizeMode,
+        StartupSize = new() { Width = StartupWindowWidth, Height = StartupWindowHeight },
+      },
+      SystemLevelStartupOptions = appSettings.SystemLevelStartupOptions with
+      {
+        RunWithAdminOrRootPrivileges = RunWithAdministratorOrRootPrivileges,
+      }
+    };
+
+    _settingChangeService
+      .MakeChangeAsync(Update)
+      .NoAwait();
   }
 
   [RelayCommand]

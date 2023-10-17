@@ -63,6 +63,7 @@ public class App : Application
     Locator.CurrentMutable
       .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptions<AppSettings>>)
       .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptionsMonitor<AppSettings>>)
+      .RegisterAnd(host.Services.GetRequiredService<IOptionsSnapshot<AppSettings>>)
       .RegisterLazySingletonAnd(host.Services.GetRequiredService<IHostEnvironment>)
       ;
   }
