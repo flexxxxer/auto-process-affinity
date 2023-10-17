@@ -24,7 +24,7 @@ namespace UI.ViewModels;
 
 public interface ISettingsViewModel
 {
-  int ProcessesUpdateRateInSeconds { get; set; }
+  int? ProcessesUpdateRateInSeconds { get; set; }
   bool UseOldSchoolAddEditStyle { get; set; }
   bool HideProcessDescription { get; set; }
   bool HideInTrayInsteadOfClosing { get; set; }
@@ -32,8 +32,8 @@ public interface ISettingsViewModel
   bool RunMinimized { get; set; }
   StartupLocationMode StartupLocationMode { get; set; }
   StartupSizeMode StartupSizeMode { get; set; }
-  double StartupWindowWidth { get; set; }
-  double StartupWindowHeight { get; set; }
+  double? StartupWindowWidth { get; set; }
+  double? StartupWindowHeight { get; set; }
   bool RunWithAdministratorOrRootPrivileges { get; set; }
   ReadOnlyObservableCollection<StartupLocationMode> StartupLocationModes { get; }
   ReadOnlyObservableCollection<StartupSizeMode> StartupSizeModes { get; }
@@ -43,7 +43,7 @@ public interface ISettingsViewModel
 
 public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelBase, ISettingsViewModel
 {
-  [ObservableProperty] int _processesUpdateRateInSeconds;
+  [ObservableProperty] int? _processesUpdateRateInSeconds;
   [ObservableProperty] bool _useOldSchoolAddEditStyle;
   [ObservableProperty] bool _hideProcessDescription;
   [ObservableProperty] bool _hideInTrayInsteadOfClosing;
@@ -51,8 +51,8 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
   [ObservableProperty] bool _runMinimized;
   [ObservableProperty] StartupLocationMode _startupLocationMode;
   [ObservableProperty] StartupSizeMode _startupSizeMode;
-  [ObservableProperty] double _startupWindowWidth;
-  [ObservableProperty] double _startupWindowHeight;
+  [ObservableProperty] double? _startupWindowWidth;
+  [ObservableProperty] double? _startupWindowHeight;
   [ObservableProperty] bool _runWithAdministratorOrRootPrivileges;
   [ObservableProperty] ReadOnlyObservableCollection<StartupLocationMode> _startupLocationModes;
   [ObservableProperty] ReadOnlyObservableCollection<StartupSizeMode> _startupSizeModes;
@@ -95,7 +95,10 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
   {
     AppSettings Update(AppSettings appSettings) => appSettings with
     {
-      RunningProcessesUpdatePeriod = TimeSpan.FromSeconds(ProcessesUpdateRateInSeconds),
+      RunningProcessesUpdatePeriod = ProcessesUpdateRateInSeconds is not { } notNull 
+        ? appSettings.RunningProcessesUpdatePeriod
+        : TimeSpan.FromSeconds(notNull),
+
       UxOptions = appSettings.UxOptions with
       {
         UseOldSchoolAddEditStyle = UseOldSchoolAddEditStyle,
@@ -108,7 +111,9 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
         Minimized = RunMinimized,
         StartupLocationMode = StartupLocationMode,
         StartupSizeMode = StartupSizeMode,
-        StartupSize = new() { Width = StartupWindowWidth, Height = StartupWindowHeight },
+        StartupSize = StartupWindowHeight is not { } notNullH || StartupWindowWidth is not { } notNullW
+          ? appSettings.StartupOptions.StartupSize
+          : new() { Height = notNullH, Width = notNullW }
       },
       SystemLevelStartupOptions = appSettings.SystemLevelStartupOptions with
       {
@@ -130,7 +135,7 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
 
 public sealed partial class DesignSettingsViewModel : ViewModelBase, ISettingsViewModel
 {
-  [ObservableProperty] int _processesUpdateRateInSeconds;
+  [ObservableProperty] int? _processesUpdateRateInSeconds;
   [ObservableProperty] bool _useOldSchoolAddEditStyle;
   [ObservableProperty] bool _hideProcessDescription;
   [ObservableProperty] bool _hideInTrayInsteadOfClosing;
@@ -138,8 +143,8 @@ public sealed partial class DesignSettingsViewModel : ViewModelBase, ISettingsVi
   [ObservableProperty] bool _runMinimized;
   [ObservableProperty] StartupLocationMode _startupLocationMode;
   [ObservableProperty] StartupSizeMode _startupSizeMode;
-  [ObservableProperty] double _startupWindowWidth;
-  [ObservableProperty] double _startupWindowHeight;
+  [ObservableProperty] double? _startupWindowWidth;
+  [ObservableProperty] double? _startupWindowHeight;
   [ObservableProperty] bool _runWithAdministratorOrRootPrivileges;
   [ObservableProperty] ReadOnlyObservableCollection<StartupLocationMode> _startupLocationModes;
   [ObservableProperty] ReadOnlyObservableCollection<StartupSizeMode> _startupSizeModes;

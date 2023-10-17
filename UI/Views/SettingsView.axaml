@@ -143,9 +143,13 @@
 										</MultiBinding>
 									</StackPanel.IsVisible>
 									<NumericUpDown Watermark="Width" MinWidth="80" ShowButtonSpinner="False"
-									               Value="{Binding StartupWindowWidth}"/>
+									               Value="{Binding StartupWindowWidth}"
+																 Increment="0.2"
+																 Minimum="300"/>
 									<NumericUpDown Watermark="Height" MinWidth="80" ShowButtonSpinner="False"
-									               Value="{Binding StartupWindowHeight}"/>
+									               Value="{Binding StartupWindowHeight}"
+																 Increment="0.2"
+																 Minimum="250"/>
 								</StackPanel>
 							</StackPanel>
 						</StackPanel>
