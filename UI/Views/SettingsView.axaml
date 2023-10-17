@@ -8,6 +8,8 @@
              xmlns:vm="clr-namespace:UI.ViewModels"
 						 xmlns:vme="clr-namespace:UI.ViewModels.Entities"
 						 xmlns:controls="clr-namespace:UI.Controls"
+						 xmlns:cv="clr-namespace:UI.Converters"
+						 xmlns:domain="clr-namespace:Domain.Infrastructure;assembly=Domain"
 						 xmlns:views="clr-namespace:UI.Views"
 						 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
@@ -15,7 +17,7 @@
 						 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:Class="UI.SettingsView"
 						 x:DataType="vm:ISettingsViewModel">
-
+	
 	<Design.DataContext>
 		<vm:DesignSettingsViewModel/>
 	</Design.DataContext>
@@ -108,12 +110,12 @@
 							<TextBlock Classes="h2" Text="Startup location mode"/>
 							<TextBlock Classes="info"
 												 Text="Specifying the application location mode at startup."/>
-							<StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
+							<StackPanel Orientation="Horizontal" Spacing="10" Margin="5">
 								<ComboBox ItemsSource="{Binding StartupLocationModes}"
 													SelectedItem="{Binding StartupLocationMode}">
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
-											<TextBlock/>
+											<TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}"/>
 										</DataTemplate>
 									</ComboBox.ItemTemplate>
 								</ComboBox>
@@ -128,17 +130,30 @@
 													SelectedItem="{Binding StartupSizeMode}">
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
-											<TextBlock/>
+											<TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}"/>
 										</DataTemplate>
 									</ComboBox.ItemTemplate>
 								</ComboBox>
+								<StackPanel Orientation="Horizontal" Spacing="5">
+									<StackPanel.IsVisible>
+										<MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
+											<Binding RelativeSource="{RelativeSource DataContext}"
+											         Path="StartupSizeMode"/>
+											<Binding Source="{x:Static domain:StartupSizeMode.Specified}"/>
+										</MultiBinding>
+									</StackPanel.IsVisible>
+									<NumericUpDown Watermark="Width" MinWidth="80" ShowButtonSpinner="False"
+									               Value="{Binding StartupWindowWidth}"/>
+									<NumericUpDown Watermark="Height" MinWidth="80" ShowButtonSpinner="False"
+									               Value="{Binding StartupWindowHeight}"/>
+								</StackPanel>
 							</StackPanel>
 						</StackPanel>
 						<StackPanel>
 							<TextBlock Classes="h2" Text="Run with administrator or root privileges"/>
 							<ToggleSwitch OnContent="On"
 														OffContent="Off"
-														IsChecked="{Binding RunWithAdministratorOrRootPrivieges}"
+														IsChecked="{Binding RunWithAdministratorOrRootPrivileges}"
 														Margin="5"/>
 						</StackPanel>
 					</StackPanel>

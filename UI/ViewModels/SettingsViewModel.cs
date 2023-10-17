@@ -31,8 +31,6 @@ public interface ISettingsViewModel
   bool LoadOnSystemStartup { get; set; }
   bool RunMinimized { get; set; }
   StartupLocationMode StartupLocationMode { get; set; }
-  int StartupLocationX { get; set; }
-  int StartupLocationY { get; set; }
   StartupSizeMode StartupSizeMode { get; set; }
   double StartupWindowWidth { get; set; }
   double StartupWindowHeight { get; set; }
@@ -52,8 +50,6 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
   [ObservableProperty] bool _loadOnSystemStartup;
   [ObservableProperty] bool _runMinimized;
   [ObservableProperty] StartupLocationMode _startupLocationMode;
-  [ObservableProperty] int _startupLocationX;
-  [ObservableProperty] int _startupLocationY;
   [ObservableProperty] StartupSizeMode _startupSizeMode;
   [ObservableProperty] double _startupWindowWidth;
   [ObservableProperty] double _startupWindowHeight;
@@ -92,8 +88,6 @@ public sealed partial class DesignSettingsViewModel : ViewModelBase, ISettingsVi
   [ObservableProperty] bool _loadOnSystemStartup;
   [ObservableProperty] bool _runMinimized;
   [ObservableProperty] StartupLocationMode _startupLocationMode;
-  [ObservableProperty] int _startupLocationX;
-  [ObservableProperty] int _startupLocationY;
   [ObservableProperty] StartupSizeMode _startupSizeMode;
   [ObservableProperty] double _startupWindowWidth;
   [ObservableProperty] double _startupWindowHeight;
