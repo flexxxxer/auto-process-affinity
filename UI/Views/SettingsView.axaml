@@ -38,6 +38,7 @@
 														 Watermark="Time period, in seconds"
 														 FormatString="0 seconds"
 														 Minimum="0" Maximum="86400" Increment="1"
+														 Value="{Binding ProcessesUpdateRateInSeconds}"
 														 Margin="5"/>
 						</StackPanel>
 					</StackPanel>
@@ -55,6 +56,7 @@
 												 Text="Instead of using a column of buttons in the table, separate buttons for editing and deleting will be available (usually at the bottom of the application window)."/>
 							<ToggleSwitch OnContent="On"
 														OffContent="Off"
+														IsChecked="{Binding UseOldSchoolAddEditStyle}"
 														Margin="5"/>
 						</StackPanel>
 						<StackPanel>
@@ -63,6 +65,7 @@
 												 Text="Process description column will be hidden in the process selection view."/>
 							<ToggleSwitch OnContent="On"
 														OffContent="Off"
+														IsChecked="{Binding HideProcessDescription}"
 														Margin="5"/>
 						</StackPanel>
 						<StackPanel>
@@ -71,6 +74,7 @@
 												 Text="The application will minimise to tray instead of closing if the close window button is pressed."/>
 							<ToggleSwitch OnContent="On"
 														OffContent="Off"
+														IsChecked="{Binding HideInTrayInsteadOfClosing}"
 														Margin="5"/>
 						</StackPanel>
 					</StackPanel>
@@ -88,6 +92,7 @@
 												 Text="The application will be started at system startup."/>
 							<ToggleSwitch OnContent="On"
 														OffContent="Off"
+														IsChecked="{Binding LoadOnSystemStartup}"
 														Margin="5"/>
 						</StackPanel>
 						<StackPanel>
@@ -96,6 +101,7 @@
 												 Text="The application will run in a minimised state."/>
 							<ToggleSwitch OnContent="On"
 														OffContent="Off"
+														IsChecked="{Binding RunMinimized}"
 														Margin="5"/>
 						</StackPanel>
 						<StackPanel>
@@ -103,7 +109,8 @@
 							<TextBlock Classes="info"
 												 Text="Specifying the application location mode at startup."/>
 							<StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
-								<ComboBox>
+								<ComboBox ItemsSource="{Binding StartupLocationModes}"
+													SelectedItem="{Binding StartupLocationMode}">
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
 											<TextBlock/>
@@ -117,7 +124,8 @@
 							<TextBlock Classes="info"
 												 Text="Specifying the application size mode at startup."/>
 							<StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
-								<ComboBox>
+								<ComboBox ItemsSource="{Binding StartupSizeModes}"
+													SelectedItem="{Binding StartupSizeMode}">
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
 											<TextBlock/>
@@ -130,6 +138,7 @@
 							<TextBlock Classes="h2" Text="Run with administrator or root privileges"/>
 							<ToggleSwitch OnContent="On"
 														OffContent="Off"
+														IsChecked="{Binding RunWithAdministratorOrRootPrivieges}"
 														Margin="5"/>
 						</StackPanel>
 					</StackPanel>
