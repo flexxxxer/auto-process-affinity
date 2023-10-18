@@ -4,12 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Domain;
 
-public static partial class Extensions
+public static partial class Ext
 {
   public static T Do<T>(this T self, Action whatToDo)
   {
@@ -139,4 +140,16 @@ public static partial class Extensions
     .Pipe(enumAsStr => WordsRegex().Replace(enumAsStr, " $1"))
     .Pipe(enumAsStr => enumAsStr.ToLower())
     .Pipe(enumAsStr => enumAsStr[0].ToUpper() + enumAsStr[1..]);
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public static Action MakeDegalate(Action action) => action;
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public static Action<T> MakeDelegate<T>(Action<T> action) => action;
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public static Func<T> MakeDelegate<T>(Func<T> action) => action;
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public static Func<T1, T2> MakeDelegate<T1, T2>(Func<T1, T2> action) => action;
 }
