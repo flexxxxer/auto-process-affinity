@@ -71,7 +71,7 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
     this.WhenActivated(d =>
     {
       this.WhenAnyPropertyChanged(Array.Empty<string>())
-        .Throttle(TimeSpan.FromSeconds(0.5))
+        .Throttle(TimeSpan.FromSeconds(0.25))
         .Subscribe(_ => UpdateAppSettings())
         .DisposeWith(d);
     });
