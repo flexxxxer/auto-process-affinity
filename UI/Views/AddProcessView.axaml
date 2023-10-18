@@ -14,77 +14,79 @@
 	</Design.DataContext>
 
 	<Grid RowDefinitions="*,Auto">
-		<Grid Grid.Row="0">
-			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" 
-			            MinWidth="260" Spacing="2">
-				
-				<Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,5,Auto"
-							IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}">
-					<TextBox Text="{Binding ProcessName, Mode=TwoWay}" 
-					         Watermark="Enter process name" Grid.Column="0"
-								   x:Name="ProcessNameTextBox" />
-					<Button Content="Or choose..." Grid.Column="2"
-					        Command="{Binding ChooseProcessCommand}"/>
-				</Grid>
+		<Border Grid.Row="0" BorderThickness="0 0 0 1" BorderBrush="{DynamicResource SystemBaseHighColor}">
+			<Grid>
+				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" 
+				            MinWidth="260" Spacing="2">
+					
+					<Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,5,Auto"
+								IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}">
+						<TextBox Text="{Binding ProcessName, Mode=TwoWay}" 
+						         Watermark="Enter process name" Grid.Column="0"
+									   x:Name="ProcessNameTextBox" />
+						<Button Content="Or choose..." Grid.Column="2"
+						        Command="{Binding ChooseProcessCommand}"/>
+					</Grid>
 
-				<DockPanel HorizontalAlignment="Stretch" 
-				           IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNotNull}}">
-					<TextBox Text="{Binding ProcessName, Mode=OneWay}" IsEnabled="False"/>
-				</DockPanel>
-				
-				<StackPanel HorizontalAlignment="Stretch">
-					<DockPanel HorizontalAlignment="Stretch">
-						<RadioButton GroupName="AffinityMode"
-												 IsChecked="{Binding IsEvenAffinityModeChosen, Mode=TwoWay}"
-												 x:Name="EvenAffinityModeCheckBox">
-							<RadioButton.Content>
-								<StackPanel Spacing="-5">
-									<TextBlock Text="Even" />
-									<TextBlock Text="turns off SMT" FontSize="11"
-									           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
-								</StackPanel>
-							</RadioButton.Content>
-						</RadioButton>
-						<TextBox IsVisible="{Binding #EvenAffinityModeCheckBox.IsChecked}"
-										 Text="{Binding EvenAffinityModeFirstNValue, Mode=TwoWay}" Watermark="First few"
-										 HorizontalAlignment="Right"
-										 x:Name="EvenAffinityModeFirstNValueTextBox"/>
+					<DockPanel HorizontalAlignment="Stretch" 
+					           IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNotNull}}">
+						<TextBox Text="{Binding ProcessName, Mode=OneWay}" IsEnabled="False"/>
 					</DockPanel>
-					<DockPanel>
-						<RadioButton GroupName="AffinityMode" Content="First N"
-												 IsChecked="{Binding IsFirstNAffinityModeChosen, Mode=TwoWay}"
-												 x:Name="FirstNAffinityModeCheckBox"/>
-						<TextBox IsVisible="{Binding #FirstNAffinityModeCheckBox.IsChecked}"
-										 Text="{Binding FirstNAffinityModeValue, Mode=TwoWay}" Watermark="Count"
-										 HorizontalAlignment="Right"
-										 x:Name="FirstNAffinityModeValueTextBox"/>
-					</DockPanel>
-					<DockPanel>
-						<RadioButton GroupName="AffinityMode" Content="Last N"
-												 IsChecked="{Binding IsLastNAffinityModeChosen, Mode=TwoWay}"
-												 x:Name="LastNAffinityModeCheckBox"/>
-						<TextBox IsVisible="{Binding #LastNAffinityModeCheckBox.IsChecked}"
-										 Text="{Binding LastNAffinityModeValue, Mode=TwoWay}" Watermark="Count"
-										 HorizontalAlignment="Right"
-										 x:Name="LastNAffinityModeValueTextBox"/>
-					</DockPanel>
-					<DockPanel>
-						<RadioButton GroupName="AffinityMode" Content="Custom"
-												 IsChecked="{Binding IsCustomAffinityModeChosen, Mode=TwoWay}"
-												 x:Name="CustomAffinityModeCheckBox"/>
-						<StackPanel Orientation="Horizontal"
-												IsVisible="{Binding #CustomAffinityModeCheckBox.IsChecked}"
-												HorizontalAlignment="Right">
-							<TextBlock Text="0x" VerticalAlignment="Center"/>
-							<TextBox Text="{Binding CustomAffinityModeValue, Mode=TwoWay}" 
-							         Watermark="Enter or paste"/>
-						</StackPanel>
-					</DockPanel>
+					
+					<StackPanel HorizontalAlignment="Stretch">
+						<DockPanel HorizontalAlignment="Stretch">
+							<RadioButton GroupName="AffinityMode"
+													 IsChecked="{Binding IsEvenAffinityModeChosen, Mode=TwoWay}"
+													 x:Name="EvenAffinityModeCheckBox">
+								<RadioButton.Content>
+									<StackPanel Spacing="-5">
+										<TextBlock Text="Even" />
+										<TextBlock Text="turns off SMT" FontSize="11"
+										           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+									</StackPanel>
+								</RadioButton.Content>
+							</RadioButton>
+							<TextBox IsVisible="{Binding #EvenAffinityModeCheckBox.IsChecked}"
+											 Text="{Binding EvenAffinityModeFirstNValue, Mode=TwoWay}" 
+											 Watermark="First few" HorizontalAlignment="Right" x:Name="EvenAffinityModeFirstNValueTextBox"/>
+						</DockPanel>
+						<DockPanel>
+							<RadioButton GroupName="AffinityMode" Content="First N"
+													 IsChecked="{Binding IsFirstNAffinityModeChosen, Mode=TwoWay}"
+													 x:Name="FirstNAffinityModeCheckBox"/>
+							<TextBox IsVisible="{Binding #FirstNAffinityModeCheckBox.IsChecked}"
+											 Text="{Binding FirstNAffinityModeValue, Mode=TwoWay}" Watermark="Count"
+											 HorizontalAlignment="Right"
+											 x:Name="FirstNAffinityModeValueTextBox"/>
+						</DockPanel>
+						<DockPanel>
+							<RadioButton GroupName="AffinityMode" Content="Last N"
+													 IsChecked="{Binding IsLastNAffinityModeChosen, Mode=TwoWay}"
+													 x:Name="LastNAffinityModeCheckBox"/>
+							<TextBox IsVisible="{Binding #LastNAffinityModeCheckBox.IsChecked}"
+											 Text="{Binding LastNAffinityModeValue, Mode=TwoWay}" Watermark="Count"
+											 HorizontalAlignment="Right"
+											 x:Name="LastNAffinityModeValueTextBox"/>
+						</DockPanel>
+						<DockPanel>
+							<RadioButton GroupName="AffinityMode" Content="Custom"
+													 IsChecked="{Binding IsCustomAffinityModeChosen, Mode=TwoWay}"
+													 x:Name="CustomAffinityModeCheckBox"/>
+							<StackPanel Orientation="Horizontal"
+													IsVisible="{Binding #CustomAffinityModeCheckBox.IsChecked}"
+													HorizontalAlignment="Right">
+								<TextBlock Text="0x" VerticalAlignment="Center"/>
+								<TextBox Text="{Binding CustomAffinityModeValue, Mode=TwoWay}" 
+								         Watermark="Enter or paste"/>
+							</StackPanel>
+						</DockPanel>
+					</StackPanel>
 				</StackPanel>
-			</StackPanel>
-		</Grid>
+			</Grid>
+		</Border>
 
-		<Grid Grid.Row="1" ColumnDefinitions="*,15,*" HorizontalAlignment="Stretch">
+		<Grid Grid.Row="1" ColumnDefinitions="*,15,*" HorizontalAlignment="Stretch"
+		      Margin="0 10 0 0">
 			<c:IconedButton HorizontalAlignment="Right" Grid.Column="0"
 			                Content="Cancel" IconFill="{DynamicResource CancelBrush}"
 			                IconMargin="-6" Padding="0 0 6 0"
