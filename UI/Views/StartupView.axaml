@@ -57,7 +57,7 @@
       <Button HotKey="Escape" x:Name="ResetSelectionOnDataGrid" />
     </Grid>
     
-    <Border Grid.Row="0" Grid.RowSpan="2" BorderThickness="0,0,0,1" 
+    <Border Grid.Row="2" BorderThickness="0,1,0,0" 
             BorderBrush="{DynamicResource SystemBaseHighColor}"/>
 
     <DockPanel Grid.Row="0" x:Name="MenuDockPanel">
