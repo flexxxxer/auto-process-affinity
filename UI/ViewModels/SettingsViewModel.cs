@@ -18,8 +18,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 using DynamicData.Binding;
 
-using Microsoft.Extensions.Options;
-
 // ReSharper disable WithExpressionModifiesAllMembers
 
 namespace UI.ViewModels;
