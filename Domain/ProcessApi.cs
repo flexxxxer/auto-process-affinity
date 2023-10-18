@@ -101,7 +101,8 @@ public static class ProcessApi
           CreateNoWindow = true,
         };
 
-        using Process process = new() { StartInfo = startInfo };
+        using Process process = new();
+        process.StartInfo = startInfo;
         process.Start();
         var result = process.StandardOutput.ReadToEnd().Trim();
         process.WaitForExit();

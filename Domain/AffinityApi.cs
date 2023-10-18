@@ -12,7 +12,8 @@ public static class AffinityApi
       AffinityMode.FirstNEven => FillFirstNEvenOnly((int)value),
       AffinityMode.FirstN => FillFirstN((int)value),
       AffinityMode.LastN => FillLastN((int)value),
-      AffinityMode.CustomBitmask or _ => FromCustom(value)
+      AffinityMode.CustomBitmask => FromCustom(value),
+      _ => throw new ArgumentOutOfRangeException()
     };
 
   public static long FillFirstNEvenOnly(int count)
