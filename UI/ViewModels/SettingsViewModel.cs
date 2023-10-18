@@ -20,6 +20,8 @@ using DynamicData.Binding;
 
 using Microsoft.Extensions.Options;
 
+// ReSharper disable WithExpressionModifiesAllMembers
+
 namespace UI.ViewModels;
 
 public interface ISettingsViewModel
@@ -67,7 +69,7 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
     StartupSizeModes = new(new(Enum.GetValues<StartupSizeMode>()));
 
     FillFromAppSettings(appSettings.Value);
-    this.WhenActivated((CompositeDisposable d) =>
+    this.WhenActivated(d =>
     {
       this.WhenAnyPropertyChanged(Array.Empty<string>())
         .Throttle(TimeSpan.FromSeconds(0.5))
@@ -101,9 +103,9 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
 
       UxOptions = appSettings.UxOptions with
       {
-        UseOldSchoolAddEditStyle = UseOldSchoolAddEditStyle,
-        HideProcessDescriptionFromSelectingProcessView = HideProcessDescription,
-        HideToTrayInsteadOfClosing = HideInTrayInsteadOfClosing,
+        UseOldSchoolAddEditStyle = this.UseOldSchoolAddEditStyle,
+        HideProcessDescriptionFromSelectingProcessView = this.HideProcessDescription,
+        HideToTrayInsteadOfClosing = this.HideInTrayInsteadOfClosing,
       },
       StartupOptions = appSettings.StartupOptions with
       {
