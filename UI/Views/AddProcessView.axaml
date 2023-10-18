@@ -16,19 +16,19 @@
 	<Grid RowDefinitions="*,Auto">
 		<Grid Grid.Row="0">
 			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" 
-									MinWidth="260" Spacing="2">
+			            MinWidth="260" Spacing="2">
 				
 				<Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,5,Auto"
 							IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}">
-					<TextBox Text="{Binding ProcessName, Mode=TwoWay}" Watermark="Enter process name"
-								   x:Name="ProcessNameTextBox"
-									 Grid.Column="0"/>
-					<Button Content="Or choose..." Command="{Binding ChooseProcessCommand}"
-									
-									Grid.Column="2"/>
+					<TextBox Text="{Binding ProcessName, Mode=TwoWay}" 
+					         Watermark="Enter process name" Grid.Column="0"
+								   x:Name="ProcessNameTextBox" />
+					<Button Content="Or choose..." Grid.Column="2"
+					        Command="{Binding ChooseProcessCommand}"/>
 				</Grid>
 
-				<DockPanel HorizontalAlignment="Stretch" IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNotNull}}">
+				<DockPanel HorizontalAlignment="Stretch" 
+				           IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNotNull}}">
 					<TextBox Text="{Binding ProcessName, Mode=OneWay}" IsEnabled="False"/>
 				</DockPanel>
 				
@@ -76,7 +76,8 @@
 												IsVisible="{Binding #CustomAffinityModeCheckBox.IsChecked}"
 												HorizontalAlignment="Right">
 							<TextBlock Text="0x" VerticalAlignment="Center"/>
-							<TextBox Text="{Binding CustomAffinityModeValue, Mode=TwoWay}" Watermark="Enter or paste"/>
+							<TextBox Text="{Binding CustomAffinityModeValue, Mode=TwoWay}" 
+							         Watermark="Enter or paste"/>
 						</StackPanel>
 					</DockPanel>
 				</StackPanel>
