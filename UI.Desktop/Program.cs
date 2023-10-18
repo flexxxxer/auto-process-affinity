@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-
 using Avalonia;
 using Avalonia.ReactiveUI;
 
@@ -26,12 +25,12 @@ static class Program
     return builder.StartWithClassicDesktopLifetime(args);
   }
 
-  static AppBuilder BuildAvaloniaApp()
-       => AppBuilder.Configure<App>()
-           .UsePlatformDetect()
-           .WithInterFont()
-           .LogToTrace()
-           .UseReactiveUI();
+  static AppBuilder BuildAvaloniaApp() => AppBuilder
+    .Configure<App>()
+    .UsePlatformDetect()
+    .WithInterFont()
+    .LogToTrace()
+    .UseReactiveUI();
 
   static void SilenceConsole()
   {
