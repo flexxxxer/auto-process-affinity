@@ -1,10 +1,15 @@
-﻿using Domain;
+﻿using UI.DomainWrappers;
+
+using Domain;
+using Domain.Infrastructure;
 
 using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 using Avalonia;
 using Avalonia.Styling;
@@ -16,11 +21,6 @@ using CommunityToolkit.Mvvm.Input;
 
 using DynamicData;
 using DynamicData.Binding;
-using System.Diagnostics;
-using System.Linq;
-using Microsoft.Extensions.Options;
-using Domain.Infrastructure;
-using UI.DomainWrappers;
 
 namespace UI.ViewModels;
 
