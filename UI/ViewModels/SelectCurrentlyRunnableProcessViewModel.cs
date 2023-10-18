@@ -18,6 +18,8 @@ using DynamicData;
 using DynamicData.Binding;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.Extensions.Options;
+using Domain.Infrastructure;
 
 namespace UI.ViewModels;
 
@@ -68,13 +70,13 @@ public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActiva
       .Select(BuildFilter);
 
     var processesSourceObservable = _currentlyRunningProcessesSource
-        .Connect()
-        .RefCount()
-        .Filter(filterOnlyMatchingText)
-        .ObserveOn(RxApp.MainThreadScheduler)
-        .Bind(out _currentlyRunningProcesses) // must be initialized in constructor
-        .DisposeMany()
-        .Subscribe(_ => { }, RxApp.DefaultExceptionHandler.OnNext);
+      .Connect()
+      .RefCount()
+      .Filter(filterOnlyMatchingText)
+      .ObserveOn(RxApp.MainThreadScheduler)
+      .Bind(out _currentlyRunningProcesses) // must be initialized in constructor
+      .DisposeMany()
+      .Subscribe(_ => { }, RxApp.DefaultExceptionHandler.OnNext);
 
     // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async d =>
