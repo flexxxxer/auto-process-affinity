@@ -2,11 +2,10 @@
 using Domain.Infrastructure;
 
 using System;
-
-using Microsoft.Extensions.Options;
-using System.Reactive.Disposables;
 using System.Linq;
 using System.Diagnostics;
+using System.Reactive.Linq;
+using System.Reactive.Disposables;
 
 namespace UI.DomainWrappers;
 
@@ -15,14 +14,18 @@ class CurrentlyRunnableProcessesServiceWrapper : IDisposable
   readonly CurrentlyRunnableProcessesService _processesService;
 
   public CurrentlyRunnableProcessesServiceWrapper(CurrentlyRunnableProcessesService processesService, 
-    IOptionsMonitor<AppSettings> options)
+    AppSettingChangeService appSettingsService)
   {
     _processesService = processesService;
-    HandleSettingsChanged(options.CurrentValue);
+    HandleSettingsChanged(appSettingsService.CurrentAppSettings);
 
-    options
-      .OnChange(HandleSettingsChanged)
-      ?.DisposeWith(App.Lifetime);
+    Observable
+      .FromEventPattern<AppSettings>(
+        h => appSettingsService.AppSettingsChanged += h,
+        h => appSettingsService.AppSettingsChanged -= h)
+      .Throttle(TimeSpan.FromSeconds(0.6))
+      .Subscribe(eventPattern => HandleSettingsChanged(eventPattern.EventArgs))
+      .DisposeWith(App.Lifetime);
   }
 
   void HandleSettingsChanged(AppSettings newSettings)
