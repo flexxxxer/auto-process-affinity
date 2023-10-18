@@ -6,75 +6,75 @@
              xmlns:controls="clr-namespace:UI.Controls"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
-             
+
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="UI.Views.SelectCurrentlyRunnableProcessView"
              x:DataType="vm:ISelectCurrentlyRunnableProcessViewModel">
-	
-	<Design.DataContext>
-		<vm:DesignSelectCurrentlyRunnableProcessViewModel/>
-	</Design.DataContext>
 
-	<Grid RowDefinitions="Auto,*,Auto">
+  <Design.DataContext>
+    <vm:DesignSelectCurrentlyRunnableProcessViewModel />
+  </Design.DataContext>
 
-		<Border Grid.Row="0" Grid.RowSpan="2" BorderThickness="0,0,0,1" 
-		        BorderBrush="{DynamicResource SystemBaseHighColor}"/>
-		
-		<TextBox Grid.Row="0" x:Name="SearchTextBox"
-		         Text="{Binding SearchText, Mode=TwoWay}" 
-		         Watermark="Search by name, id or description" AcceptsTab="False" AcceptsReturn="False" />
+  <Grid RowDefinitions="Auto,*,Auto">
 
-		<TextBlock Grid.Row="1" Text="No match found"
-							 IsVisible="{Binding !CurrentlyRunningProcesses.Count}"
-							 HorizontalAlignment="Center" FontSize="14"
-							 Margin="0 40 0 0"/>
-		
-		<DataGrid Grid.Row="1" x:Name="ProcessesDataGrid" SelectionMode="Single"
-		          ItemsSource="{Binding CurrentlyRunningProcesses}"
+    <Border Grid.Row="0" Grid.RowSpan="2" BorderThickness="0,0,0,1"
+            BorderBrush="{DynamicResource SystemBaseHighColor}" />
+
+    <TextBox Grid.Row="0" x:Name="SearchTextBox"
+             Text="{Binding SearchText, Mode=TwoWay}"
+             Watermark="Search by name, id or description" AcceptsTab="False" AcceptsReturn="False" />
+
+    <TextBlock Grid.Row="1" Text="No match found"
+               IsVisible="{Binding !CurrentlyRunningProcesses.Count}"
+               HorizontalAlignment="Center" FontSize="14"
+               Margin="0 40 0 0" />
+
+    <DataGrid Grid.Row="1" x:Name="ProcessesDataGrid" SelectionMode="Single"
+              ItemsSource="{Binding CurrentlyRunningProcesses}"
               SelectedItem="{Binding SelectedRunningProcess}"
-							IsVisible="{Binding !!CurrentlyRunningProcesses.Count}">
+              IsVisible="{Binding !!CurrentlyRunningProcesses.Count}">
 
-			<i:Interaction.Behaviors>
-				<ia:EventTriggerBehavior EventName="DoubleTapped">
-					<ia:InvokeCommandAction Command="{Binding ConfirmChoiceCommand}"/>
-				</ia:EventTriggerBehavior>
-			</i:Interaction.Behaviors>
+      <i:Interaction.Behaviors>
+        <ia:EventTriggerBehavior EventName="DoubleTapped">
+          <ia:InvokeCommandAction Command="{Binding ConfirmChoiceCommand}" />
+        </ia:EventTriggerBehavior>
+      </i:Interaction.Behaviors>
 
-			<DataGrid.Columns>
-				<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" IsReadOnly="True" 
-				                    Tag="ProcessNameColumn"/>
-				<DataGridTextColumn Header="Id" Binding="{Binding ProcessId}" Width="0.5*" IsReadOnly="True"/>
-				<DataGridTemplateColumn Header="Description" Width="*" IsReadOnly="True"
-																SortMemberPath="Description"
-																IsVisible="{Binding !ShouldDescriptionColumnBeHidden}">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
-                         Text="{Binding Description}" 
-                         ToolTip.Tip="{Binding Description}"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-			</DataGrid.Columns>
-		</DataGrid>
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" IsReadOnly="True"
+                            Tag="ProcessNameColumn" />
+        <DataGridTextColumn Header="Id" Binding="{Binding ProcessId}" Width="0.5*" IsReadOnly="True" />
+        <DataGridTemplateColumn Header="Description" Width="*" IsReadOnly="True"
+                                SortMemberPath="Description"
+                                IsVisible="{Binding !ShouldDescriptionColumnBeHidden}">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"
+                         Text="{Binding Description}"
+                         ToolTip.Tip="{Binding Description}" />
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+      </DataGrid.Columns>
+    </DataGrid>
 
-		<Grid Grid.Row="2" ColumnDefinitions="*,25,*"
-					Margin="0,10,0,0" HorizontalAlignment="Center">
-			<controls:IconedButton HorizontalAlignment="Left" Grid.Column="0"
-														 IconMargin="-6" Padding="0 0 6 0"
+    <Grid Grid.Row="2" ColumnDefinitions="*,25,*"
+          Margin="0,10,0,0" HorizontalAlignment="Center">
+      <controls:IconedButton HorizontalAlignment="Left" Grid.Column="0"
+                             IconMargin="-6" Padding="0 0 6 0"
                              Content="Cancel" IconFill="{DynamicResource CancelBrush}"
                              IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
-                             IconGeometry="{StaticResource DismissCircleIcon}" 
-                             Command="{Binding CancelCommand}" HotKey="Escape"/>
+                             IconGeometry="{StaticResource DismissCircleIcon}"
+                             Command="{Binding CancelCommand}" HotKey="Escape" />
 
-			<controls:IconedButton HorizontalAlignment="Right" Grid.Column="2"
-														 IconMargin="-6" Padding="0 0 6 0"
+      <controls:IconedButton HorizontalAlignment="Right" Grid.Column="2"
+                             IconMargin="-6" Padding="0 0 6 0"
                              Content="Choose" IconFill="{DynamicResource OkBrush}"
                              IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
-													   IconRenderTransformOrigin="50%,50%"
-														 IconGeometry="{StaticResource CheckmarkCircleIcon}" 
-														 Command="{Binding ConfirmChoiceCommand}" HotKey="Enter"/>
-		</Grid>
-	</Grid>
+                             IconRenderTransformOrigin="50%,50%"
+                             IconGeometry="{StaticResource CheckmarkCircleIcon}"
+                             Command="{Binding ConfirmChoiceCommand}" HotKey="Enter" />
+    </Grid>
+  </Grid>
 
 </UserControl>
