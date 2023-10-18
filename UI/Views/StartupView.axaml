@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:UI.ViewModels"
-             xmlns:controls="clr-namespace:UI.Controls"
+             xmlns:c="clr-namespace:UI.Controls"
              xmlns:cv="clr-namespace:UI.Converters"
              xmlns:views="clr-namespace:UI.Views"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
@@ -136,20 +136,20 @@
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <StackPanel Orientation="Horizontal" Spacing="1">
-                <controls:IconedButton IconGeometry="{StaticResource EditIcon}"
-                                       IconFill="{DynamicResource OkBrush}"
-                                       IconStroke="{DynamicResource OkBrush}"
-                                       IconStrokeThickness="1"
-                                       Command="{Binding Path=$parent[views:StartupView].((vm:IStartupViewModel)DataContext).EditMonitoredProcessCommand, FallbackValue={}}"
-                                       CommandParameter="{Binding}" />
-                <controls:IconedButton IconGeometry="{StaticResource RemoveIcon}"
-                                       IconFill="{DynamicResource CancelBrush}"
-                                       IconStroke="{DynamicResource CancelBrush}"
-                                       IconRenderTransform="scale(0.4)"
-                                       Padding="-8 -8 -5 -6"
-                                       IconStrokeThickness="1"
-                                       Command="{Binding Path=$parent[views:StartupView].((vm:IStartupViewModel)DataContext).RemoveMonitoredProcessCommand, FallbackValue={}}"
-                                       CommandParameter="{Binding}" />
+                <c:IconedButton IconGeometry="{StaticResource EditIcon}"
+                                IconFill="{DynamicResource OkBrush}"
+                                IconStroke="{DynamicResource OkBrush}"
+                                IconStrokeThickness="1"
+                                Command="{Binding Path=$parent[views:StartupView].((vm:IStartupViewModel)DataContext).EditMonitoredProcessCommand, FallbackValue={}}"
+                                CommandParameter="{Binding}" />
+                <c:IconedButton IconGeometry="{StaticResource RemoveIcon}"
+                                IconFill="{DynamicResource CancelBrush}"
+                                IconStroke="{DynamicResource CancelBrush}"
+                                IconRenderTransform="scale(0.4)"
+                                Padding="-8 -8 -5 -6"
+                                IconStrokeThickness="1"
+                                Command="{Binding Path=$parent[views:StartupView].((vm:IStartupViewModel)DataContext).RemoveMonitoredProcessCommand, FallbackValue={}}"
+                                CommandParameter="{Binding}" />
               </StackPanel>
             </DataTemplate>
           </DataGridTemplateColumn.CellTemplate>
@@ -160,23 +160,23 @@
     <StackPanel Grid.Row="2" HorizontalAlignment="Center"
                 Orientation="Horizontal" Spacing="10">
 
-      <controls:IconedButton HorizontalAlignment="Left"
-                             Content="Add new..." IconFill="{DynamicResource OkBrush}"
-                             IconMargin="3" Padding="0 1.6 6 0"
-                             IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
-                             IconGeometry="{StaticResource AddRegularIcon}" IconRenderTransform="scale(0.7)"
-                             IconRenderTransformOrigin="50%,40%"
-                             Command="{Binding AddMonitoredProcessCommand}" />
+      <c:IconedButton HorizontalAlignment="Left"
+                      Content="Add new..." IconFill="{DynamicResource OkBrush}"
+                      IconMargin="3" Padding="0 1.6 6 0"
+                      IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
+                      IconGeometry="{StaticResource AddRegularIcon}" IconRenderTransform="scale(0.7)"
+                      IconRenderTransformOrigin="50%,40%"
+                      Command="{Binding AddMonitoredProcessCommand}" />
 
-      <controls:IconedButton HorizontalAlignment="Left"
-                             Content="Remove" IconFill="{DynamicResource CancelBrush}"
-                             IconMargin="-6" Padding="0 1 6 0"
-                             IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
-                             IconGeometry="{StaticResource RemoveIcon}" IconRenderTransform="scale(0.5)"
-                             IconRenderTransformOrigin="50%,40%"
-                             Command="{Binding RemoveMonitoredProcessCommand}"
-                             x:Name="RemoveMonitoredProcessButton">
-        <controls:IconedButton.IsVisible>
+      <c:IconedButton HorizontalAlignment="Left"
+                      Content="Remove" IconFill="{DynamicResource CancelBrush}"
+                      IconMargin="-6" Padding="0 1 6 0"
+                      IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
+                      IconGeometry="{StaticResource RemoveIcon}" IconRenderTransform="scale(0.5)"
+                      IconRenderTransformOrigin="50%,40%"
+                      Command="{Binding RemoveMonitoredProcessCommand}"
+                      x:Name="RemoveMonitoredProcessButton">
+        <c:IconedButton.IsVisible>
           <MultiBinding Converter="{x:Static BoolConverters.And}">
             <Binding Path="UseOldSchoolAddEditStyle" />
             <MultiBinding Converter="{x:Static cv:ArithmeticConverters.FirstLessThanSecond}">
@@ -188,32 +188,32 @@
               </Binding>
             </MultiBinding>
           </MultiBinding>
-        </controls:IconedButton.IsVisible>
-      </controls:IconedButton>
+        </c:IconedButton.IsVisible>
+      </c:IconedButton>
 
-      <controls:IconedButton HorizontalAlignment="Left"
-                             Content="Remove all selected" IconFill="{DynamicResource CancelBrush}"
-                             IconMargin="-6" Padding="0 1 6 0"
-                             IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
-                             IconGeometry="{StaticResource RemoveIcon}" IconRenderTransform="scale(0.5)"
-                             IconRenderTransformOrigin="50%,40%"
-                             Command="{Binding RemoveAllSelectedMonitoredProcessesCommand}">
-        <controls:IconedButton.IsVisible>
+      <c:IconedButton HorizontalAlignment="Left"
+                      Content="Remove all selected" IconFill="{DynamicResource CancelBrush}"
+                      IconMargin="-6" Padding="0 1 6 0"
+                      IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
+                      IconGeometry="{StaticResource RemoveIcon}" IconRenderTransform="scale(0.5)"
+                      IconRenderTransformOrigin="50%,40%"
+                      Command="{Binding RemoveAllSelectedMonitoredProcessesCommand}">
+        <c:IconedButton.IsVisible>
           <MultiBinding Converter="{x:Static BoolConverters.And}">
             <Binding Path="UseOldSchoolAddEditStyle" />
             <Binding Path="!#RemoveMonitoredProcessButton.IsVisible" />
           </MultiBinding>
-        </controls:IconedButton.IsVisible>
-      </controls:IconedButton>
+        </c:IconedButton.IsVisible>
+      </c:IconedButton>
 
-      <controls:IconedButton HorizontalAlignment="Left"
-                             IsVisible="{Binding UseOldSchoolAddEditStyle}"
-                             Content="Edit" IconFill="{DynamicResource OkBrush}"
-                             IconMargin="1" Padding="0 1.2 6 0"
-                             IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
-                             IconGeometry="{StaticResource EditIcon}" IconRenderTransform="scale(0.5)"
-                             IconRenderTransformOrigin="50%,40%"
-                             Command="{Binding EditMonitoredProcessCommand}" />
+      <c:IconedButton HorizontalAlignment="Left"
+                      IsVisible="{Binding UseOldSchoolAddEditStyle}"
+                      Content="Edit" IconFill="{DynamicResource OkBrush}"
+                      IconMargin="1" Padding="0 1.2 6 0"
+                      IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
+                      IconGeometry="{StaticResource EditIcon}" IconRenderTransform="scale(0.5)"
+                      IconRenderTransformOrigin="50%,40%"
+                      Command="{Binding EditMonitoredProcessCommand}" />
     </StackPanel>
   </Grid>
 
