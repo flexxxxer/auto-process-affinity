@@ -22,6 +22,9 @@ public static class ExtensionMethods
 
   public static T CastTo<T>(this object obj)
     => (T)obj;
+  
+  public static T? TryCastTo<T>(this object obj)
+    => obj is T ? default : (T)obj;
 
   public static bool IsNullOrWhiteSpace(this string str) => string.IsNullOrWhiteSpace(str);
 

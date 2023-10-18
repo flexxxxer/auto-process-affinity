@@ -27,8 +27,6 @@ using DynamicData;
 
 using Splat;
 
-using Microsoft.Extensions.Options;
-
 namespace UI.ViewModels;
 
 public interface IStartupViewModel
@@ -114,7 +112,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   async Task Refresh()
   {
     static MonitoredProcess.StateType TrySetAffinity(Process p, long affinity)
-      => ProcessApi.TrySetProcessorAffinity(p, (nint)affinity)
+      => p.TrySetProcessorAffinity((nint)affinity)
           ? MonitoredProcess.StateType.AffinityApplied
           : MonitoredProcess.StateType.AffinityCantBeSet;
 
@@ -162,20 +160,14 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
       .GetRequiredService<AddProcessViewModel>()
       .RouteThrought(HostScreen);
 
-    var configuredProcess = await addProcessVm.Result;
-
-    if (configuredProcess is not null)
+    if (await addProcessVm.Result is { } configuredProcess)
     {
       Processes.Add(MonitoredProcess.CreateFrom(configuredProcess));
-
-      await _appSettingService.MakeChangeAsync(previousSettings =>
+      await _appSettingService.MakeChangeAsync(previousSettings => previousSettings with
       {
-        return previousSettings with
-        {
-          ConfiguredProcesses = previousSettings.ConfiguredProcesses
-            .Append(configuredProcess)
-            .ToArray()
-        };
+        ConfiguredProcesses = previousSettings.ConfiguredProcesses
+          .Append(configuredProcess)
+          .ToArray()
       });
     }
   }
@@ -186,7 +178,6 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     if (p is not null)
     {
       Processes.Remove(p);
-
       await _appSettingService.MakeChangeAsync(previousSettings =>
       {
         var removedProcessName = p.Name;
@@ -203,27 +194,24 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   [RelayCommand]
   async Task EditMonitoredProcess(MonitoredProcess? p)
   {
-    if (p is not null)
+    var configuredProcessToEdit = _appSettings
+      .ConfiguredProcesses
+      .FirstOrDefault(cp => cp.Name == p?.Name);
+    
+    if (p is not null && configuredProcessToEdit is not null)
     {
       var addProcessVm = Locator.Current
         .GetRequiredService<AddProcessViewModel>()
-        .Do(vm => vm.ToEdit = _appSettings
-          .ConfiguredProcesses
-          .FirstOrDefault(cp => cp.Name == p.Name));
+        .Do(vm => vm.ToEdit = configuredProcessToEdit);
 
       var processesVm = await addProcessVm.RouteThrought(HostScreen);
-      var configuredProcess = await processesVm.Result;
-
-      if (configuredProcess is not null)
+      if (await processesVm.Result is { } configuredProcess)
       {
-        await _appSettingService.MakeChangeAsync(previousSettings =>
+        await _appSettingService.MakeChangeAsync(previousSettings => previousSettings with
         {
-          return previousSettings with
-          {
-            ConfiguredProcesses = previousSettings.ConfiguredProcesses
-              .Select(cp => cp.Name == configuredProcess.Name ? configuredProcess : cp)
-              .ToArray()
-          };
+          ConfiguredProcesses = previousSettings.ConfiguredProcesses
+            .Select(cp => cp.Name == configuredProcess.Name ? configuredProcess : cp)
+            .ToArray()
         });
       }
     }
@@ -238,7 +226,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   [RelayCommand]
   void Exit() => Application.Current
     ?.ApplicationLifetime
-    ?.CastTo<IClassicDesktopStyleApplicationLifetime>()
+    ?.TryCastTo<IClassicDesktopStyleApplicationLifetime>()
     ?.Shutdown();
 }
 
