@@ -1,241 +1,238 @@
-
-
-
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:UI.ViewModels"
-						 xmlns:controls="clr-namespace:UI.Controls"
-						 xmlns:cv="clr-namespace:UI.Converters"
-						 xmlns:domain="clr-namespace:Domain.Infrastructure;assembly=Domain"
+             xmlns:controls="clr-namespace:UI.Controls"
+             xmlns:cv="clr-namespace:UI.Converters"
+             xmlns:domain="clr-namespace:Domain.Infrastructure;assembly=Domain"
 
-						 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="800"
              x:Class="UI.Views.SettingsView"
-						 x:DataType="vm:ISettingsViewModel">
-	
-	<Design.DataContext>
-		<vm:DesignSettingsViewModel/>
-	</Design.DataContext>
+             x:DataType="vm:ISettingsViewModel">
 
-	<Grid RowDefinitions="*,Auto">
-		<ScrollViewer Grid.Row="0" AllowAutoHide="True">
-			<StackPanel Spacing="15">
-				
-				<!-- general -->
-				<Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
-					<Expander.Header>
-						<TextBlock Classes="h1" Text="General"/>
-					</Expander.Header>
-					<StackPanel Spacing="5">
-						<StackPanel>
-							<TextBlock Classes="h2" Text="Processes update rate"/>
-							<TextBlock Classes="info"
-												 Text="How often the status of processes and the processes themselves will be updated in the system, specified in seconds"/>
-							<NumericUpDown HorizontalAlignment="Left" MinWidth="250"
-														 Watermark="Time period, in seconds"
-														 FormatString="0 seconds"
-														 Minimum="0" Maximum="86400" Increment="1"
-														 Value="{Binding ProcessesUpdateRateInSeconds}"
-														 Margin="5"/>
-						</StackPanel>
-					</StackPanel>
-				</Expander>
-				
-				
-				<!-- ui -->
-				<Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
-					<Expander.Header>
-						<TextBlock Classes="h1" Text="UI"/>
-					</Expander.Header>
-					<StackPanel Spacing="5">
-						<StackPanel Orientation="Horizontal" Spacing="15">
-							<StackPanel>
-								<TextBlock Classes="h2" Text="App theme"/>
-								<ComboBox ItemsSource="{Binding AppThemes}"
-								          SelectedItem="{Binding Theme}"
-								          Margin="5">
-									<ComboBox.ItemTemplate>
-										<DataTemplate>
-											<TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}"/>
-										</DataTemplate>
-									</ComboBox.ItemTemplate>
-								</ComboBox>
-							</StackPanel>
-							<StackPanel>
-								<StackPanel.IsVisible>
-									<MultiBinding Converter="{x:Static BoolConverters.Or}">
-										<MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
-											<Binding Path="Theme"/>
-											<Binding Source="{x:Static domain:AppTheme.Dark}"/>
-										</MultiBinding>
-										<MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
-											<Binding Path="Theme"/>
-											<Binding Source="{x:Static domain:AppTheme.System}"/>
-										</MultiBinding>
-									</MultiBinding>
-								</StackPanel.IsVisible>
-								<TextBlock Classes="h2" Text="Dark theme variant"/>
-								<ComboBox ItemsSource="{Binding DarkThemeVariants}"
-								          SelectedItem="{Binding DarkThemeVariant}"
-								          Margin="5">
-									<ComboBox.ItemTemplate>
-										<DataTemplate>
-											<TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}"/>
-										</DataTemplate>
-									</ComboBox.ItemTemplate>
-								</ComboBox>
-							</StackPanel>
-						</StackPanel>
-						
-						<StackPanel>
-							<TextBlock Classes="h2" Text="Show system title bar"/>
-							<TextBlock Classes="info"
-							           Text="Indicates whether a system or custom title bar will be used."/>
-							<ToggleSwitch OnContent="On"
-							              OffContent="Off"
-							              IsChecked="{Binding ShowSystemTitleBar}"
-							              Margin="5"/>
-						</StackPanel>
-					</StackPanel>
-				</Expander>
-				
-				<!-- ux -->
-				<Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
-					<Expander.Header>
-						<TextBlock Classes="h1" Text="UX"/>
-					</Expander.Header>
-					<StackPanel Spacing="5">
-						<StackPanel>
-							<TextBlock Classes="h2" Text="Use old-school add/edit style"/>
-							<TextBlock Classes="info"
-												 Text="Instead of using a column of buttons in the table, separate buttons for editing and deleting will be available (usually at the bottom of the application window)."/>
-							<ToggleSwitch OnContent="On"
-														OffContent="Off"
-														IsChecked="{Binding UseOldSchoolAddEditStyle}"
-														Margin="5"/>
-						</StackPanel>
-						<StackPanel>
-							<TextBlock Classes="h2" Text="Hide process description"/>
-							<TextBlock Classes="info"
-												 Text="Process description column will be hidden in the process selection view."/>
-							<ToggleSwitch OnContent="On"
-														OffContent="Off"
-														IsChecked="{Binding HideProcessDescription}"
-														Margin="5"/>
-						</StackPanel>
-						<StackPanel>
-							<TextBlock Classes="h2" Text="Hide in tray instead of closing"/>
-							<TextBlock Classes="info"
-												 Text="The application will minimise to tray instead of closing if the close window button is pressed."/>
-							<ToggleSwitch OnContent="On"
-														OffContent="Off"
-														IsChecked="{Binding HideInTrayInsteadOfClosing}"
-														Margin="5"/>
-						</StackPanel>
-					</StackPanel>
-				</Expander>
-				
-				<!-- startup -->
-				<Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
-					<Expander.Header>
-						<TextBlock Classes="h1" Text="Startup"/>
-					</Expander.Header>
-					<StackPanel Spacing="5">
-						<StackPanel>
-							<TextBlock Classes="h2" Text="Load on system startup"/>
-							<TextBlock Classes="info"
-												 Text="The application will be started at system startup."/>
-							<ToggleSwitch OnContent="On"
-														OffContent="Off"
-														IsChecked="{Binding LoadOnSystemStartup}"
-														Margin="5"/>
-						</StackPanel>
-						<StackPanel>
-							<TextBlock Classes="h2" Text="Minimized"/>
-							<TextBlock Classes="info"
-												 Text="The application will run in a minimised state."/>
-							<ToggleSwitch OnContent="On"
-														OffContent="Off"
-														IsChecked="{Binding RunMinimized}"
-														Margin="5"/>
-						</StackPanel>
-						<StackPanel>
-							<TextBlock Classes="h2" Text="Startup location mode"/>
-							<TextBlock Classes="info"
-												 Text="Specifying the application location mode at startup."/>
-							<StackPanel Orientation="Horizontal" Spacing="10" Margin="5">
-								<ComboBox ItemsSource="{Binding StartupLocationModes}"
-													SelectedItem="{Binding StartupLocationMode}">
-									<ComboBox.ItemTemplate>
-										<DataTemplate>
-											<TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}"/>
-										</DataTemplate>
-									</ComboBox.ItemTemplate>
-								</ComboBox>
-							</StackPanel>
-						</StackPanel>
-						<StackPanel>
-							<TextBlock Classes="h2" Text="Startup size mode"/>
-							<TextBlock Classes="info"
-												 Text="Specifying the application size mode at startup."/>
-							<StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
-								<ComboBox ItemsSource="{Binding StartupSizeModes}"
-													SelectedItem="{Binding StartupSizeMode}">
-									<ComboBox.ItemTemplate>
-										<DataTemplate>
-											<TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}"/>
-										</DataTemplate>
-									</ComboBox.ItemTemplate>
-								</ComboBox>
-								<StackPanel Orientation="Horizontal" Spacing="5">
-									<StackPanel.IsVisible>
-										<MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
-											<Binding Path="StartupSizeMode"/>
-											<Binding Source="{x:Static domain:StartupSizeMode.Specified}"/>
-										</MultiBinding>
-									</StackPanel.IsVisible>
-									<NumericUpDown Watermark="Width" MinWidth="80" ShowButtonSpinner="False"
-									               Value="{Binding StartupWindowWidth}"
-																 Increment="0.2"
-																 Minimum="300"/>
-									<NumericUpDown Watermark="Height" MinWidth="80" ShowButtonSpinner="False"
-									               Value="{Binding StartupWindowHeight}"
-																 Increment="0.2"
-																 Minimum="250"/>
-								</StackPanel>
-							</StackPanel>
-						</StackPanel>
-						<StackPanel>
-							<TextBlock Classes="h2" Text="Run with administrator or root privileges"/>
-							<ToggleSwitch OnContent="On"
-														OffContent="Off"
-														IsChecked="{Binding RunWithAdministratorOrRootPrivileges}"
-														Margin="5"/>
-						</StackPanel>
-					</StackPanel>
-				</Expander>
+  <Design.DataContext>
+    <vm:DesignSettingsViewModel />
+  </Design.DataContext>
 
-				<!-- reset -->
-				<StackPanel Margin="15 0 0 0">
-					<TextBlock Classes="h2" Text="Reset settings"/>
-					<TextBlock Classes="info"
-										 Text="Hold this button 3 seconds to reset config to defaults."/>
-					<Button Content="Reset settings" Margin="5"/>
-				</StackPanel>
-				
-			</StackPanel>
-		</ScrollViewer>
+  <Grid RowDefinitions="*,Auto">
+    <ScrollViewer Grid.Row="0" AllowAutoHide="True">
+      <StackPanel Spacing="15">
 
-		<Grid Grid.Row="1" HorizontalAlignment="Stretch">
-			<controls:IconedButton HorizontalAlignment="Center"
-														 IconMargin="3" Padding="0 1.6 6 0"
-														 IconRenderTransformOrigin="50%,40%"
+        <!-- general -->
+        <Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
+          <Expander.Header>
+            <TextBlock Classes="h1" Text="General" />
+          </Expander.Header>
+          <StackPanel Spacing="5">
+            <StackPanel>
+              <TextBlock Classes="h2" Text="Processes update rate" />
+              <TextBlock Classes="info"
+                         Text="How often the status of processes and the processes themselves will be updated in the system, specified in seconds" />
+              <NumericUpDown HorizontalAlignment="Left" MinWidth="250"
+                             Watermark="Time period, in seconds"
+                             FormatString="0 seconds"
+                             Minimum="0" Maximum="86400" Increment="1"
+                             Value="{Binding ProcessesUpdateRateInSeconds}"
+                             Margin="5" />
+            </StackPanel>
+          </StackPanel>
+        </Expander>
+
+
+        <!-- ui -->
+        <Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
+          <Expander.Header>
+            <TextBlock Classes="h1" Text="UI" />
+          </Expander.Header>
+          <StackPanel Spacing="5">
+            <StackPanel Orientation="Horizontal" Spacing="15">
+              <StackPanel>
+                <TextBlock Classes="h2" Text="App theme" />
+                <ComboBox ItemsSource="{Binding AppThemes}"
+                          SelectedItem="{Binding Theme}"
+                          Margin="5">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </StackPanel>
+              <StackPanel>
+                <StackPanel.IsVisible>
+                  <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                    <MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
+                      <Binding Path="Theme" />
+                      <Binding Source="{x:Static domain:AppTheme.Dark}" />
+                    </MultiBinding>
+                    <MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
+                      <Binding Path="Theme" />
+                      <Binding Source="{x:Static domain:AppTheme.System}" />
+                    </MultiBinding>
+                  </MultiBinding>
+                </StackPanel.IsVisible>
+                <TextBlock Classes="h2" Text="Dark theme variant" />
+                <ComboBox ItemsSource="{Binding DarkThemeVariants}"
+                          SelectedItem="{Binding DarkThemeVariant}"
+                          Margin="5">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </StackPanel>
+            </StackPanel>
+
+            <StackPanel>
+              <TextBlock Classes="h2" Text="Show system title bar" />
+              <TextBlock Classes="info"
+                         Text="Indicates whether a system or custom title bar will be used." />
+              <ToggleSwitch OnContent="On"
+                            OffContent="Off"
+                            IsChecked="{Binding ShowSystemTitleBar}"
+                            Margin="5" />
+            </StackPanel>
+          </StackPanel>
+        </Expander>
+
+        <!-- ux -->
+        <Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
+          <Expander.Header>
+            <TextBlock Classes="h1" Text="UX" />
+          </Expander.Header>
+          <StackPanel Spacing="5">
+            <StackPanel>
+              <TextBlock Classes="h2" Text="Use old-school add/edit style" />
+              <TextBlock Classes="info"
+                         Text="Instead of using a column of buttons in the table, separate buttons for editing and deleting will be available (usually at the bottom of the application window)." />
+              <ToggleSwitch OnContent="On"
+                            OffContent="Off"
+                            IsChecked="{Binding UseOldSchoolAddEditStyle}"
+                            Margin="5" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="h2" Text="Hide process description" />
+              <TextBlock Classes="info"
+                         Text="Process description column will be hidden in the process selection view." />
+              <ToggleSwitch OnContent="On"
+                            OffContent="Off"
+                            IsChecked="{Binding HideProcessDescription}"
+                            Margin="5" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="h2" Text="Hide in tray instead of closing" />
+              <TextBlock Classes="info"
+                         Text="The application will minimise to tray instead of closing if the close window button is pressed." />
+              <ToggleSwitch OnContent="On"
+                            OffContent="Off"
+                            IsChecked="{Binding HideInTrayInsteadOfClosing}"
+                            Margin="5" />
+            </StackPanel>
+          </StackPanel>
+        </Expander>
+
+        <!-- startup -->
+        <Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
+          <Expander.Header>
+            <TextBlock Classes="h1" Text="Startup" />
+          </Expander.Header>
+          <StackPanel Spacing="5">
+            <StackPanel>
+              <TextBlock Classes="h2" Text="Load on system startup" />
+              <TextBlock Classes="info"
+                         Text="The application will be started at system startup." />
+              <ToggleSwitch OnContent="On"
+                            OffContent="Off"
+                            IsChecked="{Binding LoadOnSystemStartup}"
+                            Margin="5" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="h2" Text="Minimized" />
+              <TextBlock Classes="info"
+                         Text="The application will run in a minimised state." />
+              <ToggleSwitch OnContent="On"
+                            OffContent="Off"
+                            IsChecked="{Binding RunMinimized}"
+                            Margin="5" />
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="h2" Text="Startup location mode" />
+              <TextBlock Classes="info"
+                         Text="Specifying the application location mode at startup." />
+              <StackPanel Orientation="Horizontal" Spacing="10" Margin="5">
+                <ComboBox ItemsSource="{Binding StartupLocationModes}"
+                          SelectedItem="{Binding StartupLocationMode}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="h2" Text="Startup size mode" />
+              <TextBlock Classes="info"
+                         Text="Specifying the application size mode at startup." />
+              <StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
+                <ComboBox ItemsSource="{Binding StartupSizeModes}"
+                          SelectedItem="{Binding StartupSizeMode}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                  <StackPanel.IsVisible>
+                    <MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
+                      <Binding Path="StartupSizeMode" />
+                      <Binding Source="{x:Static domain:StartupSizeMode.Specified}" />
+                    </MultiBinding>
+                  </StackPanel.IsVisible>
+                  <NumericUpDown Watermark="Width" MinWidth="80" ShowButtonSpinner="False"
+                                 Value="{Binding StartupWindowWidth}"
+                                 Increment="0.2"
+                                 Minimum="300" />
+                  <NumericUpDown Watermark="Height" MinWidth="80" ShowButtonSpinner="False"
+                                 Value="{Binding StartupWindowHeight}"
+                                 Increment="0.2"
+                                 Minimum="250" />
+                </StackPanel>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Classes="h2" Text="Run with administrator or root privileges" />
+              <ToggleSwitch OnContent="On"
+                            OffContent="Off"
+                            IsChecked="{Binding RunWithAdministratorOrRootPrivileges}"
+                            Margin="5" />
+            </StackPanel>
+          </StackPanel>
+        </Expander>
+
+        <!-- reset -->
+        <StackPanel Margin="15 0 0 0">
+          <TextBlock Classes="h2" Text="Reset settings" />
+          <TextBlock Classes="info"
+                     Text="Hold this button 3 seconds to reset config to defaults." />
+          <Button Content="Reset settings" Margin="5" />
+        </StackPanel>
+
+      </StackPanel>
+    </ScrollViewer>
+
+    <Grid Grid.Row="1" HorizontalAlignment="Stretch">
+      <controls:IconedButton HorizontalAlignment="Center"
+                             IconMargin="3" Padding="0 1.6 6 0"
+                             IconRenderTransformOrigin="50%,40%"
                              Content="Go back" IconFill="{DynamicResource NeutralBrush}"
                              IconStroke="{DynamicResource NeutralBrush}" IconStrokeThickness="1"
                              IconGeometry="{StaticResource ArrowLeftIcon}"
-													   Command="{Binding GoBackCommand}" HotKey="Escape"/>
-		</Grid>
-	</Grid>
-	
+                             Command="{Binding GoBackCommand}" HotKey="Escape" />
+    </Grid>
+  </Grid>
+
 </UserControl>
