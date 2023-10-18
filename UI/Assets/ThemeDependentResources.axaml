@@ -1,19 +1,19 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-	<ResourceDictionary.ThemeDictionaries>
-		<ResourceDictionary x:Key='Light'>
-			<SolidColorBrush x:Key='CancelBrush'>IndianRed</SolidColorBrush>
-			<SolidColorBrush x:Key='WaitingForBrush'>MediumPurple</SolidColorBrush>
-			<SolidColorBrush x:Key='NeutralBrush'>DimGray</SolidColorBrush>
-			<SolidColorBrush x:Key='OkBrush'>MediumSeaGreen</SolidColorBrush>
-		</ResourceDictionary>
-		<ResourceDictionary x:Key='Dark'>
-			<SolidColorBrush x:Key='CancelBrush'>Red</SolidColorBrush>
-			<SolidColorBrush x:Key='WaitingForBrush'>Purple</SolidColorBrush>
-			<SolidColorBrush x:Key='NeutralBrush'>White</SolidColorBrush>
-			<SolidColorBrush x:Key='OkBrush'>Aqua</SolidColorBrush>
-		</ResourceDictionary>
-	</ResourceDictionary.ThemeDictionaries>
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key='Light'>
+      <SolidColorBrush x:Key='CancelBrush'>IndianRed</SolidColorBrush>
+      <SolidColorBrush x:Key='WaitingForBrush'>MediumPurple</SolidColorBrush>
+      <SolidColorBrush x:Key='NeutralBrush'>DimGray</SolidColorBrush>
+      <SolidColorBrush x:Key='OkBrush'>MediumSeaGreen</SolidColorBrush>
+    </ResourceDictionary>
+    <ResourceDictionary x:Key='Dark'>
+      <SolidColorBrush x:Key='CancelBrush'>Red</SolidColorBrush>
+      <SolidColorBrush x:Key='WaitingForBrush'>Purple</SolidColorBrush>
+      <SolidColorBrush x:Key='NeutralBrush'>White</SolidColorBrush>
+      <SolidColorBrush x:Key='OkBrush'>Aqua</SolidColorBrush>
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
 
 </ResourceDictionary>
