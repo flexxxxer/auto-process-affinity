@@ -2,219 +2,219 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-						 xmlns:vm="clr-namespace:UI.ViewModels"
-						 xmlns:controls="clr-namespace:UI.Controls"
-						 xmlns:cv="clr-namespace:UI.Converters"
-						 xmlns:views="clr-namespace:UI.Views"
-						 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:vm="clr-namespace:UI.ViewModels"
+             xmlns:controls="clr-namespace:UI.Controls"
+             xmlns:cv="clr-namespace:UI.Converters"
+             xmlns:views="clr-namespace:UI.Views"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
 
-						 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
              x:Class="UI.Views.StartupView"
-						 x:DataType="vm:IStartupViewModel">
-	
-	<Design.DataContext>
-		<vm:DesignStartupViewModel/>
-	</Design.DataContext>
+             x:DataType="vm:IStartupViewModel">
 
-	<UserControl.Styles>
-		<Styles>
-			<Style Selector="Path[Tag=NotRunning]">
-				<Setter Property="Stroke" Value="{DynamicResource NeutralBrush}"/>
-				<Setter Property="Fill" Value="{DynamicResource NeutralBrush}"/>
-				<Setter Property="Data" Value="{StaticResource CircleIcon}"/>
-				<Setter Property="RenderTransform" Value="scale(1)"/>
-				<Setter Property="RenderTransformOrigin" Value="1,1"/>
-			</Style>
-			<Style Selector="Path[Tag=NotYetApplied]">
-				<Setter Property="Stroke" Value="{DynamicResource WaitingForBrush}"/>
-				<Setter Property="Fill" Value="{DynamicResource WaitingForBrush}"/>
-				<Setter Property="Data" Value="{StaticResource SyncCircleIcon}"/>
-				<Setter Property="RenderTransform" Value="scale(1)"/>
-				<Setter Property="RenderTransformOrigin" Value="1,1"/>
-			</Style>
-			<Style Selector="Path[Tag=AffinityCantBeSet]">
-				<Setter Property="Stroke" Value="{DynamicResource CancelBrush}"/>
-				<Setter Property="Fill" Value="{DynamicResource CancelBrush}"/>
-				<Setter Property="Data" Value="{StaticResource ErrorCircleIcon}"/>
-				<Setter Property="RenderTransform" Value="scale(1)"/>
-				<Setter Property="RenderTransformOrigin" Value="1,1"/>
-			</Style>
-			<Style Selector="Path[Tag=AffinityApplied]">
-				<Setter Property="Stroke" Value="{DynamicResource OkBrush}"/>
-				<Setter Property="Fill" Value="{DynamicResource OkBrush}"/>
-				<Setter Property="Data" Value="{StaticResource CheckmarkCircleIcon}"/>
-				<Setter Property="RenderTransform" Value="scale(0.5)"/>
-				<Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-			</Style>
-		</Styles>
-	</UserControl.Styles>
+  <Design.DataContext>
+    <vm:DesignStartupViewModel />
+  </Design.DataContext>
 
-	<Grid RowDefinitions="Auto,*,Auto">
+  <UserControl.Styles>
+    <Styles>
+      <Style Selector="Path[Tag=NotRunning]">
+        <Setter Property="Stroke" Value="{DynamicResource NeutralBrush}" />
+        <Setter Property="Fill" Value="{DynamicResource NeutralBrush}" />
+        <Setter Property="Data" Value="{StaticResource CircleIcon}" />
+        <Setter Property="RenderTransform" Value="scale(1)" />
+        <Setter Property="RenderTransformOrigin" Value="1,1" />
+      </Style>
+      <Style Selector="Path[Tag=NotYetApplied]">
+        <Setter Property="Stroke" Value="{DynamicResource WaitingForBrush}" />
+        <Setter Property="Fill" Value="{DynamicResource WaitingForBrush}" />
+        <Setter Property="Data" Value="{StaticResource SyncCircleIcon}" />
+        <Setter Property="RenderTransform" Value="scale(1)" />
+        <Setter Property="RenderTransformOrigin" Value="1,1" />
+      </Style>
+      <Style Selector="Path[Tag=AffinityCantBeSet]">
+        <Setter Property="Stroke" Value="{DynamicResource CancelBrush}" />
+        <Setter Property="Fill" Value="{DynamicResource CancelBrush}" />
+        <Setter Property="Data" Value="{StaticResource ErrorCircleIcon}" />
+        <Setter Property="RenderTransform" Value="scale(1)" />
+        <Setter Property="RenderTransformOrigin" Value="1,1" />
+      </Style>
+      <Style Selector="Path[Tag=AffinityApplied]">
+        <Setter Property="Stroke" Value="{DynamicResource OkBrush}" />
+        <Setter Property="Fill" Value="{DynamicResource OkBrush}" />
+        <Setter Property="Data" Value="{StaticResource CheckmarkCircleIcon}" />
+        <Setter Property="RenderTransform" Value="scale(0.5)" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+      </Style>
+    </Styles>
+  </UserControl.Styles>
 
-		<!-- hotkeys -->
-		<Grid IsVisible="False">
-			<Button HotKey="Escape" x:Name="ResetSelectionOnDataGrid"/>
-		</Grid>
-		
-		<DockPanel Grid.Row="0" x:Name="MenuDockPanel">
-			<Menu DockPanel.Dock="Top">
-				<MenuItem Header="_App">
-					<MenuItem Header="Export config to...">
-						<MenuItem.Icon>
-							<Path Data="{StaticResource ExportIcon}" Fill="{DynamicResource NeutralBrush}"/>
-						</MenuItem.Icon>
-						<MenuItem Header="File">
-							<MenuItem.Icon>
-								<Path Data="{StaticResource DocumentIcon}" Fill="{DynamicResource NeutralBrush}"/>
-							</MenuItem.Icon>
-						</MenuItem>
-						<MenuItem Header="Folder">
-							<MenuItem.Icon>
-								<Path Data="{StaticResource FolderRegular}" Fill="{DynamicResource NeutralBrush}"/>
-							</MenuItem.Icon>
-						</MenuItem>
-					</MenuItem>
-					<MenuItem Header="Import config from file">
-						<MenuItem.Icon>
-							<Path Data="{StaticResource ExportIcon}" Fill="{DynamicResource NeutralBrush}">
-								<Path.RenderTransform>
-									<RotateTransform Angle="180"/>
-								</Path.RenderTransform>
-							</Path>
-						</MenuItem.Icon>
-					</MenuItem>
-					<MenuItem Header="Settings" Command="{Binding GoToSettingsCommand}">
-						<MenuItem.Icon>
-							<Path Data="{StaticResource SettingsIcon}" Fill="{DynamicResource NeutralBrush}"/>
-						</MenuItem.Icon>
-					</MenuItem>
-					<MenuItem Header="Exit" Command="{Binding ExitCommand}">
-						<MenuItem.Icon>
-							<Path Data="{StaticResource ExitIcon}" Fill="{DynamicResource NeutralBrush}"/>
-						</MenuItem.Icon>
-					</MenuItem>
-				</MenuItem>
-				<MenuItem Header="A_bout"/>
-			</Menu>
-		</DockPanel>
-		
-		<DataGrid Grid.Row="1" CanUserResizeColumns="True"
-		          ItemsSource="{Binding Processes}"
-		          SelectionMode="{Binding UseOldSchoolAddEditStyle, 
+  <Grid RowDefinitions="Auto,*,Auto">
+
+    <!-- hotkeys -->
+    <Grid IsVisible="False">
+      <Button HotKey="Escape" x:Name="ResetSelectionOnDataGrid" />
+    </Grid>
+
+    <DockPanel Grid.Row="0" x:Name="MenuDockPanel">
+      <Menu DockPanel.Dock="Top">
+        <MenuItem Header="_App">
+          <MenuItem Header="Export config to...">
+            <MenuItem.Icon>
+              <Path Data="{StaticResource ExportIcon}" Fill="{DynamicResource NeutralBrush}" />
+            </MenuItem.Icon>
+            <MenuItem Header="File">
+              <MenuItem.Icon>
+                <Path Data="{StaticResource DocumentIcon}" Fill="{DynamicResource NeutralBrush}" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Folder">
+              <MenuItem.Icon>
+                <Path Data="{StaticResource FolderRegular}" Fill="{DynamicResource NeutralBrush}" />
+              </MenuItem.Icon>
+            </MenuItem>
+          </MenuItem>
+          <MenuItem Header="Import config from file">
+            <MenuItem.Icon>
+              <Path Data="{StaticResource ExportIcon}" Fill="{DynamicResource NeutralBrush}">
+                <Path.RenderTransform>
+                  <RotateTransform Angle="180" />
+                </Path.RenderTransform>
+              </Path>
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem Header="Settings" Command="{Binding GoToSettingsCommand}">
+            <MenuItem.Icon>
+              <Path Data="{StaticResource SettingsIcon}" Fill="{DynamicResource NeutralBrush}" />
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem Header="Exit" Command="{Binding ExitCommand}">
+            <MenuItem.Icon>
+              <Path Data="{StaticResource ExitIcon}" Fill="{DynamicResource NeutralBrush}" />
+            </MenuItem.Icon>
+          </MenuItem>
+        </MenuItem>
+        <MenuItem Header="A_bout" />
+      </Menu>
+    </DockPanel>
+
+    <DataGrid Grid.Row="1" CanUserResizeColumns="True"
+              ItemsSource="{Binding Processes}"
+              SelectionMode="{Binding UseOldSchoolAddEditStyle, 
 								Converter={x:Static cv:BoolToSelectionModeConverters.ToDataGridSelectionMode}}"
-		          x:Name="MonitoredProcessesDataGrid">
+              x:Name="MonitoredProcessesDataGrid">
 
-			<i:Interaction.Behaviors>
-				<ia:EventTriggerBehavior EventName="DoubleTapped">
-					<ia:InvokeCommandAction Command="{Binding EditMonitoredProcessCommand}"
-					                        CommandParameter="{Binding #MonitoredProcessesDataGrid.SelectedItem}"/>
-				</ia:EventTriggerBehavior>
-			</i:Interaction.Behaviors>
+      <i:Interaction.Behaviors>
+        <ia:EventTriggerBehavior EventName="DoubleTapped">
+          <ia:InvokeCommandAction Command="{Binding EditMonitoredProcessCommand}"
+                                  CommandParameter="{Binding #MonitoredProcessesDataGrid.SelectedItem}" />
+        </ia:EventTriggerBehavior>
+      </i:Interaction.Behaviors>
 
-			<DataGrid.Columns>
-				<DataGridTextColumn Header="Process name" Width="*"
-                            Binding="{Binding Name}" IsReadOnly="True"/>
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Process name" Width="*"
+                            Binding="{Binding Name}" IsReadOnly="True" />
 
-				<DataGridTemplateColumn Header="Affinity state" Width="Auto" 
-																IsReadOnly="True">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Grid>
-								<Path VerticalAlignment="Center" Margin="0 0 0 0"
-                      Height="20" Width="20" Tag="{Binding State}"/>
-								<Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-													 ToolTip.Tip="{Binding State}"
-													 Fill="Transparent"/>
-							</Grid>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
+        <DataGridTemplateColumn Header="Affinity state" Width="Auto"
+                                IsReadOnly="True">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Grid>
+                <Path VerticalAlignment="Center" Margin="0 0 0 0"
+                      Height="20" Width="20" Tag="{Binding State}" />
+                <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                           ToolTip.Tip="{Binding State}"
+                           Fill="Transparent" />
+              </Grid>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
 
-				<DataGridTemplateColumn Header="" Width="Auto" IsReadOnly="True"
-				                        IsVisible="{Binding !UseOldSchoolAddEditStyle}">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<StackPanel Orientation="Horizontal" Spacing="1">
-								<controls:IconedButton IconGeometry="{StaticResource EditIcon}"
+        <DataGridTemplateColumn Header="" Width="Auto" IsReadOnly="True"
+                                IsVisible="{Binding !UseOldSchoolAddEditStyle}">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal" Spacing="1">
+                <controls:IconedButton IconGeometry="{StaticResource EditIcon}"
                                        IconFill="{DynamicResource OkBrush}"
                                        IconStroke="{DynamicResource OkBrush}"
                                        IconStrokeThickness="1"
                                        Command="{Binding Path=$parent[views:StartupView].((vm:IStartupViewModel)DataContext).EditMonitoredProcessCommand, FallbackValue={}}"
-                                       CommandParameter="{Binding}"/>
-								<controls:IconedButton IconGeometry="{StaticResource RemoveIcon}"
+                                       CommandParameter="{Binding}" />
+                <controls:IconedButton IconGeometry="{StaticResource RemoveIcon}"
                                        IconFill="{DynamicResource CancelBrush}"
                                        IconStroke="{DynamicResource CancelBrush}"
                                        IconRenderTransform="scale(0.4)"
                                        Padding="-8 -8 -5 -6"
                                        IconStrokeThickness="1"
                                        Command="{Binding Path=$parent[views:StartupView].((vm:IStartupViewModel)DataContext).RemoveMonitoredProcessCommand, FallbackValue={}}"
-                                       CommandParameter="{Binding}"/>
-							</StackPanel>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-			</DataGrid.Columns>
-		</DataGrid>
-		 
-		<StackPanel Grid.Row="2" HorizontalAlignment="Center"
-								Orientation="Horizontal" Spacing="10">
+                                       CommandParameter="{Binding}" />
+              </StackPanel>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+      </DataGrid.Columns>
+    </DataGrid>
 
-			<controls:IconedButton HorizontalAlignment="Left"
+    <StackPanel Grid.Row="2" HorizontalAlignment="Center"
+                Orientation="Horizontal" Spacing="10">
+
+      <controls:IconedButton HorizontalAlignment="Left"
                              Content="Add new..." IconFill="{DynamicResource OkBrush}"
-														 IconMargin="3" Padding="0 1.6 6 0"
+                             IconMargin="3" Padding="0 1.6 6 0"
                              IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
                              IconGeometry="{StaticResource AddRegularIcon}" IconRenderTransform="scale(0.7)"
-														 IconRenderTransformOrigin="50%,40%"
-                             Command="{Binding AddMonitoredProcessCommand}"/>
+                             IconRenderTransformOrigin="50%,40%"
+                             Command="{Binding AddMonitoredProcessCommand}" />
 
-			<controls:IconedButton HorizontalAlignment="Left"
+      <controls:IconedButton HorizontalAlignment="Left"
                              Content="Remove" IconFill="{DynamicResource CancelBrush}"
-														 IconMargin="-6" Padding="0 1 6 0"
+                             IconMargin="-6" Padding="0 1 6 0"
                              IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
                              IconGeometry="{StaticResource RemoveIcon}" IconRenderTransform="scale(0.5)"
-														 IconRenderTransformOrigin="50%,40%"
+                             IconRenderTransformOrigin="50%,40%"
                              Command="{Binding RemoveMonitoredProcessCommand}"
                              x:Name="RemoveMonitoredProcessButton">
-				<controls:IconedButton.IsVisible>
-					<MultiBinding Converter="{x:Static BoolConverters.And}">
-						<Binding Path="UseOldSchoolAddEditStyle"/>
-						<MultiBinding Converter="{x:Static cv:ArithmeticConverters.FirstLessThanSecond}">
-							<Binding Path="SelectedProcesses.Count"/>
-							<Binding >
-								<Binding.Source>
-									<x:Int32>2</x:Int32>
-								</Binding.Source>
-							</Binding>
-						</MultiBinding>
-					</MultiBinding>
-				</controls:IconedButton.IsVisible>
-			</controls:IconedButton>
-			
-			<controls:IconedButton HorizontalAlignment="Left"
-			                       Content="Remove all selected" IconFill="{DynamicResource CancelBrush}"
-			                       IconMargin="-6" Padding="0 1 6 0"
-			                       IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
-			                       IconGeometry="{StaticResource RemoveIcon}" IconRenderTransform="scale(0.5)"
-			                       IconRenderTransformOrigin="50%,40%"
-			                       Command="{Binding RemoveAllSelectedMonitoredProcessesCommand}">
-				<controls:IconedButton.IsVisible>
-					<MultiBinding Converter="{x:Static BoolConverters.And}">
-						<Binding Path="UseOldSchoolAddEditStyle"/>
-						<Binding Path="!#RemoveMonitoredProcessButton.IsVisible"/>
-					</MultiBinding>
-				</controls:IconedButton.IsVisible>
-			</controls:IconedButton>
+        <controls:IconedButton.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <Binding Path="UseOldSchoolAddEditStyle" />
+            <MultiBinding Converter="{x:Static cv:ArithmeticConverters.FirstLessThanSecond}">
+              <Binding Path="SelectedProcesses.Count" />
+              <Binding>
+                <Binding.Source>
+                  <x:Int32>2</x:Int32>
+                </Binding.Source>
+              </Binding>
+            </MultiBinding>
+          </MultiBinding>
+        </controls:IconedButton.IsVisible>
+      </controls:IconedButton>
 
-			<controls:IconedButton HorizontalAlignment="Left"
-			                       IsVisible="{Binding UseOldSchoolAddEditStyle}"
+      <controls:IconedButton HorizontalAlignment="Left"
+                             Content="Remove all selected" IconFill="{DynamicResource CancelBrush}"
+                             IconMargin="-6" Padding="0 1 6 0"
+                             IconStroke="{DynamicResource CancelBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource RemoveIcon}" IconRenderTransform="scale(0.5)"
+                             IconRenderTransformOrigin="50%,40%"
+                             Command="{Binding RemoveAllSelectedMonitoredProcessesCommand}">
+        <controls:IconedButton.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <Binding Path="UseOldSchoolAddEditStyle" />
+            <Binding Path="!#RemoveMonitoredProcessButton.IsVisible" />
+          </MultiBinding>
+        </controls:IconedButton.IsVisible>
+      </controls:IconedButton>
+
+      <controls:IconedButton HorizontalAlignment="Left"
+                             IsVisible="{Binding UseOldSchoolAddEditStyle}"
                              Content="Edit" IconFill="{DynamicResource OkBrush}"
-													   IconMargin="1" Padding="0 1.2 6 0"
+                             IconMargin="1" Padding="0 1.2 6 0"
                              IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
                              IconGeometry="{StaticResource EditIcon}" IconRenderTransform="scale(0.5)"
-														 IconRenderTransformOrigin="50%,40%"
-                             Command="{Binding EditMonitoredProcessCommand}"/>
-		</StackPanel>
-	</Grid>
+                             IconRenderTransformOrigin="50%,40%"
+                             Command="{Binding EditMonitoredProcessCommand}" />
+    </StackPanel>
+  </Grid>
 
 </UserControl>
