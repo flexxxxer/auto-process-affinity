@@ -35,8 +35,13 @@ public interface ISettingsViewModel
   double? StartupWindowWidth { get; set; }
   double? StartupWindowHeight { get; set; }
   bool RunWithAdministratorOrRootPrivileges { get; set; }
+  bool ShowSystemTitleBar { get; set; }
+  AppTheme Theme { get; set; }
+  AppDarkThemeVariant DarkThemeVariant { get; set; }
   ReadOnlyObservableCollection<StartupLocationMode> StartupLocationModes { get; }
   ReadOnlyObservableCollection<StartupSizeMode> StartupSizeModes { get; }
+  ReadOnlyObservableCollection<AppTheme> AppThemes { get; }
+  ReadOnlyObservableCollection<AppDarkThemeVariant> DarkThemeVariants { get; }
 
   IRelayCommand GoBackCommand { get; }
 }
@@ -54,8 +59,13 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
   [ObservableProperty] double? _startupWindowWidth;
   [ObservableProperty] double? _startupWindowHeight;
   [ObservableProperty] bool _runWithAdministratorOrRootPrivileges;
+  [ObservableProperty] bool _showSystemTitleBar;
+  [ObservableProperty] AppTheme _theme;
+  [ObservableProperty] AppDarkThemeVariant _darkThemeVariant;
   [ObservableProperty] ReadOnlyObservableCollection<StartupLocationMode> _startupLocationModes;
   [ObservableProperty] ReadOnlyObservableCollection<StartupSizeMode> _startupSizeModes;
+  [ObservableProperty] ReadOnlyObservableCollection<AppTheme> _appThemes;
+  [ObservableProperty] ReadOnlyObservableCollection<AppDarkThemeVariant> _darkThemeVariants;
 
   readonly AppSettingChangeService _settingChangeService;
 
@@ -64,6 +74,8 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
     _settingChangeService = settingChangeService;
     StartupLocationModes = new(new(Enum.GetValues<StartupLocationMode>()));
     StartupSizeModes = new(new(Enum.GetValues<StartupSizeMode>()));
+    AppThemes = new(new(Enum.GetValues<AppTheme>()));
+    DarkThemeVariants = new(new(Enum.GetValues<AppDarkThemeVariant>()));
 
     FillFromAppSettings(settingChangeService.CurrentAppSettings);
     this.WhenActivated(d =>
@@ -88,6 +100,9 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
     StartupWindowWidth = appSettings.StartupOptions.StartupSize.Width;
     StartupWindowHeight = appSettings.StartupOptions.StartupSize.Height;
     RunWithAdministratorOrRootPrivileges = appSettings.SystemLevelStartupOptions.RunWithAdminOrRootPrivileges;
+    ShowSystemTitleBar = appSettings.UiOptions.ShowSystemTitleBar;
+    Theme = appSettings.UiOptions.Theme;
+    DarkThemeVariant = appSettings.UiOptions.DarkThemeVariant;
   }
 
   void UpdateAppSettings()
@@ -98,6 +113,12 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
         ? appSettings.RunningProcessesUpdatePeriod
         : TimeSpan.FromSeconds(notNull),
 
+      UiOptions = appSettings.UiOptions with
+      {
+        ShowSystemTitleBar = ShowSystemTitleBar,
+        Theme = Theme,
+        DarkThemeVariant = DarkThemeVariant,
+      },
       UxOptions = appSettings.UxOptions with
       {
         UseOldSchoolAddEditStyle = this.UseOldSchoolAddEditStyle,
@@ -145,13 +166,20 @@ public sealed partial class DesignSettingsViewModel : ViewModelBase, ISettingsVi
   [ObservableProperty] double? _startupWindowWidth;
   [ObservableProperty] double? _startupWindowHeight;
   [ObservableProperty] bool _runWithAdministratorOrRootPrivileges;
+  [ObservableProperty] bool _showSystemTitleBar;
+  [ObservableProperty] AppTheme _theme;
+  [ObservableProperty] AppDarkThemeVariant _darkThemeVariant;
   [ObservableProperty] ReadOnlyObservableCollection<StartupLocationMode> _startupLocationModes;
   [ObservableProperty] ReadOnlyObservableCollection<StartupSizeMode> _startupSizeModes;
+  [ObservableProperty] ReadOnlyObservableCollection<AppTheme> _appThemes;
+  [ObservableProperty] ReadOnlyObservableCollection<AppDarkThemeVariant> _darkThemeVariants;
 
   public DesignSettingsViewModel()
   {
     StartupLocationModes = new(new(Enum.GetValues<StartupLocationMode>()));
     StartupSizeModes = new(new(Enum.GetValues<StartupSizeMode>()));
+    AppThemes = new(new(Enum.GetValues<AppTheme>()));
+    DarkThemeVariants = new(new(Enum.GetValues<AppDarkThemeVariant>()));
     Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
   }
 
