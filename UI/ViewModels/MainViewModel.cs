@@ -4,7 +4,6 @@ using Domain.Infrastructure;
 using UI.DomainWrappers;
 
 using System;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
@@ -32,7 +31,7 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
     IOptions<AppSettings> appSettings) 
   {
     // ReSharper disable once AsyncVoidLambda
-    this.WhenActivated(async (CompositeDisposable d) =>
+    this.WhenActivated(async d =>
     {
       Router.CurrentViewModel
         .Where(vm => vm is not null)
@@ -75,9 +74,11 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
     static AppSettings ValidateStartupOptions(AppSettings appSettings)
     {
       static AppSettings ValidateIsNotNull(AppSettings appSettings)
-        => appSettings.StartupOptions is null
-          ? appSettings with { StartupOptions = StartupOptions.Default }
-          : appSettings;
+        => appSettings.StartupOptions switch
+        {
+          null => appSettings with { StartupOptions = StartupOptions.Default },
+          _ => appSettings
+        };
 
       static AppSettings ValidateStartupLocation(AppSettings appSettings)
       {
@@ -150,9 +151,11 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
     static AppSettings ValidateUiOptions(AppSettings appSettings)
     {
       static AppSettings ValidateIsNotNull(AppSettings appSettings)
-        => appSettings.UiOptions is null
-          ? appSettings with { UiOptions = UiOptions.Default }
-          : appSettings;
+        => appSettings.UiOptions switch
+        {
+          null => appSettings with { UiOptions = UiOptions.Default },
+          _ => appSettings
+        };
 
       static AppSettings ValidateTheme(AppSettings appSettings)
       {
