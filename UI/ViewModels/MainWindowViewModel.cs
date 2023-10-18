@@ -81,17 +81,19 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
       : WindowState.Normal;
 
     HandleAppSettingsChanged(appSettings.CurrentValue);
-    var handleAppSettingsChangedSpecial = ((Action<AppSettings>)HandleAppSettingsChanged)
-        .InvokeOn(RxApp.MainThreadScheduler)
-        .ThrottleInvokes(TimeSpan.FromSeconds(1));
 
     this.WhenActivated(async (CompositeDisposable d) =>
     {
-      appSettings
-        .OnChange(handleAppSettingsChangedSpecial)
-        ?.DisposeWith(d);
+      Observable
+        .FromEventPattern<AppSettings>(
+          h => appSettingsService.AppSettingsChanged += h,
+          h => appSettingsService.AppSettingsChanged -= h)
+        .Throttle(TimeSpan.FromSeconds(0.6))
+        .ObserveOn(RxApp.MainThreadScheduler)
+        .Subscribe(eventPattern => HandleAppSettingsChanged(eventPattern.EventArgs))
+        .DisposeWith(d);
 
-      if (locationValues is (var x, var y))
+      if (locationValues is var (x, y))
       {
         await Task.Yield(); // "wait" for full view activation (and interaction registrations)
         await SetWindowPosition.Handle(new(x, y));
