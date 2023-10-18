@@ -5,6 +5,6 @@ namespace UI.Converters;
 
 static class ObjectConverters
 {
-  public static IMultiValueConverter IsEquals
+  public static readonly IMultiValueConverter IsEquals
     = new FuncMultiValueConverter<object, bool>(objs => objs.Distinct().Count() is 1);
 }

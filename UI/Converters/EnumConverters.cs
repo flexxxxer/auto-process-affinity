@@ -6,6 +6,6 @@ namespace UI.Converters;
 
 static class EnumConverters
 {
-  public static IValueConverter AnyEnumToFriendlyString =
+  public static readonly IValueConverter AnyEnumToFriendlyString =
     new FuncValueConverter<Enum, string>(enumVal => enumVal?.ToFriendlyString() ?? string.Empty);
 }
