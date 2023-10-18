@@ -1,14 +1,16 @@
-﻿using UI.ViewModels;
+﻿using Domain;
+
+using UI.ViewModels;
 
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 
 using ReactiveUI;
-
 
 namespace UI.Views;
 
@@ -24,6 +26,9 @@ public partial class MainWindow : ReactiveWindow<IMainWindowViewModel>
         .WhereNotNull()
         .Subscribe(vm =>
         {
+          // can be bind in axaml after fix https://github.com/AvaloniaUI/Avalonia/issues/13300 
+          WindowState = vm.WindowState;
+
           vm.SetWindowPosition
             .RegisterHandler(interaction =>
             {

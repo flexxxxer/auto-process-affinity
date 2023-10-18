@@ -28,6 +28,8 @@ namespace UI.ViewModels;
 public interface IMainWindowViewModel : IScreen
 {
   PixelPoint WindowPosition { get; set; }
+
+  WindowState WindowState { get; }
   
   double WindowHeight { get; set; }
 
@@ -47,6 +49,7 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
   [ObservableProperty] string _windowTitleText = "";
   [ObservableProperty] PixelPoint _windowPosition;
   [ObservableProperty] WindowStartupLocation _windowStartupLocationMode;
+  [ObservableProperty] WindowState _windowState;
 
   public string DefaultWindowTitleText { get; }
 
@@ -73,6 +76,9 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
       StartupLocationMode.RememberLast => (TupleFrom(startupOptions.StartupLocation), WindowStartupLocation.Manual),
       StartupLocationMode.Default or _ => (null, WindowStartupLocation.Manual),
     };
+    WindowState = startupOptions.Minimized
+      ? WindowState.Minimized
+      : WindowState.Normal;
 
     HandleAppSettingsChanged(appSettings.CurrentValue);
     var handleAppSettingsChangedSpecial = ((Action<AppSettings>)HandleAppSettingsChanged)
@@ -213,6 +219,8 @@ public sealed class DesignMainWindowViewModel : ViewModelBase, IMainWindowViewMo
   public string WindowTitleText { get; } = Application.Current?.Name ?? "";
 
   public WindowStartupLocation WindowStartupLocationMode { get; } = WindowStartupLocation.Manual;
+
+  public WindowState WindowState { get; } = WindowState.Normal;
 
   public Interaction<PixelPoint, Unit> SetWindowPosition { get; } = new();
 
