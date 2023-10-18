@@ -40,6 +40,8 @@ public interface IStartupViewModel
   IAsyncRelayCommand AddMonitoredProcessCommand { get; }
 
   IAsyncRelayCommand<MonitoredProcess?> RemoveMonitoredProcessCommand { get; }
+  
+  IAsyncRelayCommand RemoveAllSelectedMonitoredProcessesCommand { get; }
 
   IAsyncRelayCommand<MonitoredProcess?> EditMonitoredProcessCommand { get; }
 
@@ -54,11 +56,13 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   
   [ObservableProperty] 
   [NotifyCanExecuteChangedFor(nameof(RemoveMonitoredProcessCommand))]
+  [NotifyCanExecuteChangedFor(nameof(RemoveAllSelectedMonitoredProcessesCommand))]
   [NotifyCanExecuteChangedFor(nameof(EditMonitoredProcessCommand))]
   bool _useOldSchoolAddEditStyle;
 
   [ObservableProperty] 
   [NotifyCanExecuteChangedFor(nameof(RemoveMonitoredProcessCommand))]
+  [NotifyCanExecuteChangedFor(nameof(RemoveAllSelectedMonitoredProcessesCommand))]
   [NotifyCanExecuteChangedFor(nameof(EditMonitoredProcessCommand))]
   ReadOnlyCollection<MonitoredProcess> _selectedProcesses = new(Array.Empty<MonitoredProcess>());
 
@@ -197,15 +201,35 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     if (p is not null)
     {
       Processes.Remove(p);
-      await _appSettingService.MakeChangeAsync(previousSettings =>
+      var removedProcessName = p.Name;
+      
+      await _appSettingService.MakeChangeAsync(previousSettings => previousSettings with
       {
-        var removedProcessName = p.Name;
-        return previousSettings with
-        {
-          ConfiguredProcesses = previousSettings.ConfiguredProcesses
-            .Where(cp => cp.Name != removedProcessName)
-            .ToArray()
-        };
+        ConfiguredProcesses = previousSettings.ConfiguredProcesses
+          .Where(cp => cp.Name != removedProcessName)
+          .ToArray()
+      });
+    }
+  }
+
+  bool CanRemoveAllSelectedMonitoredProcesses()
+    => UseOldSchoolAddEditStyle && SelectedProcesses.Count > 1;
+  
+  [RelayCommand(CanExecute = nameof(CanRemoveAllSelectedMonitoredProcesses))]
+  async Task RemoveAllSelectedMonitoredProcesses()
+  {
+    if (SelectedProcesses is { Count: > 1 } selectedProcesses)
+    {
+      Processes.RemoveMany(selectedProcesses);
+      var removedProcessesNames = selectedProcesses
+        .Select(x => x.Name)
+        .ToHashSet();
+      
+      await _appSettingService.MakeChangeAsync(previousSettings => previousSettings with
+      {
+        ConfiguredProcesses = previousSettings.ConfiguredProcesses
+          .Where(cp => !removedProcessesNames.Contains(cp.Name))
+          .ToArray()
       });
     }
   }
@@ -281,9 +305,12 @@ public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupView
     UseOldSchoolAddEditStyle = !UseOldSchoolAddEditStyle;
     return Task.CompletedTask;
   }
-
+  
   [RelayCommand]
   Task RemoveMonitoredProcess(MonitoredProcess? p) => Task.CompletedTask;
+  
+  [RelayCommand]
+  Task RemoveAllSelectedMonitoredProcesses() => Task.CompletedTask;
 
   [RelayCommand]
   Task EditMonitoredProcess(MonitoredProcess? p) => Task.CompletedTask;

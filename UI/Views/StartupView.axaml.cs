@@ -1,12 +1,12 @@
 using UI.ViewModels;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 
 using ReactiveUI;
@@ -37,6 +37,13 @@ public partial class StartupView : ReactiveUserControl<IStartupViewModel>
               .AsReadOnly())
             .DisposeWith(d);
         })
+        .DisposeWith(d);
+
+      Observable
+        .FromEventPattern<RoutedEventArgs>(
+          h => ResetSelectionOnDataGrid.Click += h,
+          h => ResetSelectionOnDataGrid.Click -= h)
+        .Subscribe(_ => MonitoredProcessesDataGrid.SelectedItem = null)
         .DisposeWith(d);
     });
   }
