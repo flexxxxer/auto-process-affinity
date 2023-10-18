@@ -153,7 +153,7 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
   {
     var vm = await Locator.Current
       .GetRequiredService<SelectCurrentlyRunnableProcessViewModel>()
-      .RouteThrought(HostScreen);
+      .RouteThrough(HostScreen);
 
     var selectedProcess = await vm.Result;
 

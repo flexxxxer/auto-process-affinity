@@ -56,7 +56,7 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
 
       _ = await Locator.Current
         .GetRequiredService<StartupViewModel>()
-        .RouteThrought(Router);
+        .RouteThrough(Router);
     });
   }
 

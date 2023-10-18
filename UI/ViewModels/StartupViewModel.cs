@@ -158,7 +158,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   {
     var addProcessVm = await Locator.Current
       .GetRequiredService<AddProcessViewModel>()
-      .RouteThrought(HostScreen);
+      .RouteThrough(HostScreen);
 
     if (await addProcessVm.Result is { } configuredProcess)
     {
@@ -204,7 +204,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
         .GetRequiredService<AddProcessViewModel>()
         .Do(vm => vm.ToEdit = configuredProcessToEdit);
 
-      var processesVm = await addProcessVm.RouteThrought(HostScreen);
+      var processesVm = await addProcessVm.RouteThrough(HostScreen);
       if (await processesVm.Result is { } configuredProcess)
       {
         await _appSettingService.MakeChangeAsync(previousSettings => previousSettings with
@@ -221,7 +221,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   async Task GoToSettings()
     => await Locator.Current
       .GetRequiredService<SettingsViewModel>()
-      .RouteThrought(HostScreen);
+      .RouteThrough(HostScreen);
 
   [RelayCommand]
   void Exit() => Application.Current
