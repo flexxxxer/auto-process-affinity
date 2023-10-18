@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Styling;
 
-using ReactiveUI;
 using ReactiveUI.ExtendedRouting;
 
 using CommunityToolkit.Mvvm.Input;
@@ -93,6 +92,7 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
     CustomAffinityModeValue = AffinityApi.BitmaskFrom(_affinityMode, _affinityValue).ToString("X");
   }
 
+  // ReSharper disable UnusedParameterInPartialMethod
   partial void OnIsEvenAffinityModeChosenChanged(bool value) => HandleAffinityModeChange();
 
   partial void OnIsFirstNAffinityModeChosenChanged(bool value) => HandleAffinityModeChange();
@@ -108,6 +108,7 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
   partial void OnLastNAffinityModeValueChanged(string value) => HandleAffinityModeChange();
 
   partial void OnCustomAffinityModeValueChanged(string value) => HandleAffinityModeChange();
+  // ReSharper restore UnusedParameterInPartialMethod
 
   partial void OnToEditChanged(ConfiguredProcess? value)
   {
@@ -191,7 +192,7 @@ public sealed partial class DesignAddProcessViewModel : ViewModelBase, IAddProce
   [ObservableProperty] string _firstNAffinityModeValue = "";
   [ObservableProperty] string _lastNAffinityModeValue = "";
   [ObservableProperty] string _customAffinityModeValue = "";
-  [ObservableProperty] ConfiguredProcess? _toEdit = null;
+  [ObservableProperty] ConfiguredProcess? _toEdit;
 
   public DesignAddProcessViewModel()
   {
