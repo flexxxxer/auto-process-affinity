@@ -95,10 +95,8 @@ public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActiva
         .FromEventPattern<AppSettings>(
           h => appSettingsService.AppSettingsChanged += h,
           h => appSettingsService.AppSettingsChanged -= h)
-        .Throttle(TimeSpan.FromSeconds(0.6))
         .ObserveOn(RxApp.MainThreadScheduler)
-        .Subscribe(eventPattern => HandleAppSettingsChanged(eventPattern.EventArgs))
-        .DisposeWith(d);
+        .Subscribe(eventPattern => HandleAppSettingsChanged(eventPattern.EventArgs));
 
       // must be after previous line
       Observable

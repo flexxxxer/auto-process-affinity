@@ -61,14 +61,13 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
 
   readonly AppSettingChangeService _settingChangeService;
 
-  public SettingsViewModel(AppSettingChangeService settingChangeService,
-    IOptionsSnapshot<AppSettings> appSettings) 
+  public SettingsViewModel(AppSettingChangeService settingChangeService) 
   {
     _settingChangeService = settingChangeService;
     StartupLocationModes = new(new(Enum.GetValues<StartupLocationMode>()));
     StartupSizeModes = new(new(Enum.GetValues<StartupSizeMode>()));
 
-    FillFromAppSettings(appSettings.Value);
+    FillFromAppSettings(settingChangeService.CurrentAppSettings);
     this.WhenActivated(d =>
     {
       this.WhenAnyPropertyChanged(Array.Empty<string>())

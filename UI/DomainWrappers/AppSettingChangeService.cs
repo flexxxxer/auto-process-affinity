@@ -27,8 +27,12 @@ public sealed class AppSettingChangeService
     _hostEnvironment = hostEnvironment;
     CurrentAppSettings = appSettings.CurrentValue;
 
+    var handleAppSettingsChangedSpecial = HandleAppSettingsChanged;
+    handleAppSettingsChangedSpecial = handleAppSettingsChangedSpecial
+      .ThrottleInvokes(TimeSpan.FromSeconds(0.6));
+    
     appSettings
-      .OnChange(HandleAppSettingsChanged)
+      .OnChange(handleAppSettingsChangedSpecial)
       ?.DisposeWith(App.Lifetime);
   }
   
