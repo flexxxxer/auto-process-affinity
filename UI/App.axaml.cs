@@ -32,8 +32,6 @@ public class App : Application
 {
   public static bool IsDesignMode => Design.IsDesignMode;
 
-  public static CompositeDisposable Lifetime { get; } = new();
-
   public override void Initialize()
   {
     AvaloniaXamlLoader.Load(this);
@@ -118,5 +116,5 @@ public class App : Application
   { }
   
   void HandleAppExit(object? _, ControlledApplicationLifetimeExitEventArgs args)
-    => Lifetime.Dispose();
+  { }
 }
