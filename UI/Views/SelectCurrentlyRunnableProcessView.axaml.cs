@@ -7,7 +7,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 
 using ReactiveUI;
@@ -20,28 +19,23 @@ public partial class SelectCurrentlyRunnableProcessView : ReactiveUserControl<IS
   {
     InitializeComponent();
 
-    this.WhenActivated((CompositeDisposable d) =>
+    this.WhenActivated(d =>
     {
       // make column with process name sorted but only
       // first time (on view opening)
+      // ReSharper disable once AsyncVoidLambda
       this.WhenAnyValue(v => v.ProcessesDataGrid.IsVisible)
-        .Where(visibility => visibility is true)
+        .Where(visible => visible)
         .Take(1)
         .Subscribe(async _ => 
         {
           await Task.Yield();
+          SearchTextBox.Focus();
           ProcessesDataGrid.Columns
             .Single(c => c.Tag is "ProcessNameColumn")
             .Sort(ListSortDirection.Ascending);
         })
         .DisposeWith(d);
     });
-  }
-
-  protected override void OnLoaded(RoutedEventArgs e)
-  {
-    base.OnLoaded(e);
-
-    SearchTextBox.Focus();
   }
 }

@@ -144,7 +144,7 @@ public sealed partial class DesignSelectCurrentlyRunnableProcessViewModel : View
   ISelectCurrentlyRunnableProcessViewModel
 {
   [ObservableProperty] string _searchText = "";
-  [ObservableProperty] bool _shouldDescriptionColumnBeHidden = false;
+  [ObservableProperty] bool _shouldDescriptionColumnBeHidden;
   [ObservableProperty] ReadOnlyObservableCollection<CurrentlyRunnedProcessDto> _currentlyRunningProcesses = new(new());
   [ObservableProperty] CurrentlyRunnedProcessDto? _selectedRunningProcess;
 

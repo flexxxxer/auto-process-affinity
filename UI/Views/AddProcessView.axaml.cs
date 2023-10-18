@@ -1,10 +1,10 @@
 using UI.ViewModels;
 
+using System.Linq;
+
+using Avalonia.Input;
 using Avalonia.ReactiveUI;
 using Avalonia.Interactivity;
-using Avalonia.Input;
-using System.Linq;
-using ReactiveUI;
 
 namespace UI.Views;
 

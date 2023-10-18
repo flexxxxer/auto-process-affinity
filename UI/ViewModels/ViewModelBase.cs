@@ -17,7 +17,7 @@ public abstract class ViewModelBase : ObservableObject, IReactiveObject
 
 public abstract class RoutableViewModelBase : ViewModelBase, IRoutableViewModel
 {
-  public string? UrlPathSegment => GetType().Name;
+  public string UrlPathSegment => GetType().Name;
 
   public IScreen HostScreen { get; init; } = Locator.Current.GetRequiredService<IScreen>();
 }

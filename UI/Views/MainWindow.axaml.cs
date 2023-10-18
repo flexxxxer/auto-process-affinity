@@ -1,11 +1,8 @@
-﻿using Domain;
-
-using UI.ViewModels;
+﻿using UI.ViewModels;
 
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
@@ -20,7 +17,7 @@ public partial class MainWindow : ReactiveWindow<IMainWindowViewModel>
   {
     InitializeComponent();
 
-    this.WhenActivated((CompositeDisposable d) =>
+    this.WhenActivated(d =>
     {
       this.WhenAnyValue(w => w.ViewModel)
         .WhereNotNull()
