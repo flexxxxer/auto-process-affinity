@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Text.Json;
-using System.Reactive.Disposables;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
