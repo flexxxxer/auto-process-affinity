@@ -1,9 +1,4 @@
-﻿using Domain;
-using Domain.Infrastructure;
-
-using UI.DomainWrappers;
-
-using System;
+﻿using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
@@ -15,8 +10,6 @@ using Avalonia.Styling;
 
 using Splat;
 
-using Microsoft.Extensions.Options;
-
 namespace UI.ViewModels;
 
 public interface IMainViewModel : IScreen
@@ -25,10 +18,9 @@ public interface IMainViewModel : IScreen
 
 public class MainViewModel : ActivatableViewModelBase, IMainViewModel
 {
-  public RoutingState Router { get; } = new RoutingState();
+  public RoutingState Router { get; } = new();
 
-  public MainViewModel(MainWindowViewModel mainWindowViewModel, AppSettingChangeService appSettingService,
-    IOptions<AppSettings> appSettings) 
+  public MainViewModel(MainWindowViewModel mainWindowViewModel) 
   {
     // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async d =>
@@ -57,7 +49,7 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
 
 public sealed class DesignMainViewModel : ViewModelBase, IMainViewModel
 {
-  public RoutingState Router { get; } = new RoutingState();
+  public RoutingState Router { get; } = new();
 
   public DesignMainViewModel()
   {
