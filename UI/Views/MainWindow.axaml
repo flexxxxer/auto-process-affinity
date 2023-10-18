@@ -4,23 +4,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:UI.ViewModels"
         xmlns:vs="clr-namespace:UI.Views"
-				mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-        
-				WindowStartupLocation="{Binding WindowStartupLocationMode}"
-				Height="{Binding WindowHeight, Mode=TwoWay}"
-				Width="{Binding WindowWidth, Mode=TwoWay}"
-				MinHeight="250" MinWidth="300"
-				
-				x:Class="UI.Views.MainWindow"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+
+        WindowStartupLocation="{Binding WindowStartupLocationMode}"
+        Height="{Binding WindowHeight, Mode=TwoWay}"
+        Width="{Binding WindowWidth, Mode=TwoWay}"
+        MinHeight="250" MinWidth="300"
+
+        x:Class="UI.Views.MainWindow"
         Icon="/Assets/app-logo.ico"
         Title="{Binding WindowTitleText}"
-				x:DataType="vm:IMainWindowViewModel">
+        x:DataType="vm:IMainWindowViewModel">
 
-	<Design.DataContext>
-		<vm:DesignMainWindowViewModel/>
-	</Design.DataContext>
-	
-	<Grid>
-		<vs:MainView />
-	</Grid>
+  <Design.DataContext>
+    <vm:DesignMainWindowViewModel />
+  </Design.DataContext>
+
+  <Grid>
+    <vs:MainView />
+  </Grid>
 </Window>
