@@ -48,7 +48,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
 {
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
 
-  IDisposable? _periodicUpdateStick = null;
+  IDisposable? _periodicUpdateStick;
   AppSettings _appSettings;
   readonly AppSettingChangeService _appSettingService;
 
@@ -58,7 +58,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     _appSettingService = appSettingsService;
 
     HandleAppSettingsChanged(_appSettings);
-    this.WhenActivated((CompositeDisposable d) =>
+    this.WhenActivated(d =>
     {
       Observable
         .FromEventPattern<AppSettings>(
@@ -82,7 +82,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     _appSettings = newAppSettings;
     _periodicUpdateStick?.Dispose();
     _periodicUpdateStick = RxApp.MainThreadScheduler
-      .SchedulePeriodic(null as object, newAppSettings.RunningProcessesUpdatePeriod, async _ => await Refresh());
+      .SchedulePeriodic(newAppSettings.RunningProcessesUpdatePeriod, () => Refresh().NoAwait());
 
     var configuredProcesses = newAppSettings.ConfiguredProcesses;
 
