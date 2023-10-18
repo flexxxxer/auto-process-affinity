@@ -33,7 +33,7 @@ public interface IStartupViewModel
 {
   ObservableCollection<MonitoredProcess> Processes { get; }
   
-  MonitoredProcess? SelectedMonitoredProcess { get; set; }
+  ReadOnlyCollection<MonitoredProcess> SelectedProcesses { get; set; }
   
   bool UseOldSchoolAddEditStyle { get; }
 
@@ -51,11 +51,16 @@ public interface IStartupViewModel
 public partial class StartupViewModel : RoutableAndActivatableViewModelBase, IStartupViewModel
 {
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
-  [ObservableProperty] bool _useOldSchoolAddEditStyle;
-  [ObservableProperty]
+  
+  [ObservableProperty] 
   [NotifyCanExecuteChangedFor(nameof(RemoveMonitoredProcessCommand))]
   [NotifyCanExecuteChangedFor(nameof(EditMonitoredProcessCommand))]
-  MonitoredProcess? _selectedMonitoredProcess;
+  bool _useOldSchoolAddEditStyle;
+
+  [ObservableProperty] 
+  [NotifyCanExecuteChangedFor(nameof(RemoveMonitoredProcessCommand))]
+  [NotifyCanExecuteChangedFor(nameof(EditMonitoredProcessCommand))]
+  ReadOnlyCollection<MonitoredProcess> _selectedProcesses = new(Array.Empty<MonitoredProcess>());
 
   IDisposable? _periodicUpdateStick;
   AppSettings _appSettings;
@@ -179,12 +184,15 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     }
   }
 
-  bool CanRemoveMonitoredProcess(MonitoredProcess? p) => (p ?? SelectedMonitoredProcess) is not null;
+  bool CanRemoveMonitoredProcess(MonitoredProcess? p)
+    => UseOldSchoolAddEditStyle
+      ? p is not null || SelectedProcesses is [_]
+      : SelectedProcesses is [_];
   
   [RelayCommand(CanExecute = nameof(CanRemoveMonitoredProcess))]
   async Task RemoveMonitoredProcess(MonitoredProcess? p)
   {
-    p ??= SelectedMonitoredProcess;
+    p ??= SelectedProcesses.FirstOrDefault();
     
     if (p is not null)
     {
@@ -202,12 +210,15 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     }
   }
 
-  bool CanEditMonitoredProcess(MonitoredProcess? p) => (p ?? SelectedMonitoredProcess) is not null;
+  bool CanEditMonitoredProcess(MonitoredProcess? p) 
+    => UseOldSchoolAddEditStyle
+      ? p is not null || SelectedProcesses is [_]
+      : SelectedProcesses is [_];
   
   [RelayCommand(CanExecute = nameof(CanEditMonitoredProcess))]
   async Task EditMonitoredProcess(MonitoredProcess? p)
   {
-    p ??= SelectedMonitoredProcess;
+    p ??= SelectedProcesses.FirstOrDefault();
     
     var configuredProcessToEdit = _appSettings
       .ConfiguredProcesses
@@ -248,7 +259,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
 public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupViewModel
 {
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
-  [ObservableProperty] MonitoredProcess? _selectedMonitoredProcess;
+  [ObservableProperty] ReadOnlyCollection<MonitoredProcess> _selectedProcesses = new(Array.Empty<MonitoredProcess>());
   [ObservableProperty] bool _useOldSchoolAddEditStyle;
   
   public DesignStartupViewModel()

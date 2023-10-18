@@ -94,8 +94,7 @@
 		</DockPanel>
 		
 		<DataGrid Grid.Row="1" CanUserResizeColumns="True"
-		          ItemsSource="{Binding Processes}" 
-		          SelectedItem="{Binding SelectedMonitoredProcess}"
+		          ItemsSource="{Binding Processes}"
 		          x:Name="MonitoredProcessesDataGrid">
 
 			<i:Interaction.Behaviors>
