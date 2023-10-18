@@ -41,7 +41,7 @@
 						</StackPanel>
 					</StackPanel>
 				</Expander>
-
+				
 				<!-- ux -->
 				<Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
 					<Expander.Header>
@@ -133,8 +133,7 @@
 								<StackPanel Orientation="Horizontal" Spacing="5">
 									<StackPanel.IsVisible>
 										<MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
-											<Binding RelativeSource="{RelativeSource DataContext}"
-											         Path="StartupSizeMode"/>
+											<Binding Path="StartupSizeMode"/>
 											<Binding Source="{x:Static domain:StartupSizeMode.Specified}"/>
 										</MultiBinding>
 									</StackPanel.IsVisible>
