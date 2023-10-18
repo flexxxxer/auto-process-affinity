@@ -43,7 +43,8 @@
 				                    Tag="ProcessNameColumn"/>
 				<DataGridTextColumn Header="Id" Binding="{Binding ProcessId}" Width="0.5*" IsReadOnly="True"/>
 				<DataGridTemplateColumn Header="Description" Width="*" IsReadOnly="True"
-																SortMemberPath="Description">
+																SortMemberPath="Description"
+																IsVisible="{Binding !ShouldDescriptionColumnBeHidden}">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center"

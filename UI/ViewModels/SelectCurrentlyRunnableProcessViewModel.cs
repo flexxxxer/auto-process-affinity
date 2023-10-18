@@ -27,6 +27,8 @@ public interface ISelectCurrentlyRunnableProcessViewModel
 {
   string SearchText { get; set; }
 
+  bool ShouldDescriptionColumnBeHidden { get; }
+
   CurrentlyRunnedProcessDto? SelectedRunningProcess { get; set; }
 
   ReadOnlyObservableCollection<CurrentlyRunnedProcessDto> CurrentlyRunningProcesses { get; }
@@ -40,6 +42,7 @@ public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActiva
   ISelectCurrentlyRunnableProcessViewModel
 {
   [ObservableProperty] string _searchText = "";
+  [ObservableProperty] bool _shouldDescriptionColumnBeHidden;
   [ObservableProperty] ReadOnlyObservableCollection<CurrentlyRunnedProcessDto> _currentlyRunningProcesses;
   readonly SourceList<CurrentlyRunnedProcessDto> _currentlyRunningProcessesSource = new();
 
@@ -50,7 +53,8 @@ public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActiva
   readonly TaskCompletionSource<CurrentlyRunnedProcessDto?> _resultSource = new();
   public Task<CurrentlyRunnedProcessDto?> Result => _resultSource.Task;
 
-  public SelectCurrentlyRunnableProcessViewModel(CurrentlyRunnableProcessesService processesService)
+  public SelectCurrentlyRunnableProcessViewModel(CurrentlyRunnableProcessesService processesService,
+    IOptionsMonitor<AppSettings> appSettings)
   {
     static Func<CurrentlyRunnedProcessDto, bool> BuildFilter(string? searchText)
         => string.IsNullOrWhiteSpace(searchText)
@@ -78,11 +82,20 @@ public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActiva
       .DisposeMany()
       .Subscribe(_ => { }, RxApp.DefaultExceptionHandler.OnNext);
 
+    HandleAppSettingsChanged(appSettings.CurrentValue);
+    var handleAppSettingsChangedSpecial = ((Action<AppSettings>)HandleAppSettingsChanged)
+      .InvokeOn(RxApp.MainThreadScheduler)
+      .ThrottleInvokes(TimeSpan.FromSeconds(1));
+
     // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async d =>
     {
       await processesService.InitAsync();
       _currentlyRunningProcessesSource.AddRange(processesService.CurrentlyRunningProcesses);
+
+      appSettings
+        .OnChange(handleAppSettingsChangedSpecial)
+        ?.DisposeWith(d);
 
       // must be after previous line
       Observable
@@ -94,6 +107,11 @@ public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActiva
       searchTextAction.DisposeWith(d);
       processesSourceObservable.DisposeWith(d);
     });
+  }
+
+  void HandleAppSettingsChanged(AppSettings newAppSettings)
+  {
+    ShouldDescriptionColumnBeHidden = newAppSettings.UxOptions.HideProcessDescriptionFromSelectingProcessView;
   }
 
   void HandleCurrentlyRunningProcessesChangeset(CurrentlyRunnableProcessesService.UpdateChangeset changeset)
@@ -123,6 +141,7 @@ public sealed partial class DesignSelectCurrentlyRunnableProcessViewModel : View
   ISelectCurrentlyRunnableProcessViewModel
 {
   [ObservableProperty] string _searchText = "";
+  [ObservableProperty] bool _shouldDescriptionColumnBeHidden = false;
   [ObservableProperty] ReadOnlyObservableCollection<CurrentlyRunnedProcessDto> _currentlyRunningProcesses = new(new());
   [ObservableProperty] CurrentlyRunnedProcessDto? _selectedRunningProcess;
 
