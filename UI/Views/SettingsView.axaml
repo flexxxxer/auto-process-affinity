@@ -42,6 +42,64 @@
 					</StackPanel>
 				</Expander>
 				
+				
+				<!-- ui -->
+				<Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
+					<Expander.Header>
+						<TextBlock Classes="h1" Text="UI"/>
+					</Expander.Header>
+					<StackPanel Spacing="5">
+						<StackPanel Orientation="Horizontal" Spacing="15">
+							<StackPanel>
+								<TextBlock Classes="h2" Text="App theme"/>
+								<ComboBox ItemsSource="{Binding AppThemes}"
+								          SelectedItem="{Binding Theme}"
+								          Margin="5">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}"/>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</StackPanel>
+							<StackPanel>
+								<StackPanel.IsVisible>
+									<MultiBinding Converter="{x:Static BoolConverters.Or}">
+										<MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
+											<Binding Path="Theme"/>
+											<Binding Source="{x:Static domain:AppTheme.Dark}"/>
+										</MultiBinding>
+										<MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
+											<Binding Path="Theme"/>
+											<Binding Source="{x:Static domain:AppTheme.System}"/>
+										</MultiBinding>
+									</MultiBinding>
+								</StackPanel.IsVisible>
+								<TextBlock Classes="h2" Text="Dark theme variant"/>
+								<ComboBox ItemsSource="{Binding DarkThemeVariants}"
+								          SelectedItem="{Binding DarkThemeVariant}"
+								          Margin="5">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}"/>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</StackPanel>
+						</StackPanel>
+						
+						<StackPanel>
+							<TextBlock Classes="h2" Text="Show system title bar"/>
+							<TextBlock Classes="info"
+							           Text="Indicates whether a system or custom title bar will be used."/>
+							<ToggleSwitch OnContent="On"
+							              OffContent="Off"
+							              IsChecked="{Binding ShowSystemTitleBar}"
+							              Margin="5"/>
+						</StackPanel>
+					</StackPanel>
+				</Expander>
+				
 				<!-- ux -->
 				<Expander ExpandDirection="Down" IsExpanded="True" HorizontalAlignment="Stretch">
 					<Expander.Header>
