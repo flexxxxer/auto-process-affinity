@@ -33,6 +33,8 @@ public interface IStartupViewModel
 {
   ObservableCollection<MonitoredProcess> Processes { get; }
   
+  MonitoredProcess? SelectedMonitoredProcess { get; set; }
+  
   bool UseOldSchoolAddEditStyle { get; }
 
   IAsyncRelayCommand AddMonitoredProcessCommand { get; }
@@ -50,6 +52,10 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
 {
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
   [ObservableProperty] bool _useOldSchoolAddEditStyle;
+  [ObservableProperty]
+  [NotifyCanExecuteChangedFor(nameof(RemoveMonitoredProcessCommand))]
+  [NotifyCanExecuteChangedFor(nameof(EditMonitoredProcessCommand))]
+  MonitoredProcess? _selectedMonitoredProcess;
 
   IDisposable? _periodicUpdateStick;
   AppSettings _appSettings;
@@ -173,9 +179,13 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     }
   }
 
-  [RelayCommand]
+  bool CanRemoveMonitoredProcess(MonitoredProcess? p) => (p ?? SelectedMonitoredProcess) is not null;
+  
+  [RelayCommand(CanExecute = nameof(CanRemoveMonitoredProcess))]
   async Task RemoveMonitoredProcess(MonitoredProcess? p)
   {
+    p ??= SelectedMonitoredProcess;
+    
     if (p is not null)
     {
       Processes.Remove(p);
@@ -192,9 +202,13 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     }
   }
 
-  [RelayCommand]
+  bool CanEditMonitoredProcess(MonitoredProcess? p) => (p ?? SelectedMonitoredProcess) is not null;
+  
+  [RelayCommand(CanExecute = nameof(CanEditMonitoredProcess))]
   async Task EditMonitoredProcess(MonitoredProcess? p)
   {
+    p ??= SelectedMonitoredProcess;
+    
     var configuredProcessToEdit = _appSettings
       .ConfiguredProcesses
       .FirstOrDefault(cp => cp.Name == p?.Name);
@@ -234,6 +248,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
 public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupViewModel
 {
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
+  [ObservableProperty] MonitoredProcess? _selectedMonitoredProcess;
   [ObservableProperty] bool _useOldSchoolAddEditStyle;
   
   public DesignStartupViewModel()
