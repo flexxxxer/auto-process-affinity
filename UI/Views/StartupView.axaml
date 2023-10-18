@@ -56,6 +56,9 @@
     <Grid IsVisible="False">
       <Button HotKey="Escape" x:Name="ResetSelectionOnDataGrid" />
     </Grid>
+    
+    <Border Grid.Row="0" Grid.RowSpan="2" BorderThickness="0,0,0,1" 
+            BorderBrush="{DynamicResource SystemBaseHighColor}"/>
 
     <DockPanel Grid.Row="0" x:Name="MenuDockPanel">
       <Menu DockPanel.Dock="Top">
@@ -158,7 +161,7 @@
     </DataGrid>
 
     <StackPanel Grid.Row="2" HorizontalAlignment="Center"
-                Orientation="Horizontal" Spacing="10">
+                Orientation="Horizontal" Spacing="10" Margin="0 10 0 0">
 
       <c:IconedButton HorizontalAlignment="Left"
                       Content="Add new..." IconFill="{DynamicResource OkBrush}"
