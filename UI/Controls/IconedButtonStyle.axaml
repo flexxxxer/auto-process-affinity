@@ -1,52 +1,52 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-				xmlns:local="clr-namespace:UI.Controls"
-				xmlns:vs="clr-namespace:UI.Views">
-	<Design.PreviewWith>
-		<Border Padding="10">
-			<StackPanel>
-				<vs:DesignModeTitleBar/>
+        xmlns:local="clr-namespace:UI.Controls"
+        xmlns:vs="clr-namespace:UI.Views">
+  <Design.PreviewWith>
+    <Border Padding="10">
+      <StackPanel>
+        <vs:DesignModeTitleBar />
 
-				<StackPanel>
-					<TextBlock Text="Control:"/>
+        <StackPanel>
+          <TextBlock Text="Control:" />
 
-					<local:IconedButton Content="Click me"
-															IconGeometry="{StaticResource AddRegularIcon}"
-															IconFill="Transparent"
-															Padding="6,2,6,2"
-															IconRenderTransform="scale(0.7)"/>
-				</StackPanel>
-			</StackPanel>
-		</Border>
-	</Design.PreviewWith>
+          <local:IconedButton Content="Click me"
+                              IconGeometry="{StaticResource AddRegularIcon}"
+                              IconFill="Transparent"
+                              Padding="6,2,6,2"
+                              IconRenderTransform="scale(0.7)" />
+        </StackPanel>
+      </StackPanel>
+    </Border>
+  </Design.PreviewWith>
 
-	<Style Selector="local|IconedButton">
-		<Setter Property="Template">
-			<ControlTemplate>
-				<Button Padding="{TemplateBinding Padding}"
+  <Style Selector="local|IconedButton">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Button Padding="{TemplateBinding Padding}"
                 Margin="{TemplateBinding Margin}"
                 Command="{TemplateBinding Command}"
                 CommandParameter="{TemplateBinding CommandParameter}"
                 ContextMenu="{TemplateBinding ContextMenu}">
-					<Grid ColumnDefinitions="Auto,Auto">
-						<ContentPresenter Grid.Column="1"
-															Content="{TemplateBinding Content}"
+          <Grid ColumnDefinitions="Auto,Auto">
+            <ContentPresenter Grid.Column="1"
+                              Content="{TemplateBinding Content}"
                               ContentTemplate="{TemplateBinding ContentTemplate}"
-                              VerticalAlignment="Center"/>
+                              VerticalAlignment="Center" />
 
-						<Path Grid.Column="0"
+            <Path Grid.Column="0"
                   VerticalAlignment="Center"
                   Data="{TemplateBinding IconGeometry}"
                   Fill="{TemplateBinding IconFill}"
-								  UseLayoutRounding="True"
+                  UseLayoutRounding="True"
                   StrokeThickness="{TemplateBinding IconStrokeThickness}"
                   Stroke="{TemplateBinding IconStroke}"
                   RenderTransform="{TemplateBinding IconRenderTransform}"
                   RenderTransformOrigin="{TemplateBinding IconRenderTransformOrigin}"
-									Margin="{TemplateBinding IconMargin}"/>
-					</Grid>
-				</Button>
-			</ControlTemplate>
-		</Setter>
-	</Style>
+                  Margin="{TemplateBinding IconMargin}" />
+          </Grid>
+        </Button>
+      </ControlTemplate>
+    </Setter>
+  </Style>
 </Styles>
