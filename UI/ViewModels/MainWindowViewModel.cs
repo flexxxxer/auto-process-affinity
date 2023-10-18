@@ -60,10 +60,10 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
   readonly AppSettingChangeService _appSettingsService;
 
   public MainWindowViewModel(HardwareInfo hwInfo, AdminPrivilegesStatus privilegesStatus, 
-    IOptionsMonitor<AppSettings> appSettings, AppSettingChangeService appSettingsService) 
+    AppSettingChangeService appSettingsService) 
   {
     _appSettingsService = appSettingsService;
-    var startupOptions = appSettings.CurrentValue.StartupOptions;
+    var startupOptions = appSettingsService.CurrentAppSettings.StartupOptions;
     WindowTitleText = DefaultWindowTitleText = MakeDefaultTitlePostfix(privilegesStatus);
     (WindowHeight, WindowWidth) = startupOptions.StartupSizeMode switch
     {
@@ -80,8 +80,9 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
       ? WindowState.Minimized
       : WindowState.Normal;
 
-    HandleAppSettingsChanged(appSettings.CurrentValue);
+    HandleAppSettingsChanged(appSettingsService.CurrentAppSettings);
 
+    // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async (CompositeDisposable d) =>
     {
       Observable
