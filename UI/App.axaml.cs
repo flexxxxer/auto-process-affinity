@@ -53,7 +53,8 @@ public class App : Application
       })
       .ConfigureServices((hb, scs) =>
       {
-        scs.Configure<AppSettings>(hb.Configuration.GetSection("AppSettings"));
+        scs.AddOptions<AppSettings>()
+          .Bind(hb.Configuration.GetSection(nameof(AppSettings)));
       })
       .Build();
 
