@@ -59,7 +59,7 @@
     </DataGrid>
 
     <Grid Grid.Row="2" ColumnDefinitions="*,25,*"
-          Margin="0,10,0,0" HorizontalAlignment="Center">
+          Margin="0,10,0,7" HorizontalAlignment="Center">
       <controls:IconedButton HorizontalAlignment="Left" Grid.Column="0"
                              IconMargin="-6" Padding="0 0 6 0"
                              Content="Cancel" IconFill="{DynamicResource CancelBrush}"

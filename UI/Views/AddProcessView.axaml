@@ -85,7 +85,7 @@
     </Grid>
 
     <Grid Grid.Row="1" ColumnDefinitions="*,15,*" HorizontalAlignment="Stretch"
-          Margin="0 10 0 0">
+          Margin="0 10 0 7">
       <c:IconedButton HorizontalAlignment="Right" Grid.Column="0"
                       Content="Cancel" IconFill="{DynamicResource CancelBrush}"
                       IconMargin="-6" Padding="0 0 6 0"

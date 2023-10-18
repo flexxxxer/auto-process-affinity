@@ -161,7 +161,7 @@
     </DataGrid>
 
     <StackPanel Grid.Row="2" HorizontalAlignment="Center"
-                Orientation="Horizontal" Spacing="10" Margin="0 10 0 0">
+                Orientation="Horizontal" Spacing="10" Margin="0 10 0 7">
 
       <c:IconedButton HorizontalAlignment="Left"
                       Content="Add new..." IconFill="{DynamicResource OkBrush}"
