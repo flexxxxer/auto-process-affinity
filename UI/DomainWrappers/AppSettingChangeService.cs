@@ -14,8 +14,6 @@ using System.Reactive.Disposables;
 
 namespace UI.DomainWrappers;
 
-public delegate void AppSettingsChangedHandler(AppSettings newAppSettings);
-
 public sealed class AppSettingChangeService
 {
   readonly IHostEnvironment _hostEnvironment;
@@ -23,7 +21,7 @@ public sealed class AppSettingChangeService
   
   public AppSettings CurrentAppSettings { get; private set; }
   
-  public event AppSettingsChangedHandler? AppSettingsChanged;
+  public event EventHandler<AppSettings>? AppSettingsChanged;
   
   public AppSettingChangeService(IHostEnvironment hostEnvironment, IOptionsMonitor<AppSettings> appSettings)
   {
@@ -38,7 +36,7 @@ public sealed class AppSettingChangeService
       ?.DisposeWith(App.Lifetime);
   }
   
-  void OnAppSettingsChanged(AppSettings newAppSettings) => AppSettingsChanged?.Invoke(newAppSettings);
+  void OnAppSettingsChanged(AppSettings newAppSettings) => AppSettingsChanged?.Invoke(this, newAppSettings);
   
   void HandleAppSettingsChanged(AppSettings newAppSettings)
   {
