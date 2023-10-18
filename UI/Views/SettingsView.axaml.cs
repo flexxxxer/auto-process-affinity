@@ -2,7 +2,7 @@ using UI.ViewModels;
 
 using Avalonia.ReactiveUI;
 
-namespace UI;
+namespace UI.Views;
 
 public partial class SettingsView : ReactiveUserControl<ISettingsViewModel>
 {

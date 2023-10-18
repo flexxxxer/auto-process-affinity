@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -35,7 +34,7 @@ public static class ExtensionMethods
     => () => scheduler.Schedule(action);
 
   public static Action<T> InvokeOn<T>(this Action<T> action, IScheduler scheduler)
-    => state => scheduler.Schedule(state, (_, state) => { action(state); return Disposable.Empty; });
+    => state => scheduler.Schedule(state, (_, passedState) => { action(passedState); return Disposable.Empty; });
 
   public static Action<T> ThrottleInvokes<T>(this Action<T> action, TimeSpan throttleTimeout)
   {
