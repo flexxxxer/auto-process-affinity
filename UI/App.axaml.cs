@@ -11,6 +11,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+
 using ReactiveUI;
 
 using Splat;
@@ -39,8 +40,10 @@ public class App : Application
 
   void Init()
   {
+    ConfigureUiServices();
     if(!IsDesignMode) ConfigureMicrosoftHostServices();
-    ConfigureSplatServices();
+    if(!IsDesignMode) ConfigureCustomServices();
+    if(!IsDesignMode) SetupServices();
   }
 
   void ConfigureMicrosoftHostServices()
@@ -59,14 +62,14 @@ public class App : Application
       .Build();
 
     Locator.CurrentMutable
-      .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptions<AppSettings>>)
-      .RegisterLazySingletonAnd(host.Services.GetRequiredService<IOptionsMonitor<AppSettings>>)
+      .RegisterAnd(host.Services.GetRequiredService<IOptions<AppSettings>>)
+      .RegisterAnd(host.Services.GetRequiredService<IOptionsMonitor<AppSettings>>)
       .RegisterAnd(host.Services.GetRequiredService<IOptionsSnapshot<AppSettings>>)
-      .RegisterLazySingletonAnd(host.Services.GetRequiredService<IHostEnvironment>)
+      .RegisterAnd(host.Services.GetRequiredService<IHostEnvironment>)
       ;
   }
 
-  void ConfigureSplatServices()
+  void ConfigureUiServices()
   {
     SR.SetupIOC();
     SR.RegisterLazySingleton<MainWindowViewModel>();
@@ -75,10 +78,6 @@ public class App : Application
     SR.Register<AddProcessViewModel>();
     SR.Register<SelectCurrentlyRunnableProcessViewModel>();
     SR.Register<SettingsViewModel>();
-    SR.RegisterLazySingleton<CurrentlyRunnableProcessesService>();
-    SR.RegisterLazySingleton<CurrentlyRunnableProcessesServiceWrapper>();
-    SR.RegisterLazySingleton<AppSettingChangeService>();
-    SR.RegisterLazySingleton<ThemeUpdaterService>();
 
     Locator.CurrentMutable
       .RegisterLazySingletonAnd<MainWindow>(() => new() { DataContext = Locator.Current.GetRequiredService<MainWindowViewModel>() })
@@ -87,12 +86,39 @@ public class App : Application
       .RegisterLazySingletonAnd<HardwareInfo>(() => new())
       .RegisterLazySingletonAnd<AdminPrivilegesStatus>()
       ;
+  }
 
-    if (!IsDesignMode)
+  void ConfigureCustomServices()
+  {
+    SR.RegisterLazySingleton<CurrentlyRunnableProcessesService>();
+    SR.RegisterLazySingleton<CurrentlyRunnableProcessesServiceWrapper>();
+    SR.RegisterLazySingleton<AppSettingChangeService>();
+    SR.RegisterLazySingleton<ThemeUpdaterService>();
+
+    Locator.CurrentMutable
+      .RegisterLazySingletonAnd<HardwareInfo>(() => new())
+      .RegisterLazySingletonAnd<AdminPrivilegesStatus>()
+      ;
+  }
+  
+  void SetupServices()
+  {
+    var appSettingsService = Locator.Current.GetRequiredService<AppSettingChangeService>();
+    var currentSettings = appSettingsService.CurrentAppSettings;
+    var fixedSettings = currentSettings.ValidateAndFix();
+    if (currentSettings != fixedSettings)
     {
-      _ = Locator.Current.GetRequiredService<CurrentlyRunnableProcessesServiceWrapper>();
-      _ = Locator.Current.GetRequiredService<ThemeUpdaterService>();
+      appSettingsService
+        .MakeChangeAsync(_ => fixedSettings)
+        .NoAwait();
     }
+    
+    // services to instantiate manually
+    new[]
+    {
+      typeof(CurrentlyRunnableProcessesServiceWrapper),
+      typeof(ThemeUpdaterService),
+    }.ForEach(serviceType => _ = Locator.Current.GetService(serviceType));
   }
 
   public override void OnFrameworkInitializationCompleted()
