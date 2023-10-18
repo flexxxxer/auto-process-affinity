@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using Domain.Infrastructure;
+using UI.DomainWrappers;
 
 namespace UI.ViewModels;
 
@@ -54,7 +55,7 @@ public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActiva
   public Task<CurrentlyRunnedProcessDto?> Result => _resultSource.Task;
 
   public SelectCurrentlyRunnableProcessViewModel(CurrentlyRunnableProcessesService processesService,
-    IOptionsMonitor<AppSettings> appSettings)
+    AppSettingChangeService appSettingsService)
   {
     static Func<CurrentlyRunnedProcessDto, bool> BuildFilter(string? searchText)
         => string.IsNullOrWhiteSpace(searchText)
@@ -82,10 +83,7 @@ public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActiva
       .DisposeMany()
       .Subscribe(_ => { }, RxApp.DefaultExceptionHandler.OnNext);
 
-    HandleAppSettingsChanged(appSettings.CurrentValue);
-    var handleAppSettingsChangedSpecial = ((Action<AppSettings>)HandleAppSettingsChanged)
-      .InvokeOn(RxApp.MainThreadScheduler)
-      .ThrottleInvokes(TimeSpan.FromSeconds(1));
+    HandleAppSettingsChanged(appSettingsService.CurrentAppSettings);
 
     // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async d =>
@@ -93,9 +91,14 @@ public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActiva
       await processesService.InitAsync();
       _currentlyRunningProcessesSource.AddRange(processesService.CurrentlyRunningProcesses);
 
-      appSettings
-        .OnChange(handleAppSettingsChangedSpecial)
-        ?.DisposeWith(d);
+      Observable
+        .FromEventPattern<AppSettings>(
+          h => appSettingsService.AppSettingsChanged += h,
+          h => appSettingsService.AppSettingsChanged -= h)
+        .Throttle(TimeSpan.FromSeconds(0.6))
+        .ObserveOn(RxApp.MainThreadScheduler)
+        .Subscribe(eventPattern => HandleAppSettingsChanged(eventPattern.EventArgs))
+        .DisposeWith(d);
 
       // must be after previous line
       Observable
