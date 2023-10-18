@@ -51,24 +51,25 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
 
   IDisposable? _periodicUpdateStick = null;
-  readonly IOptionsMonitor<AppSettings> _appSettings;
+  AppSettings _appSettings;
   readonly AppSettingChangeService _appSettingService;
 
-  public StartupViewModel(IOptionsMonitor<AppSettings> appSettings, AppSettingChangeService appSettingService)
+  public StartupViewModel(AppSettingChangeService appSettingsService)
   {
-    _appSettings = appSettings;
-    _appSettingService = appSettingService;
+    _appSettings = appSettingsService.CurrentAppSettings;
+    _appSettingService = appSettingsService;
 
-    HandleAppSettingsChanged(appSettings.CurrentValue);
-    var handleAppSettingsChangedSpecial = ((Action<AppSettings>)HandleAppSettingsChanged)
-      .InvokeOn(RxApp.MainThreadScheduler)
-      .ThrottleInvokes(TimeSpan.FromSeconds(1));
-
+    HandleAppSettingsChanged(_appSettings);
     this.WhenActivated((CompositeDisposable d) =>
     {
-      appSettings
-        .OnChange(handleAppSettingsChangedSpecial)
-        ?.DisposeWith(d);
+      Observable
+        .FromEventPattern<AppSettings>(
+          h => appSettingsService.AppSettingsChanged += h,
+          h => appSettingsService.AppSettingsChanged -= h)
+        .Throttle(TimeSpan.FromSeconds(0.6))
+        .ObserveOn(RxApp.MainThreadScheduler)
+        .Subscribe(eventPattern => HandleAppSettingsChanged(eventPattern.EventArgs))
+        .DisposeWith(d);
 
       Disposable
         .Create(HandleDeactivation)
@@ -80,6 +81,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   {
     static string ProcessName(MonitoredProcess p) => p.Name;
 
+    _appSettings = newAppSettings;
     _periodicUpdateStick?.Dispose();
     _periodicUpdateStick = RxApp.MainThreadScheduler
       .SchedulePeriodic(null as object, newAppSettings.RunningProcessesUpdatePeriod, async _ => await Refresh());
@@ -205,7 +207,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     {
       var addProcessVm = Locator.Current
         .GetRequiredService<AddProcessViewModel>()
-        .Do(vm => vm.ToEdit = _appSettings.CurrentValue
+        .Do(vm => vm.ToEdit = _appSettings
           .ConfiguredProcesses
           .FirstOrDefault(cp => cp.Name == p.Name));
 
