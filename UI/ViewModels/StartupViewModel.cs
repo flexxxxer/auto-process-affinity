@@ -32,6 +32,8 @@ namespace UI.ViewModels;
 public interface IStartupViewModel
 {
   ObservableCollection<MonitoredProcess> Processes { get; }
+  
+  bool UseOldSchoolAddEditStyle { get; }
 
   IAsyncRelayCommand AddMonitoredProcessCommand { get; }
 
@@ -47,6 +49,7 @@ public interface IStartupViewModel
 public partial class StartupViewModel : RoutableAndActivatableViewModelBase, IStartupViewModel
 {
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
+  [ObservableProperty] bool _useOldSchoolAddEditStyle;
 
   IDisposable? _periodicUpdateStick;
   AppSettings _appSettings;
@@ -83,9 +86,9 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     _periodicUpdateStick?.Dispose();
     _periodicUpdateStick = RxApp.MainThreadScheduler
       .SchedulePeriodic(newAppSettings.RunningProcessesUpdatePeriod, () => Refresh().NoAwait());
-
+    
+    UseOldSchoolAddEditStyle = newAppSettings.UxOptions.UseOldSchoolAddEditStyle;
     var configuredProcesses = newAppSettings.ConfiguredProcesses;
-
     var newProcesses = configuredProcesses
       .Select(MonitoredProcess.CreateFrom)
       .ToArray();
@@ -232,6 +235,9 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
 
 public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupViewModel
 {
+  [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
+  [ObservableProperty] bool _useOldSchoolAddEditStyle;
+  
   public DesignStartupViewModel()
   {
     Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
@@ -245,10 +251,12 @@ public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupView
     });
   }
 
-  [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
-
   [RelayCommand]
-  Task AddMonitoredProcess() => Task.CompletedTask;
+  Task AddMonitoredProcess()
+  {
+    UseOldSchoolAddEditStyle = !UseOldSchoolAddEditStyle;
+    return Task.CompletedTask;
+  }
 
   [RelayCommand]
   Task RemoveMonitoredProcess(MonitoredProcess? p) => Task.CompletedTask;
