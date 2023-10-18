@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Styling;
 
 using ReactiveUI;
 using ReactiveUI.ExtendedRouting;
 
-using Avalonia;
-using Avalonia.Styling;
+using CommunityToolkit.Mvvm.Input;
 
 using Splat;
 
@@ -14,9 +18,12 @@ namespace UI.ViewModels;
 
 public interface IMainViewModel : IScreen
 {
+  IAsyncRelayCommand GoToSettingsCommand { get; }
+
+  IRelayCommand ExitCommand { get; }
 }
 
-public class MainViewModel : ActivatableViewModelBase, IMainViewModel
+public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
 {
   public RoutingState Router { get; } = new();
 
@@ -45,9 +52,21 @@ public class MainViewModel : ActivatableViewModelBase, IMainViewModel
         .RouteThrough(Router);
     });
   }
+  
+  [RelayCommand]
+  async Task GoToSettings()
+    => await Locator.Current
+      .GetRequiredService<SettingsViewModel>()
+      .RouteThrough(this);
+
+  [RelayCommand]
+  void Exit() => Application.Current
+    ?.ApplicationLifetime
+    ?.TryCastTo<IClassicDesktopStyleApplicationLifetime>()
+    ?.Shutdown();
 }
 
-public sealed class DesignMainViewModel : ViewModelBase, IMainViewModel
+public sealed partial class DesignMainViewModel : ViewModelBase, IMainViewModel
 {
   public RoutingState Router { get; } = new();
 
@@ -55,5 +74,11 @@ public sealed class DesignMainViewModel : ViewModelBase, IMainViewModel
   {
     Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
   }
+
+  [RelayCommand]
+  Task GoToSettings() => Task.CompletedTask;
+
+  [RelayCommand]
+  void Exit() { }
 }
 

@@ -15,7 +15,6 @@ using System.Reactive.Concurrency;
 
 using Avalonia;
 using Avalonia.Styling;
-using Avalonia.Controls.ApplicationLifetimes;
 
 using ReactiveUI;
 using ReactiveUI.ExtendedRouting;
@@ -44,10 +43,6 @@ public interface IStartupViewModel
   IAsyncRelayCommand RemoveAllSelectedMonitoredProcessesCommand { get; }
 
   IAsyncRelayCommand<MonitoredProcess?> EditMonitoredProcessCommand { get; }
-
-  IAsyncRelayCommand GoToSettingsCommand { get; }
-
-  IRelayCommand ExitCommand { get; }
 }
 
 public partial class StartupViewModel : RoutableAndActivatableViewModelBase, IStartupViewModel
@@ -266,18 +261,6 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
       }
     }
   }
-
-  [RelayCommand]
-  async Task GoToSettings()
-    => await Locator.Current
-      .GetRequiredService<SettingsViewModel>()
-      .RouteThrough(HostScreen);
-
-  [RelayCommand]
-  void Exit() => Application.Current
-    ?.ApplicationLifetime
-    ?.TryCastTo<IClassicDesktopStyleApplicationLifetime>()
-    ?.Shutdown();
 }
 
 public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupViewModel
@@ -314,10 +297,4 @@ public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupView
 
   [RelayCommand]
   Task EditMonitoredProcess(MonitoredProcess? p) => Task.CompletedTask;
-
-  [RelayCommand]
-  Task GoToSettings() => Task.CompletedTask;
-
-  [RelayCommand]
-  void Exit() { }
 }
