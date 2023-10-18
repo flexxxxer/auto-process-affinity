@@ -5,13 +5,13 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Reactive.Linq;
-using System.Reactive.Disposables;
 
 namespace UI.DomainWrappers;
 
 class CurrentlyRunnableProcessesServiceWrapper : IDisposable
 {
   readonly CurrentlyRunnableProcessesService _processesService;
+  readonly IDisposable _handleSettingsChangedStick;
 
   public CurrentlyRunnableProcessesServiceWrapper(CurrentlyRunnableProcessesService processesService, 
     AppSettingChangeService appSettingsService)
@@ -19,13 +19,11 @@ class CurrentlyRunnableProcessesServiceWrapper : IDisposable
     _processesService = processesService;
     HandleSettingsChanged(appSettingsService.CurrentAppSettings);
 
-    Observable
+    _handleSettingsChangedStick = Observable
       .FromEventPattern<AppSettings>(
         h => appSettingsService.AppSettingsChanged += h,
         h => appSettingsService.AppSettingsChanged -= h)
-      .Throttle(TimeSpan.FromSeconds(0.6))
-      .Subscribe(eventPattern => HandleSettingsChanged(eventPattern.EventArgs))
-      .DisposeWith(App.Lifetime);
+      .Subscribe(eventPattern => HandleSettingsChanged(eventPattern.EventArgs));
   }
 
   void HandleSettingsChanged(AppSettings newSettings)
@@ -40,5 +38,9 @@ class CurrentlyRunnableProcessesServiceWrapper : IDisposable
       .ForEach(name => processNamesToExclude.TryAdd(name, default));
   }
 
-  public void Dispose() => _processesService.Dispose();
+  public void Dispose()
+  {
+    _handleSettingsChangedStick.Dispose();
+    _processesService.Dispose();
+  }
 }

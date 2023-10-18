@@ -13,10 +13,12 @@ using Microsoft.Extensions.Options;
 
 namespace UI.DomainWrappers;
 
-public sealed class AppSettingChangeService
+public sealed class AppSettingChangeService : IDisposable
 {
   readonly IHostEnvironment _hostEnvironment;
   readonly SemaphoreSlim _lockGuard = new(1);
+  readonly IDisposable? _handleAppSettingsChangedStick;
+  readonly IDisposable _handleAppSettingsChangedThrottleStick;
   
   public AppSettings CurrentAppSettings { get; private set; }
   
@@ -27,13 +29,12 @@ public sealed class AppSettingChangeService
     _hostEnvironment = hostEnvironment;
     CurrentAppSettings = appSettings.CurrentValue;
 
-    var handleAppSettingsChangedSpecial = HandleAppSettingsChanged;
-    handleAppSettingsChangedSpecial = handleAppSettingsChangedSpecial
-      .ThrottleInvokes(TimeSpan.FromSeconds(0.6));
-    
-    appSettings
-      .OnChange(handleAppSettingsChangedSpecial)
-      ?.DisposeWith(App.Lifetime);
+    var handleAppSettingsChangedSpecial = Ext
+      .MakeDelegate<AppSettings>(HandleAppSettingsChanged)
+      .ThrottleInvokes(TimeSpan.FromSeconds(0.6), out _handleAppSettingsChangedThrottleStick);
+
+    _handleAppSettingsChangedStick = appSettings
+      .OnChange(handleAppSettingsChangedSpecial);
   }
   
   void OnAppSettingsChanged(AppSettings newAppSettings) => AppSettingsChanged?.Invoke(this, newAppSettings);
@@ -66,5 +67,11 @@ public sealed class AppSettingChangeService
     {
       _lockGuard.Release();
     }
+  }
+
+  public void Dispose()
+  {
+    _handleAppSettingsChangedThrottleStick.Dispose();
+    _handleAppSettingsChangedStick?.Dispose();
   }
 }
