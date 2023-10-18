@@ -78,6 +78,7 @@ public class App : Application
     SR.RegisterLazySingleton<CurrentlyRunnableProcessesService>();
     SR.RegisterLazySingleton<CurrentlyRunnableProcessesServiceWrapper>();
     SR.RegisterLazySingleton<AppSettingChangeService>();
+    SR.RegisterLazySingleton<ThemeUpdaterService>();
 
     Locator.CurrentMutable
       .RegisterLazySingletonAnd<MainWindow>(() => new() { DataContext = Locator.Current.GetRequiredService<MainWindowViewModel>() })
@@ -90,6 +91,7 @@ public class App : Application
     if (!IsDesignMode)
     {
       _ = Locator.Current.GetRequiredService<CurrentlyRunnableProcessesServiceWrapper>();
+      _ = Locator.Current.GetRequiredService<ThemeUpdaterService>();
     }
   }
 
