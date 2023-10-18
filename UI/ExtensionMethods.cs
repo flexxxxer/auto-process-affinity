@@ -36,15 +36,15 @@ public static class ExtensionMethods
   public static Action<T> InvokeOn<T>(this Action<T> action, IScheduler scheduler)
     => state => scheduler.Schedule(state, (_, passedState) => { action(passedState); return Disposable.Empty; });
 
-  public static Action<T> ThrottleInvokes<T>(this Action<T> action, TimeSpan throttleTimeout)
+  public static Action<T> ThrottleInvokes<T>(this Action<T> action, TimeSpan throttleTimeout, out IDisposable methodThrottleStick)
   {
     Subject<T> methodPick = new();
 
-    methodPick.Throttle(throttleTimeout)
-      .Subscribe(action)
-      .DisposeWith(App.Lifetime);
+    methodThrottleStick = methodPick
+      .Throttle(throttleTimeout)
+      .Subscribe(action);
 
-    return (arg) => methodPick.OnNext(arg);
+    return methodPick.OnNext;
   }
 
   public static Action InvokeOn(this Func<Task> action, Dispatcher dispatcher)
