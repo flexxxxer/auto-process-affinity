@@ -3,6 +3,9 @@
 using Domain;
 using Domain.Infrastructure;
 
+using System;
+using System.Threading.Tasks;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -15,13 +18,9 @@ using ReactiveUI;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-using Hardware.Info;
-
-using Microsoft.Extensions.Options;
-using System;
-using System.Threading.Tasks;
-using System.Linq;
 using DynamicData.Binding;
+
+using Hardware.Info;
 
 namespace UI.ViewModels;
 
@@ -55,8 +54,8 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
 
   public Interaction<PixelPoint, Unit> SetWindowPosition { get; } = new();
 
-  IDisposable? _rememberLastSizeStick = null;
-  IDisposable? _rememberLastPositionStick = null;
+  IDisposable? _rememberLastSizeStick;
+  IDisposable? _rememberLastPositionStick;
   readonly AppSettingChangeService _appSettingsService;
 
   public MainWindowViewModel(HardwareInfo hwInfo, AdminPrivilegesStatus privilegesStatus, 
@@ -68,13 +67,15 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
     (WindowHeight, WindowWidth) = startupOptions.StartupSizeMode switch
     {
       StartupSizeMode.Optimal => MakeOptimalStartupSize(hwInfo),
-      StartupSizeMode.Specified or StartupSizeMode.RememberLast or _ => TupleFrom(startupOptions.StartupSize)
+      StartupSizeMode.Specified or StartupSizeMode.RememberLast => TupleFrom(startupOptions.StartupSize),
+      _ => throw new ArgumentOutOfRangeException()
     };
     (var locationValues, WindowStartupLocationMode) = startupOptions.StartupLocationMode switch
     {
       StartupLocationMode.CenterScreen => (null as (int, int)?, WindowStartupLocation.CenterScreen),
       StartupLocationMode.RememberLast => (TupleFrom(startupOptions.StartupLocation), WindowStartupLocation.Manual),
-      StartupLocationMode.Default or _ => (null, WindowStartupLocation.Manual),
+      StartupLocationMode.Default => (null, WindowStartupLocation.Manual),
+      _ => throw new ArgumentOutOfRangeException()
     };
     WindowState = startupOptions.Minimized
       ? WindowState.Minimized
@@ -83,7 +84,7 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
     HandleAppSettingsChanged(appSettingsService.CurrentAppSettings);
 
     // ReSharper disable once AsyncVoidLambda
-    this.WhenActivated(async (CompositeDisposable d) =>
+    this.WhenActivated(async d =>
     {
       Observable
         .FromEventPattern<AppSettings>(
@@ -97,7 +98,7 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
       if (locationValues is var (x, y))
       {
         await Task.Yield(); // "wait" for full view activation (and interaction registrations)
-        await SetWindowPosition.Handle(new(x, y));
+        await SetWindowPosition.Handle(new PixelPoint(x, y));
       }
 
       Disposable
