@@ -14,29 +14,39 @@ using System.Reactive.Disposables;
 
 namespace UI.DomainWrappers;
 
+public delegate void AppSettingsChangedHandler(AppSettings newAppSettings);
+
 public sealed class AppSettingChangeService
 {
   readonly IHostEnvironment _hostEnvironment;
   readonly SemaphoreSlim _lockGuard = new(1);
-  AppSettings _currentAppSettings;
-
+  
+  public AppSettings CurrentAppSettings { get; private set; }
+  
+  public event AppSettingsChangedHandler? AppSettingsChanged;
+  
   public AppSettingChangeService(IHostEnvironment hostEnvironment, IOptionsMonitor<AppSettings> appSettings)
   {
     _hostEnvironment = hostEnvironment;
-    _currentAppSettings = appSettings.CurrentValue;
+    CurrentAppSettings = appSettings.CurrentValue;
 
+    var handleAppSettingsChangedSpecial = ((Action<AppSettings>)HandleAppSettingsChanged)
+      .ThrottleInvokes(TimeSpan.FromSeconds(0.6));
+    
     appSettings
-      .OnChange(((Action<AppSettings>)HandleAppSettingsChanged)
-      .ThrottleInvokes(TimeSpan.FromSeconds(1)))
+      .OnChange(handleAppSettingsChangedSpecial)
       ?.DisposeWith(App.Lifetime);
   }
-
+  
+  void OnAppSettingsChanged(AppSettings newAppSettings) => AppSettingsChanged?.Invoke(newAppSettings);
+  
   void HandleAppSettingsChanged(AppSettings newAppSettings)
   {
     _lockGuard.Wait();
     try
     {
-      _currentAppSettings = newAppSettings;
+      CurrentAppSettings = newAppSettings;
+      OnAppSettingsChanged(newAppSettings);
     }
     finally
     {
@@ -49,14 +59,16 @@ public sealed class AppSettingChangeService
     await _lockGuard.WaitAsync();
     try
     {
-      _currentAppSettings = makeChangeFunc(_currentAppSettings);
+      CurrentAppSettings = makeChangeFunc(CurrentAppSettings);
       var configFilePath = Path.Combine(_hostEnvironment.ContentRootPath, "appsettings.json");
       await using FileStream fileStream = new(configFilePath, FileMode.Create);
-      await JsonSerializer.SerializeAsync(fileStream, _currentAppSettings.WrapBeforeSerialization(), SerializerOptions.Default);
+      await JsonSerializer.SerializeAsync(fileStream, CurrentAppSettings.WrapBeforeSerialization(), SerializerOptions.Default);
     }
     finally
     {
       _lockGuard.Release();
     }
   }
+
+  
 }
