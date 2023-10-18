@@ -69,6 +69,4 @@ public sealed class AppSettingChangeService
       _lockGuard.Release();
     }
   }
-
-  
 }
