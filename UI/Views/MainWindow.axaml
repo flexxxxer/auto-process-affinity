@@ -14,6 +14,7 @@
         x:Class="UI.Views.MainWindow"
         Icon="/Assets/app-logo.ico"
         Title="{Binding WindowTitleText}"
+        ExtendClientAreaToDecorationsHint="{Binding IsCustomTitleBarUsed}"
         x:DataType="vm:IMainWindowViewModel">
 
   <Design.DataContext>

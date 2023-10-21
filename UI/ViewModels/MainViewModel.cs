@@ -3,6 +3,7 @@
 using UI.DomainWrappers;
 
 using System;
+using System.ComponentModel;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -52,6 +53,7 @@ public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
       .ObserveOn(RxApp.MainThreadScheduler)
       .Select(eventPattern => eventPattern.EventArgs.UiOptions.ShowSystemTitleBar);
 
+    IsCustomTitleBarUsed = appSettingsService.CurrentAppSettings.UiOptions.ShowSystemTitleBar is false;
     
     // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async d =>
@@ -73,8 +75,7 @@ public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
         .DisposeWith(d);
       
       showSystemTitleBarSettingChanged
-        .Select(negate => !negate)
-        .Subscribe(isUsed => IsCustomTitleBarUsed = isUsed)
+        .Subscribe(systemTitleBarUsed => IsCustomTitleBarUsed = systemTitleBarUsed is false)
         .DisposeWith(d);
 
       _ = await Locator.Current

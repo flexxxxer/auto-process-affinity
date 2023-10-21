@@ -15,7 +15,16 @@
   </Design.DataContext>
 
   <Grid RowDefinitions="Auto,*">
-    <DockPanel Grid.Row="0" x:Name="MenuDockPanel" MinHeight="31">
+    <DockPanel Grid.Row="0" x:Name="MenuDockPanel" MinHeight="31" HorizontalAlignment="Left">
+      <DockPanel.IsVisible>
+        <MultiBinding Converter="{x:Static BoolConverters.Or}">
+          <Binding Path="IsCustomTitleBarUsed"/>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <Binding Path="!IsCustomTitleBarUsed"/>
+            <Binding Path="IsMenuVisible"/>
+          </MultiBinding>
+        </MultiBinding>
+      </DockPanel.IsVisible>
       <Menu DockPanel.Dock="Top" IsVisible="{Binding IsMenuVisible}">
         <MenuItem Header="_App">
           <MenuItem Header="Export config to...">

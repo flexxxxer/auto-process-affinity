@@ -35,6 +35,8 @@ public interface IMainWindowViewModel : IScreen
   double WindowWidth { get; set; }
 
   string WindowTitleText { get; }
+  
+  bool IsCustomTitleBarUsed { get; }
 
   WindowStartupLocation WindowStartupLocationMode { get; }
 
@@ -49,6 +51,7 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
   [ObservableProperty] PixelPoint _windowPosition;
   [ObservableProperty] WindowStartupLocation _windowStartupLocationMode;
   [ObservableProperty] WindowState _windowState;
+  [ObservableProperty] bool _isCustomTitleBarUsed;
 
   public string DefaultWindowTitleText { get; }
 
@@ -63,6 +66,7 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
   {
     _appSettingsService = appSettingsService;
     var startupOptions = appSettingsService.CurrentAppSettings.StartupOptions;
+    IsCustomTitleBarUsed = appSettingsService.CurrentAppSettings.UiOptions.ShowSystemTitleBar is false;
     WindowTitleText = DefaultWindowTitleText = MakeDefaultTitlePostfix(privilegesStatus);
     (WindowHeight, WindowWidth) = startupOptions.StartupSizeMode switch
     {
@@ -164,6 +168,8 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
         .Select(propertyChanged => propertyChanged.Value)
         .Subscribe(UpdateStartupLocation)
     };
+
+    IsCustomTitleBarUsed = newAppSettings.UiOptions.ShowSystemTitleBar is false;
   }
 
   void HandleDeactivation()
@@ -219,6 +225,8 @@ public sealed class DesignMainWindowViewModel : ViewModelBase, IMainWindowViewMo
   public double WindowWidth { get; set; } = 266;
 
   public string WindowTitleText { get; } = Application.Current?.Name ?? "";
+
+  public bool IsCustomTitleBarUsed { get; } = false;
 
   public WindowStartupLocation WindowStartupLocationMode { get; } = WindowStartupLocation.Manual;
 
