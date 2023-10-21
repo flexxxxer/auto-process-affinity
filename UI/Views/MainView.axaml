@@ -15,8 +15,8 @@
   </Design.DataContext>
 
   <Grid RowDefinitions="Auto,*">
-    <DockPanel Grid.Row="0" x:Name="MenuDockPanel">
-      <Menu DockPanel.Dock="Top">
+    <DockPanel Grid.Row="0" x:Name="MenuDockPanel" MinHeight="31">
+      <Menu DockPanel.Dock="Top" IsVisible="{Binding IsMenuVisible}">
         <MenuItem Header="_App">
           <MenuItem Header="Export config to...">
             <MenuItem.Icon>
