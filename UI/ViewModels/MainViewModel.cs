@@ -35,16 +35,14 @@ public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
       Router.CurrentViewModel
         .Where(vm => vm is not null)
         .Select(vm => vm!)
-        .Subscribe(vm =>
+        .Select(vm => vm switch
         {
-          mainWindowViewModel.WindowTitleText = vm switch
-          {
-            AddProcessViewModel => "New process rule",
-            SelectCurrentlyRunnableProcessViewModel => "Selecting process",
-            SettingsViewModel => "Settings",
-            StartupViewModel or _ => mainWindowViewModel.DefaultWindowTitleText,
-          };
+          AddProcessViewModel => "New process rule",
+          SelectCurrentlyRunnableProcessViewModel => "Selecting process",
+          SettingsViewModel => "Settings",
+          StartupViewModel or _ => mainWindowViewModel.DefaultWindowTitleText,
         })
+        .Subscribe(newTitle => mainWindowViewModel.WindowTitleText = newTitle)
         .DisposeWith(d);
 
       _ = await Locator.Current
