@@ -28,13 +28,13 @@ public interface IAddProcessViewModel
 
   bool IsCustomAffinityModeChosen { get; set; }
 
-  string EvenAffinityModeFirstNValue { get; set; }
+  int? EvenAffinityModeFirstNValue { get; set; }
 
-  string FirstNAffinityModeValue { get; set; }
+  int? FirstNAffinityModeValue { get; set; }
 
-  string LastNAffinityModeValue { get; set; }
+  int? LastNAffinityModeValue { get; set; }
 
-  string CustomAffinityModeValue { get; set; }
+  long? CustomAffinityModeValue { get; set; }
 
   ConfiguredProcess? ToEdit { get; }
 
@@ -52,10 +52,10 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isFirstNAffinityModeChosen;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isLastNAffinityModeChosen;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isCustomAffinityModeChosen;
-  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _evenAffinityModeFirstNValue = "";
-  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _firstNAffinityModeValue = "";
-  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _lastNAffinityModeValue = "";
-  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _customAffinityModeValue = "";
+  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] int? _evenAffinityModeFirstNValue;
+  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] int? _firstNAffinityModeValue;
+  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] int? _lastNAffinityModeValue;
+  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] long? _customAffinityModeValue;
 
   [ObservableProperty] ConfiguredProcess? _toEdit;
 
@@ -71,25 +71,23 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
     {
       _ when IsEvenAffinityModeChosen => EvenAffinityModeFirstNValue switch
       {
-        { } str when int.TryParse(str, out var firstNEven) => (firstNEven, AffinityMode.FirstNEven),
-        null or "" => (0 /* any value not matter */, AffinityMode.AllEven),
-        _ => (_affinityValue, _affinityMode),
+        { } firstNValue  => (firstNValue, AffinityMode.FirstNEven),
+        null => (0 /* any value not matter */, AffinityMode.AllEven)
       },
 
-      _ when IsFirstNAffinityModeChosen && int.TryParse(FirstNAffinityModeValue, out var firstN) 
+      _ when IsFirstNAffinityModeChosen && FirstNAffinityModeValue is { } firstN
         => (firstN, AffinityMode.FirstN),
 
-      _ when IsLastNAffinityModeChosen && int.TryParse(LastNAffinityModeValue, out var lastN) 
+      _ when IsLastNAffinityModeChosen && LastNAffinityModeValue is { } lastN
         => (lastN, AffinityMode.LastN),
 
-      _ when IsCustomAffinityModeChosen 
-        && long.TryParse(CustomAffinityModeValue.Remove("0x"), System.Globalization.NumberStyles.HexNumber, null, out var newMask)
+      _ when IsCustomAffinityModeChosen && CustomAffinityModeValue is { } newMask
         => (newMask, AffinityMode.CustomBitmask),
 
       _ => (_affinityValue, _affinityMode)
     };
 
-    CustomAffinityModeValue = AffinityApi.BitmaskFrom(_affinityMode, _affinityValue).ToString("X");
+    CustomAffinityModeValue = AffinityApi.BitmaskFrom(_affinityMode, _affinityValue);
   }
 
   // ReSharper disable UnusedParameterInPartialMethod
@@ -101,13 +99,13 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
 
   partial void OnIsCustomAffinityModeChosenChanged(bool value) => HandleAffinityModeChange();
 
-  partial void OnEvenAffinityModeFirstNValueChanged(string value) => HandleAffinityModeChange();
+  partial void OnEvenAffinityModeFirstNValueChanged(int? value) => HandleAffinityModeChange();
 
-  partial void OnFirstNAffinityModeValueChanged(string value) => HandleAffinityModeChange();
+  partial void OnFirstNAffinityModeValueChanged(int? value) => HandleAffinityModeChange();
 
-  partial void OnLastNAffinityModeValueChanged(string value) => HandleAffinityModeChange();
+  partial void OnLastNAffinityModeValueChanged(int? value) => HandleAffinityModeChange();
 
-  partial void OnCustomAffinityModeValueChanged(string value) => HandleAffinityModeChange();
+  partial void OnCustomAffinityModeValueChanged(long? value) => HandleAffinityModeChange();
   // ReSharper restore UnusedParameterInPartialMethod
 
   partial void OnToEditChanged(ConfiguredProcess? value)
@@ -119,22 +117,22 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
 
       (IsEvenAffinityModeChosen, EvenAffinityModeFirstNValue) = value.AffinityMode switch
       {
-        AffinityMode.AllEven => (true, ""),
-        AffinityMode.FirstNEven => (true, value.AffinityValue.ToString()),
-        _ => (false, "")
+        AffinityMode.AllEven => (true, null),
+        AffinityMode.FirstNEven => (true, (int?)value.AffinityValue),
+        _ => (false, null)
       };
 
       (IsFirstNAffinityModeChosen, FirstNAffinityModeValue) = value.AffinityMode is AffinityMode.FirstN
-        ? (true, value.AffinityValue.ToString())
-        : (false, "");
+        ? (true, (int?)value.AffinityValue)
+        : (false, null);
 
       (IsLastNAffinityModeChosen, LastNAffinityModeValue) = value.AffinityMode is AffinityMode.LastN
-        ? (true, value.AffinityValue.ToString())
-        : (false, "");
+        ? (true, (int?)value.AffinityValue)
+        : (false, null);
 
       (IsCustomAffinityModeChosen, CustomAffinityModeValue) = value.AffinityMode is AffinityMode.CustomBitmask
-        ? (true, value.AffinityValue.ToString("X"))
-        : (false, "");
+        ? (true, (int?)value.AffinityValue)
+        : (false, null);
 
       HandleAffinityModeChange();
     }
@@ -143,10 +141,10 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
   bool CanAddProcess() =>
     !ProcessName.IsNullOrWhiteSpace()
     && (
-      (IsEvenAffinityModeChosen && (!EvenAffinityModeFirstNValue.IsNullOrWhiteSpace() || EvenAffinityModeFirstNValue is ""))
-      || (IsFirstNAffinityModeChosen && !FirstNAffinityModeValue.IsNullOrWhiteSpace())
-      || (IsLastNAffinityModeChosen && !LastNAffinityModeValue.IsNullOrWhiteSpace())
-      || (IsCustomAffinityModeChosen && !CustomAffinityModeValue.IsNullOrWhiteSpace())
+      (IsEvenAffinityModeChosen && EvenAffinityModeFirstNValue is null or > 1)
+      || (IsFirstNAffinityModeChosen && FirstNAffinityModeValue is not null)
+      || (IsLastNAffinityModeChosen && LastNAffinityModeValue is not null)
+      || (IsCustomAffinityModeChosen && CustomAffinityModeValue is not null)
     );
 
   [RelayCommand]
@@ -188,10 +186,10 @@ public sealed partial class DesignAddProcessViewModel : ViewModelBase, IAddProce
   [ObservableProperty] bool _isFirstNAffinityModeChosen;
   [ObservableProperty] bool _isLastNAffinityModeChosen;
   [ObservableProperty] bool _isCustomAffinityModeChosen;
-  [ObservableProperty] string _evenAffinityModeFirstNValue = "";
-  [ObservableProperty] string _firstNAffinityModeValue = "";
-  [ObservableProperty] string _lastNAffinityModeValue = "";
-  [ObservableProperty] string _customAffinityModeValue = "";
+  [ObservableProperty] int? _evenAffinityModeFirstNValue;
+  [ObservableProperty] int? _firstNAffinityModeValue;
+  [ObservableProperty] int? _lastNAffinityModeValue;
+  [ObservableProperty] long? _customAffinityModeValue;
   [ObservableProperty] ConfiguredProcess? _toEdit;
 
   public DesignAddProcessViewModel()

@@ -46,27 +46,31 @@
                 </StackPanel>
               </RadioButton.Content>
             </RadioButton>
-            <TextBox IsVisible="{Binding #EvenAffinityModeCheckBox.IsChecked}"
-                     Text="{Binding EvenAffinityModeFirstNValue, Mode=TwoWay}"
-                     Watermark="First few" HorizontalAlignment="Right" x:Name="EvenAffinityModeFirstNValueTextBox" />
+            <NumericUpDown IsVisible="{Binding #EvenAffinityModeCheckBox.IsChecked}"
+                           Value="{Binding EvenAffinityModeFirstNValue}"
+                           ShowButtonSpinner="False"
+                           ParsingNumberStyle="Integer" Watermark="First few" HorizontalAlignment="Right" 
+                           x:Name="EvenAffinityModeFirstNValueTextBox" />
           </DockPanel>
           <DockPanel>
             <RadioButton GroupName="AffinityMode" Content="First N"
                          IsChecked="{Binding IsFirstNAffinityModeChosen, Mode=TwoWay}"
                          x:Name="FirstNAffinityModeCheckBox" />
-            <TextBox IsVisible="{Binding #FirstNAffinityModeCheckBox.IsChecked}"
-                     Text="{Binding FirstNAffinityModeValue, Mode=TwoWay}" Watermark="Count"
-                     HorizontalAlignment="Right"
-                     x:Name="FirstNAffinityModeValueTextBox" />
+            <NumericUpDown IsVisible="{Binding #FirstNAffinityModeCheckBox.IsChecked}"
+                           Value="{Binding FirstNAffinityModeValue}" 
+                           ShowButtonSpinner="False"
+                           ParsingNumberStyle="Integer" Watermark="Count" HorizontalAlignment="Right"
+                           x:Name="FirstNAffinityModeValueTextBox" />
           </DockPanel>
           <DockPanel>
             <RadioButton GroupName="AffinityMode" Content="Last N"
                          IsChecked="{Binding IsLastNAffinityModeChosen, Mode=TwoWay}"
                          x:Name="LastNAffinityModeCheckBox" />
-            <TextBox IsVisible="{Binding #LastNAffinityModeCheckBox.IsChecked}"
-                     Text="{Binding LastNAffinityModeValue, Mode=TwoWay}" Watermark="Count"
-                     HorizontalAlignment="Right"
-                     x:Name="LastNAffinityModeValueTextBox" />
+            <NumericUpDown IsVisible="{Binding #LastNAffinityModeCheckBox.IsChecked}"
+                           Value="{Binding LastNAffinityModeValue}" 
+                           ShowButtonSpinner="False"
+                           ParsingNumberStyle="Integer" Watermark="Count" HorizontalAlignment="Right"
+                           x:Name="LastNAffinityModeValueTextBox" />
           </DockPanel>
           <DockPanel>
             <RadioButton GroupName="AffinityMode" Content="Custom"
@@ -76,8 +80,9 @@
                         IsVisible="{Binding #CustomAffinityModeCheckBox.IsChecked}"
                         HorizontalAlignment="Right">
               <TextBlock Text="0x" VerticalAlignment="Center" />
-              <TextBox Text="{Binding CustomAffinityModeValue, Mode=TwoWay}"
-                       Watermark="Enter or paste" />
+              <NumericUpDown Value="{Binding CustomAffinityModeValue}"
+                             ParsingNumberStyle="HexNumber" ShowButtonSpinner="False"
+                             Watermark="Enter or paste" />
             </StackPanel>
           </DockPanel>
         </StackPanel>
