@@ -69,14 +69,6 @@ class ThemeUpdaterService : IDisposable
 
       _overridenDarkResources.ThemeDictionaries.Add(ThemeVariant.Dark, overridenBrushesWithSpecifiedColor);
       appResources.MergedDictionaries.Add(_overridenDarkResources);
-
-      static object? ResourceFromStylesWithName(string name)
-        => Application.Current?.Styles.Resources.TryGetResource(name, ThemeVariant.Dark, out var resource) is true
-          ? resource
-          : null;
-
-      static Color? ColorFromBrushWithName(string name)
-        => ResourceFromStylesWithName(name)?.TryCastTo<ISolidColorBrush>()?.Color;
     }
   }
 
