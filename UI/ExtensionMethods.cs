@@ -23,7 +23,7 @@ public static class ExtensionMethods
     => (T)obj;
   
   public static T? TryCastTo<T>(this object obj)
-    => obj is T ? default : (T)obj;
+    => obj is T retyped ?  retyped : default;
 
   public static bool IsNullOrWhiteSpace(this string str) => string.IsNullOrWhiteSpace(str);
 
