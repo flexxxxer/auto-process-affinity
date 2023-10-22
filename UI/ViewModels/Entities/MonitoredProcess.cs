@@ -18,6 +18,8 @@ public sealed partial class MonitoredProcess : ObservableObject
   [ObservableProperty] string _name = "";
   [ObservableProperty] StateType _state = StateType.NotRunning;
   [ObservableProperty] nint _affinityValue;
+  [ObservableProperty] AffinityApplyingMode _affinityApplyingMode;
+  [ObservableProperty] bool _isCaseSensitive;
 
   public static MonitoredProcess CreateFrom(ConfiguredProcess configuredProcess)
     => new()

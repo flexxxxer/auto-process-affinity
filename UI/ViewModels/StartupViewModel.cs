@@ -117,7 +117,12 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     {
       configuredProcesses
         .FirstOrDefault(cp => cp.Name == p.Name)
-        ?.Do(cp => p.AffinityValue = (nint)AffinityApi.BitmaskFrom(cp.AffinityMode, cp.AffinityValue));
+        ?.Do(cp =>
+        {
+          p.AffinityValue = (nint)AffinityApi.BitmaskFrom(cp.AffinityMode, cp.AffinityValue);
+          p.AffinityApplyingMode = cp.AffinityApplyingMode;
+          p.IsCaseSensitive = cp.IsCaseSensitive;
+        });
     }
   }
 
