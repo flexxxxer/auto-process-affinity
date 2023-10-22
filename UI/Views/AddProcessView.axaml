@@ -14,11 +14,10 @@
   </Design.DataContext>
 
   <Grid RowDefinitions="*,Auto">
-    <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SystemBaseHighColor}"/>
+    <Border Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SystemBaseHighColor}" />
     <Grid Grid.Row="0">
       <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
-                  MinWidth="260" Spacing="2">
-
+                  MinWidth="260" Spacing="20">
         <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,5,Auto"
               IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}">
           <TextBox Text="{Binding ProcessName, Mode=TwoWay}"
@@ -34,6 +33,7 @@
         </DockPanel>
 
         <StackPanel HorizontalAlignment="Stretch">
+          <TextBlock Text="Affinity value mode:" FontSize="16" />
           <DockPanel HorizontalAlignment="Stretch">
             <RadioButton GroupName="AffinityMode"
                          IsChecked="{Binding IsEvenAffinityModeChosen, Mode=TwoWay}"
@@ -49,7 +49,7 @@
             <NumericUpDown IsVisible="{Binding #EvenAffinityModeCheckBox.IsChecked}"
                            Value="{Binding EvenAffinityModeFirstNValue}"
                            ShowButtonSpinner="False"
-                           ParsingNumberStyle="Integer" Watermark="First few" HorizontalAlignment="Right" 
+                           ParsingNumberStyle="Integer" Watermark="First few" HorizontalAlignment="Right"
                            x:Name="EvenAffinityModeFirstNValueTextBox" />
           </DockPanel>
           <DockPanel>
@@ -57,7 +57,7 @@
                          IsChecked="{Binding IsFirstNAffinityModeChosen, Mode=TwoWay}"
                          x:Name="FirstNAffinityModeCheckBox" />
             <NumericUpDown IsVisible="{Binding #FirstNAffinityModeCheckBox.IsChecked}"
-                           Value="{Binding FirstNAffinityModeValue}" 
+                           Value="{Binding FirstNAffinityModeValue}"
                            ShowButtonSpinner="False"
                            ParsingNumberStyle="Integer" Watermark="Count" HorizontalAlignment="Right"
                            x:Name="FirstNAffinityModeValueTextBox" />
@@ -67,7 +67,7 @@
                          IsChecked="{Binding IsLastNAffinityModeChosen, Mode=TwoWay}"
                          x:Name="LastNAffinityModeCheckBox" />
             <NumericUpDown IsVisible="{Binding #LastNAffinityModeCheckBox.IsChecked}"
-                           Value="{Binding LastNAffinityModeValue}" 
+                           Value="{Binding LastNAffinityModeValue}"
                            ShowButtonSpinner="False"
                            ParsingNumberStyle="Integer" Watermark="Count" HorizontalAlignment="Right"
                            x:Name="LastNAffinityModeValueTextBox" />
@@ -85,6 +85,13 @@
                              Watermark="Enter or paste" />
             </StackPanel>
           </DockPanel>
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Stretch">
+          <TextBlock Text="Applying affinity mode:" FontSize="16" />
+          <RadioButton GroupName="AffinityApplyingMode" Content="First with matched name" />
+          <RadioButton GroupName="AffinityApplyingMode" Content="All with matched name" />
+          <CheckBox Content="Case insensitive" />
         </StackPanel>
       </StackPanel>
     </Grid>
