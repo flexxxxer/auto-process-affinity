@@ -89,8 +89,18 @@
 
         <StackPanel HorizontalAlignment="Stretch">
           <TextBlock Text="Applying affinity mode:" FontSize="16" />
-          <RadioButton GroupName="AffinityApplyingMode" Content="All with matched name" 
-                       IsChecked="{Binding IsAllWithMatchedNameAffinityApplyingModeChosen}" />
+          <RadioButton GroupName="AffinityApplyingMode"
+                       IsChecked="{Binding IsAllWithMatchedNameAffinityApplyingModeChosen}">
+            <RadioButton.Content>
+              <StackPanel Spacing="-5">
+                <TextBlock Text="All with matched name" />
+                <TextBlock Text="recommended" FontSize="11"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" 
+                           IsVisible="{Binding ToEdit, 
+                            Converter={x:Static ObjectConverters.IsNull}}"/>
+              </StackPanel>
+            </RadioButton.Content>
+          </RadioButton>
           <RadioButton GroupName="AffinityApplyingMode" Content="First with matched name" 
                        IsChecked="{Binding IsFirstWithMatchedNameAffinityApplyingModeChosen}" />
           <CheckBox Content="Case insensitive" 
