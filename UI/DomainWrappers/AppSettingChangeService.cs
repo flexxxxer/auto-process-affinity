@@ -43,8 +43,8 @@ public sealed class AppSettingChangeService : IDisposable
     _lockGuard.Wait();
     try
     {
-      CurrentAppSettings = newAppSettings;
-      OnAppSettingsChanged(newAppSettings);
+      CurrentAppSettings = newAppSettings.ValidateAndFix();
+      OnAppSettingsChanged(CurrentAppSettings);
     }
     finally
     {
