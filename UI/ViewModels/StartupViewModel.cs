@@ -73,6 +73,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     HandleAppSettingsChanged(_appSettings);
     this.WhenActivated(d =>
     {
+      PeriodUpdateRecreate(appSettingsService.CurrentAppSettings.RunningProcessesUpdatePeriod);
       Observable
         .FromEventPattern<AppSettings>(
           h => appSettingsService.AppSettingsChanged += h,
@@ -86,14 +87,19 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     });
   }
 
+  void PeriodUpdateRecreate(TimeSpan updatePeriod)
+  {
+    _periodicUpdateStick?.Dispose();
+    _periodicUpdateStick = RxApp.MainThreadScheduler
+      .SchedulePeriodic(updatePeriod, () => Refresh().NoAwait());
+  }
+
   void HandleAppSettingsChanged(AppSettings newAppSettings)
   {
     static string ProcessName(MonitoredProcess p) => p.Name;
 
     _appSettings = newAppSettings;
-    _periodicUpdateStick?.Dispose();
-    _periodicUpdateStick = RxApp.MainThreadScheduler
-      .SchedulePeriodic(newAppSettings.RunningProcessesUpdatePeriod, () => Refresh().NoAwait());
+    PeriodUpdateRecreate(newAppSettings.RunningProcessesUpdatePeriod);
     
     UseOldSchoolAddEditStyle = newAppSettings.UxOptions.UseOldSchoolAddEditStyle;
     var configuredProcesses = newAppSettings.ConfiguredProcesses;
