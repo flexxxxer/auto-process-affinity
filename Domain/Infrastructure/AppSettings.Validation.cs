@@ -151,7 +151,9 @@ public static class AppSettingsValidation
   static AppSettings ValidateConfiguredProcesses(AppSettings appSettings)
   {
     static ConfiguredProcess? ValidateConfiguredProcess(ConfiguredProcess? cp)
-      => cp is null or { Name: null } || Enum.GetValues<AffinityMode>().Contains(cp.AffinityMode) is false
+      => cp is null or { Name: null } 
+         || Enum.GetValues<AffinityMode>().Contains(cp.AffinityMode) is false
+         || Enum.GetValues<AffinityApplyingMode>().Contains(cp.AffinityApplyingMode) is false
         ? null
         : cp;
     

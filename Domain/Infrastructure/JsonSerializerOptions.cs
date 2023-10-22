@@ -11,6 +11,7 @@ public static class SerializerOptions
       Converters =
       {
         new JsonEnumStringConverter<AffinityMode>(),
+        new JsonEnumStringConverter<AffinityApplyingMode>(),
         new JsonEnumStringConverter<StartupLocationMode>(),
         new JsonEnumStringConverter<StartupSizeMode>(),
         new JsonEnumStringConverter<AppTheme>(),

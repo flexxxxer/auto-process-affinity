@@ -11,11 +11,21 @@ public enum AffinityMode
   CustomBitmask,
 }
 
+public enum AffinityApplyingMode
+{
+  AllWithMatchedName,
+  FirstWithMatchedName,
+}
+
 public sealed record ConfiguredProcess
 {
   public string Name { get; init; } = "";
 
   public AffinityMode AffinityMode { get; init; }
+  
+  public AffinityApplyingMode AffinityApplyingMode { get; init; }
+  
+  public bool IsCaseSensitive { get; init; }
 
   public long AffinityValue { get; init; }
 }
