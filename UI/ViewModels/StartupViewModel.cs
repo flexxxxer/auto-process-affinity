@@ -138,29 +138,83 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
           ? MonitoredProcess.StateType.AffinityApplied
           : MonitoredProcess.StateType.AffinityCantBeSet;
 
-    static Process? GetSourceProcess(MonitoredProcess p)
+    static Process[] GetSourceProcesses(MonitoredProcess p, Process[]? whereToFind = null)
     {
-      var processName = p.Name;
-      var normalizedName = processName.EndsWith(".exe")
-        ? processName.Remove(".exe")
-        : processName + ".exe";
+      static string ProcessNameV2(string processName)
+        => processName.EndsWith(".exe")
+          ? processName.Remove(".exe")
+          : $"{processName}.exe";
 
-      return Process.GetProcessesByName(normalizedName).FirstOrDefault()
-        ?? Process.GetProcessesByName(processName).FirstOrDefault();
+      static Process[]? CaseSensitiveMatch(string processName, AffinityApplyingMode affinityApplyingMode) =>
+        affinityApplyingMode switch
+        {
+          AffinityApplyingMode.FirstWithMatchedName => Process.GetProcessesByName(processName)
+            .FirstOrDefault()
+            .Pipe(p => p is null ? null : new[] { p }),
+          
+          AffinityApplyingMode.AllWithMatchedName => Process.GetProcessesByName(processName)
+            .Pipe(ps => ps is [] ? null : ps),
+          
+          _ => throw new ArgumentOutOfRangeException()
+        };
+
+      static Process[]? CaseInsensitiveMatch(string processName, AffinityApplyingMode affinityApplyingMode, 
+        Process[]? whereToFind = null)
+      {
+        whereToFind = whereToFind switch
+        {
+          null or [] => Process.GetProcesses(),
+          _ => whereToFind
+        };
+        
+        return affinityApplyingMode switch
+        {
+          AffinityApplyingMode.FirstWithMatchedName => whereToFind
+            .FirstOrDefault(p => p.ProcessName.Equals(processName, StringComparison.OrdinalIgnoreCase))
+            .Pipe(p => p is null ? null : new[] { p }),
+          
+          AffinityApplyingMode.AllWithMatchedName => whereToFind
+            .Where(p => p.ProcessName.Equals(processName, StringComparison.OrdinalIgnoreCase))
+            .ToArray()
+            .Pipe(ps => ps is [] ? null : ps),
+          
+          _ => throw new ArgumentOutOfRangeException()
+        };
+      }
+      
+      var processName = p.Name;
+      var applyingMode = p.AffinityApplyingMode;
+      var processName2 = ProcessNameV2(p.Name);
+
+      return p.IsCaseSensitive switch
+      {
+        true => CaseSensitiveMatch(processName, applyingMode)
+          ?? CaseSensitiveMatch(processName2, applyingMode)
+          ?? Array.Empty<Process>(),
+        
+        false => CaseInsensitiveMatch(processName, applyingMode, whereToFind)
+          ?? CaseInsensitiveMatch(processName2, applyingMode, whereToFind)
+          ?? Array.Empty<Process>(),
+      };
     }
 
-    static MonitoredProcess.StateType SetAffinityAndGetStateType(nint affinityValue, Process? sourceProcess)
-      => sourceProcess switch
+    static MonitoredProcess.StateType SetAffinityAndGetStateType(nint affinityValue, Process[] sourceProcesses) =>
+      sourceProcesses switch
       {
-        not null => TrySetAffinity(sourceProcess, affinityValue),
-        null => MonitoredProcess.StateType.NotRunning,
+        [] => MonitoredProcess.StateType.NotRunning,
+        _ => sourceProcesses
+          .Select(p => TrySetAffinity(p, affinityValue))
+          .ToArray()
+          .Contains(MonitoredProcess.StateType.AffinityApplied)
+          ? MonitoredProcess.StateType.AffinityApplied
+          : MonitoredProcess.StateType.AffinityCantBeSet
       };
 
     var processesCopy = Processes.ToArray();
     var processesStateTypeToSet = await processesCopy
       .AsParallel()
       .AsOrdered()
-      .Select(mp => (AffinityToSet: mp.AffinityValue, Source: GetSourceProcess(mp)))
+      .Select(mp => (AffinityToSet: mp.AffinityValue, Source: GetSourceProcesses(mp)))
       .Select(tuple => SetAffinityAndGetStateType(tuple.AffinityToSet, tuple.Source))
       .PipeUsingTaskRun(q => q.ToArray());
 
