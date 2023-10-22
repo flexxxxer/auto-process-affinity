@@ -6,8 +6,6 @@
              xmlns:c="clr-namespace:UI.Controls"
              xmlns:cv="clr-namespace:UI.Converters"
              xmlns:views="clr-namespace:UI.Views"
-             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
-             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
 
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
              x:Class="UI.Views.StartupView"
@@ -65,13 +63,6 @@
               SelectionMode="{Binding UseOldSchoolAddEditStyle, 
 								Converter={x:Static cv:BoolToSelectionModeConverters.ToDataGridSelectionMode}}"
               x:Name="MonitoredProcessesDataGrid">
-
-      <i:Interaction.Behaviors>
-        <ia:EventTriggerBehavior EventName="DoubleTapped">
-          <ia:InvokeCommandAction Command="{Binding EditMonitoredProcessCommand}"
-                                  CommandParameter="{Binding #MonitoredProcessesDataGrid.SelectedItem}" />
-        </ia:EventTriggerBehavior>
-      </i:Interaction.Behaviors>
 
       <DataGrid.Columns>
         <DataGridTextColumn Header="Process name" Width="*"
