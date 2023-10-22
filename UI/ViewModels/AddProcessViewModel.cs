@@ -1,6 +1,7 @@
 ﻿using Domain;
 using Domain.Infrastructure;
 
+using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -35,6 +36,12 @@ public interface IAddProcessViewModel
   int? LastNAffinityModeValue { get; set; }
 
   long? CustomAffinityModeValue { get; set; }
+  
+  bool IsAllWithMatchedNameAffinityApplyingModeChosen { get; set; }
+  
+  bool IsFirstWithMatchedNameAffinityApplyingModeChosen { get; set; }
+  
+  bool IsCaseSensitiveAffinityApplyingMode { get; set; }
 
   ConfiguredProcess? ToEdit { get; }
 
@@ -56,17 +63,27 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] int? _firstNAffinityModeValue;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] int? _lastNAffinityModeValue;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] long? _customAffinityModeValue;
+  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isAllWithMatchedNameAffinityApplyingModeChosen;
+  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isFirstWithMatchedNameAffinityApplyingModeChosen;
+  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isCaseSensitiveAffinityApplyingMode;
 
   [ObservableProperty] ConfiguredProcess? _toEdit;
 
   readonly TaskCompletionSource<ConfiguredProcess?> _resultSource = new();
   public Task<ConfiguredProcess?> Result => _resultSource.Task;
 
+  AffinityApplyingMode _affinityApplyingMode;
   AffinityMode _affinityMode;
   long _affinityValue;
 
   void HandleAffinityModeChange()
   {
+    _affinityApplyingMode = (null as object) switch
+    {
+      _ when IsAllWithMatchedNameAffinityApplyingModeChosen => AffinityApplyingMode.AllWithMatchedName,
+      _ when IsFirstWithMatchedNameAffinityApplyingModeChosen => AffinityApplyingMode.FirstWithMatchedName,
+      _ => _affinityApplyingMode
+    };
     (_affinityValue, _affinityMode) = (null as object) switch
     {
       _ when IsEvenAffinityModeChosen => EvenAffinityModeFirstNValue switch
@@ -106,7 +123,12 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
   partial void OnLastNAffinityModeValueChanged(int? value) => HandleAffinityModeChange();
 
   partial void OnCustomAffinityModeValueChanged(long? value) => HandleAffinityModeChange();
+  
+  partial void OnIsAllWithMatchedNameAffinityApplyingModeChosenChanged(bool value) => HandleAffinityModeChange();
+
+  partial void OnIsFirstWithMatchedNameAffinityApplyingModeChosenChanged(bool value) => HandleAffinityModeChange();
   // ReSharper restore UnusedParameterInPartialMethod
+
 
   partial void OnToEditChanged(ConfiguredProcess? value)
   {
@@ -114,6 +136,15 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
     {
       ToEdit = value;
       ProcessName = value.Name;
+      IsCaseSensitiveAffinityApplyingMode = value.IsCaseSensitive;
+
+      (IsAllWithMatchedNameAffinityApplyingModeChosen, IsFirstWithMatchedNameAffinityApplyingModeChosen) =
+        value.AffinityApplyingMode switch
+        {
+          AffinityApplyingMode.AllWithMatchedName => (true, false),
+          AffinityApplyingMode.FirstWithMatchedName => (false, true),
+          _ => throw new ArgumentOutOfRangeException()
+        };
 
       (IsEvenAffinityModeChosen, EvenAffinityModeFirstNValue) = value.AffinityMode switch
       {
@@ -164,7 +195,9 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
     {
       Name = ProcessName,
       AffinityMode = _affinityMode,
-      AffinityValue = _affinityValue
+      AffinityValue = _affinityValue,
+      AffinityApplyingMode = _affinityApplyingMode,
+      IsCaseSensitive = IsCaseSensitiveAffinityApplyingMode,
     });
     HostScreen.Router.NavigateBack.Execute();
   }
@@ -188,6 +221,9 @@ public sealed partial class DesignAddProcessViewModel : ViewModelBase, IAddProce
   [ObservableProperty] int? _firstNAffinityModeValue;
   [ObservableProperty] int? _lastNAffinityModeValue;
   [ObservableProperty] long? _customAffinityModeValue;
+  [ObservableProperty] bool _isAllWithMatchedNameAffinityApplyingModeChosen;
+  [ObservableProperty] bool _isFirstWithMatchedNameAffinityApplyingModeChosen;
+  [ObservableProperty] bool _isCaseSensitiveAffinityApplyingMode;
   [ObservableProperty] ConfiguredProcess? _toEdit;
 
   public DesignAddProcessViewModel()

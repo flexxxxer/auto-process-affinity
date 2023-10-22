@@ -89,9 +89,12 @@
 
         <StackPanel HorizontalAlignment="Stretch">
           <TextBlock Text="Applying affinity mode:" FontSize="16" />
-          <RadioButton GroupName="AffinityApplyingMode" Content="First with matched name" />
-          <RadioButton GroupName="AffinityApplyingMode" Content="All with matched name" />
-          <CheckBox Content="Case insensitive" />
+          <RadioButton GroupName="AffinityApplyingMode" Content="All with matched name" 
+                       IsChecked="{Binding IsAllWithMatchedNameAffinityApplyingModeChosen}" />
+          <RadioButton GroupName="AffinityApplyingMode" Content="First with matched name" 
+                       IsChecked="{Binding IsFirstWithMatchedNameAffinityApplyingModeChosen}" />
+          <CheckBox Content="Case insensitive" 
+                    IsChecked="{Binding !IsCaseSensitiveAffinityApplyingMode, Mode=TwoWay}"/>
         </StackPanel>
       </StackPanel>
     </Grid>
