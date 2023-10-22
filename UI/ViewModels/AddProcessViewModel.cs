@@ -175,8 +175,9 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
       (IsEvenAffinityModeChosen && EvenAffinityModeFirstNValue is null or > 1)
       || (IsFirstNAffinityModeChosen && FirstNAffinityModeValue is not null)
       || (IsLastNAffinityModeChosen && LastNAffinityModeValue is not null)
-      || (IsCustomAffinityModeChosen && CustomAffinityModeValue is not null)
-    );
+      || (IsCustomAffinityModeChosen && CustomAffinityModeValue is not null))
+    && (IsAllWithMatchedNameAffinityApplyingModeChosen
+      || IsFirstWithMatchedNameAffinityApplyingModeChosen);
 
   [RelayCommand]
   async Task ChooseProcess()
