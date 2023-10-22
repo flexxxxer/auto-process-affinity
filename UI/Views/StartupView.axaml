@@ -78,7 +78,7 @@
                             Binding="{Binding Name}" IsReadOnly="True" />
 
         <DataGridTemplateColumn Header="Affinity state" Width="Auto"
-                                IsReadOnly="True">
+                                IsReadOnly="True" SortMemberPath="State">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <Grid>
