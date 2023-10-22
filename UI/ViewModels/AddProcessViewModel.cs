@@ -154,9 +154,7 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
       .GetRequiredService<SelectCurrentlyRunnableProcessViewModel>()
       .RouteThrough(HostScreen);
 
-    var selectedProcess = await vm.Result;
-
-    if (selectedProcess is not null) ProcessName = selectedProcess.Name;
+    if (await vm.Result is { } selectedProcess) ProcessName = selectedProcess.Name;
   }
 
   [RelayCommand(CanExecute = nameof(CanAddProcess))]
