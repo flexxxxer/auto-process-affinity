@@ -152,4 +152,7 @@ public static partial class Ext
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public static Func<T1, T2> MakeDelegate<T1, T2>(Func<T1, T2> action) => action;
+
+  public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> seq) 
+    => seq.Where(x => x is not null)!;
 }

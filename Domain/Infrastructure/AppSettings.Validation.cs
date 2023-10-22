@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Domain.Infrastructure;
 
@@ -147,11 +148,33 @@ public static class AppSettingsValidation
       _ => appSettings
     };
 
+  static AppSettings ValidateConfiguredProcesses(AppSettings appSettings)
+  {
+    static ConfiguredProcess? ValidateConfiguredProcess(ConfiguredProcess? cp)
+      => cp is null or { Name: null } || Enum.GetValues<AffinityMode>().Contains(cp.AffinityMode) is false
+        ? null
+        : cp;
+    
+    // serializer abnormally serializes [] as null
+    // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
+    var configuredProcesses = appSettings.ConfiguredProcesses ?? Array.Empty<ConfiguredProcess>();
+    
+    return appSettings with
+    {
+      // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+      ConfiguredProcesses = configuredProcesses
+        .Select(ValidateConfiguredProcess)
+        .WhereNotNull()
+        .ToArray()
+    };
+  }
+
   public static AppSettings ValidateAndFix(this AppSettings currentAppSettings)
     => currentAppSettings
       .Pipe(ValidateRunningProcessesUpdatePeriod)
       .Pipe(ValidateStartupOptions)
       .Pipe(ValidateUxOptions)
       .Pipe(ValidateUiOptions)
+      .Pipe(ValidateConfiguredProcesses)
       .Pipe(ValidateSystemLevelStartupOptions);
 }
