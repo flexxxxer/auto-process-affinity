@@ -58,10 +58,16 @@
     <Border Grid.Row="1" BorderThickness="0,1,0,0" 
             BorderBrush="{DynamicResource SystemBaseHighColor}"/>
 
+    <TextBlock Grid.Row="0" Text="No process configured. Lets add new one!"
+               TextWrapping="WrapWithOverflow"
+               IsVisible="{Binding !Processes.Count}"
+               HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" />
+    
     <DataGrid Grid.Row="0" CanUserResizeColumns="True"
               ItemsSource="{Binding Processes}"
               SelectionMode="{Binding UseOldSchoolAddEditStyle, 
 								Converter={x:Static cv:BoolToSelectionModeConverters.ToDataGridSelectionMode}}"
+              IsVisible="{Binding !!Processes.Count}"
               x:Name="MonitoredProcessesDataGrid">
 
       <DataGrid.Columns>
@@ -131,6 +137,7 @@
         <c:IconedButton.IsVisible>
           <MultiBinding Converter="{x:Static BoolConverters.And}">
             <Binding Path="UseOldSchoolAddEditStyle" />
+            <Binding Path="!!Processes.Count" />
             <MultiBinding Converter="{x:Static cv:ArithmeticConverters.FirstLessThanSecond}">
               <Binding Path="SelectedProcesses.Count" />
               <Binding>
@@ -153,19 +160,26 @@
         <c:IconedButton.IsVisible>
           <MultiBinding Converter="{x:Static BoolConverters.And}">
             <Binding Path="UseOldSchoolAddEditStyle" />
+            <Binding Path="!!Processes.Count" />
             <Binding Path="!#RemoveMonitoredProcessButton.IsVisible" />
           </MultiBinding>
         </c:IconedButton.IsVisible>
       </c:IconedButton>
 
       <c:IconedButton HorizontalAlignment="Left"
-                      IsVisible="{Binding UseOldSchoolAddEditStyle}"
                       Content="Edit" IconFill="{DynamicResource OkBrush}"
                       IconMargin="1" Padding="0 1.2 6 0"
                       IconStroke="{DynamicResource OkBrush}" IconStrokeThickness="1"
                       IconGeometry="{StaticResource EditIcon}" IconRenderTransform="scale(0.5)"
                       IconRenderTransformOrigin="50%,40%"
-                      Command="{Binding EditMonitoredProcessCommand}" />
+                      Command="{Binding EditMonitoredProcessCommand}">
+        <c:IconedButton.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <Binding Path="UseOldSchoolAddEditStyle"/>
+            <Binding Path="!!Processes.Count" />
+          </MultiBinding>
+        </c:IconedButton.IsVisible>
+      </c:IconedButton>
     </StackPanel>
   </Grid>
 
