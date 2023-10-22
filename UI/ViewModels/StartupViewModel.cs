@@ -185,8 +185,8 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
 
   bool CanRemoveMonitoredProcess(MonitoredProcess? p)
     => UseOldSchoolAddEditStyle
-      ? p is not null || SelectedProcesses is [_]
-      : SelectedProcesses is [_];
+      ? SelectedProcesses is [_]
+      : SelectedProcesses is [_] || p is not null;
   
   [RelayCommand(CanExecute = nameof(CanRemoveMonitoredProcess))]
   async Task RemoveMonitoredProcess(MonitoredProcess? p)
@@ -231,8 +231,8 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
 
   bool CanEditMonitoredProcess(MonitoredProcess? p) 
     => UseOldSchoolAddEditStyle
-      ? p is not null || SelectedProcesses is [_]
-      : SelectedProcesses is [_];
+      ? SelectedProcesses is [_]
+      : SelectedProcesses is [_] || p is not null;
   
   [RelayCommand(CanExecute = nameof(CanEditMonitoredProcess))]
   async Task EditMonitoredProcess(MonitoredProcess? p)
