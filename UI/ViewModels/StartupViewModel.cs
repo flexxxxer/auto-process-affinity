@@ -151,23 +151,17 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
         null => MonitoredProcess.StateType.NotRunning,
       };
 
-    var sourceProcesses = await Processes
+    var processesCopy = Processes.ToArray();
+    var processesStateTypeToSet = await processesCopy
       .AsParallel()
       .AsOrdered()
-      .Select(GetSourceProcess)
+      .Select(mp => (AffinityToSet: mp.AffinityValue, Source: GetSourceProcess(mp)))
+      .Select(tuple => SetAffinityAndGetStateType(tuple.AffinityToSet, tuple.Source))
       .PipeUsingTaskRun(q => q.ToArray());
 
-    var processesStateTypeToSet = await Processes
-      .Select(p => p.AffinityValue)
-      .Zip(sourceProcesses)
-      .AsParallel()
-      .AsOrdered()
-      .Select(tuple => SetAffinityAndGetStateType(tuple.First, tuple.Second))
-      .PipeUsingTaskRun(q => q.ToArray());
-
-    Processes
+    processesCopy
       .Zip(processesStateTypeToSet)
-      .ForEach((monitoredProcess, state) => monitoredProcess.State = state);
+      .ForEach((mp, state) => mp.State = state);
   }
 
   [RelayCommand]
