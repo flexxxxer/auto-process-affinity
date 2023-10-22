@@ -31,15 +31,15 @@ namespace UI.ViewModels;
 public interface IStartupViewModel
 {
   ObservableCollection<MonitoredProcess> Processes { get; }
-  
+
   ReadOnlyCollection<MonitoredProcess> SelectedProcesses { get; set; }
-  
+
   bool UseOldSchoolAddEditStyle { get; }
 
   IAsyncRelayCommand AddMonitoredProcessCommand { get; }
 
   IAsyncRelayCommand<MonitoredProcess?> RemoveMonitoredProcessCommand { get; }
-  
+
   IAsyncRelayCommand RemoveAllSelectedMonitoredProcessesCommand { get; }
 
   IAsyncRelayCommand<MonitoredProcess?> EditMonitoredProcessCommand { get; }
@@ -48,14 +48,14 @@ public interface IStartupViewModel
 public partial class StartupViewModel : RoutableAndActivatableViewModelBase, IStartupViewModel
 {
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
-  
-  [ObservableProperty] 
+
+  [ObservableProperty]
   [NotifyCanExecuteChangedFor(nameof(RemoveMonitoredProcessCommand))]
   [NotifyCanExecuteChangedFor(nameof(RemoveAllSelectedMonitoredProcessesCommand))]
   [NotifyCanExecuteChangedFor(nameof(EditMonitoredProcessCommand))]
   bool _useOldSchoolAddEditStyle;
 
-  [ObservableProperty] 
+  [ObservableProperty]
   [NotifyCanExecuteChangedFor(nameof(RemoveMonitoredProcessCommand))]
   [NotifyCanExecuteChangedFor(nameof(RemoveAllSelectedMonitoredProcessesCommand))]
   [NotifyCanExecuteChangedFor(nameof(EditMonitoredProcessCommand))]
@@ -100,7 +100,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
 
     _appSettings = newAppSettings;
     PeriodUpdateRecreate(newAppSettings.RunningProcessesUpdatePeriod);
-    
+
     UseOldSchoolAddEditStyle = newAppSettings.UxOptions.UseOldSchoolAddEditStyle;
     var configuredProcesses = newAppSettings.ConfiguredProcesses;
     var newProcesses = configuredProcesses
@@ -135,8 +135,8 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
   {
     static MonitoredProcess.StateType TrySetAffinity(Process p, long affinity)
       => p.TrySetProcessorAffinity((nint)affinity)
-          ? MonitoredProcess.StateType.AffinityApplied
-          : MonitoredProcess.StateType.AffinityCantBeSet;
+        ? MonitoredProcess.StateType.AffinityApplied
+        : MonitoredProcess.StateType.AffinityCantBeSet;
 
     static Process[] GetSourceProcesses(MonitoredProcess p, Process[]? whereToFind = null)
     {
@@ -151,14 +151,14 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
           AffinityApplyingMode.FirstWithMatchedName => Process.GetProcessesByName(processName)
             .FirstOrDefault()
             .Pipe(p => p is null ? null : new[] { p }),
-          
+
           AffinityApplyingMode.AllWithMatchedName => Process.GetProcessesByName(processName)
             .Pipe(ps => ps is [] ? null : ps),
-          
+
           _ => throw new ArgumentOutOfRangeException()
         };
 
-      static Process[]? CaseInsensitiveMatch(string processName, AffinityApplyingMode affinityApplyingMode, 
+      static Process[]? CaseInsensitiveMatch(string processName, AffinityApplyingMode affinityApplyingMode,
         Process[]? whereToFind = null)
       {
         whereToFind = whereToFind switch
@@ -166,22 +166,22 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
           null or [] => Process.GetProcesses(),
           _ => whereToFind
         };
-        
+
         return affinityApplyingMode switch
         {
           AffinityApplyingMode.FirstWithMatchedName => whereToFind
             .FirstOrDefault(p => p.ProcessName.Equals(processName, StringComparison.OrdinalIgnoreCase))
             .Pipe(p => p is null ? null : new[] { p }),
-          
+
           AffinityApplyingMode.AllWithMatchedName => whereToFind
             .Where(p => p.ProcessName.Equals(processName, StringComparison.OrdinalIgnoreCase))
             .ToArray()
             .Pipe(ps => ps is [] ? null : ps),
-          
+
           _ => throw new ArgumentOutOfRangeException()
         };
       }
-      
+
       var processName = p.Name;
       var applyingMode = p.AffinityApplyingMode;
       var processName2 = ProcessNameV2(p.Name);
@@ -189,12 +189,12 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
       return p.IsCaseSensitive switch
       {
         true => CaseSensitiveMatch(processName, applyingMode)
-          ?? CaseSensitiveMatch(processName2, applyingMode)
-          ?? Array.Empty<Process>(),
-        
-        false => CaseInsensitiveMatch(processName, applyingMode, whereToFind)
-          ?? CaseInsensitiveMatch(processName2, applyingMode, whereToFind)
-          ?? Array.Empty<Process>(),
+                ?? CaseSensitiveMatch(processName2, applyingMode)
+                ?? Array.Empty<Process>(),
+
+        false => CaseInsensitiveMatch(processName, applyingMode, whereToFind) 
+                 ?? CaseInsensitiveMatch(processName2, applyingMode, whereToFind)
+                 ?? Array.Empty<Process>(),
       };
     }
 
@@ -211,10 +211,11 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
       };
 
     var processesCopy = Processes.ToArray();
+    var existingProcesses = Processes.Any(p => !p.IsCaseSensitive) ? Process.GetProcesses() : null;
     var processesStateTypeToSet = await processesCopy
       .AsParallel()
       .AsOrdered()
-      .Select(mp => (AffinityToSet: mp.AffinityValue, Source: GetSourceProcesses(mp)))
+      .Select(mp => (AffinityToSet: mp.AffinityValue, Source: GetSourceProcesses(mp, existingProcesses)))
       .Select(tuple => SetAffinityAndGetStateType(tuple.AffinityToSet, tuple.Source))
       .PipeUsingTaskRun(q => q.ToArray());
 
@@ -246,17 +247,17 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     => UseOldSchoolAddEditStyle
       ? SelectedProcesses is [_]
       : SelectedProcesses is [_] || p is not null;
-  
+
   [RelayCommand(CanExecute = nameof(CanRemoveMonitoredProcess))]
   async Task RemoveMonitoredProcess(MonitoredProcess? p)
   {
     p ??= SelectedProcesses.FirstOrDefault();
-    
+
     if (p is not null)
     {
       Processes.Remove(p);
       var removedProcessName = p.Name;
-      
+
       await _appSettingService.MakeChangeAsync(previousSettings => previousSettings with
       {
         ConfiguredProcesses = previousSettings.ConfiguredProcesses
@@ -268,7 +269,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
 
   bool CanRemoveAllSelectedMonitoredProcesses()
     => UseOldSchoolAddEditStyle && SelectedProcesses.Count > 1;
-  
+
   [RelayCommand(CanExecute = nameof(CanRemoveAllSelectedMonitoredProcesses))]
   async Task RemoveAllSelectedMonitoredProcesses()
   {
@@ -278,7 +279,7 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
       var removedProcessesNames = selectedProcesses
         .Select(x => x.Name)
         .ToHashSet();
-      
+
       await _appSettingService.MakeChangeAsync(previousSettings => previousSettings with
       {
         ConfiguredProcesses = previousSettings.ConfiguredProcesses
@@ -288,20 +289,20 @@ public partial class StartupViewModel : RoutableAndActivatableViewModelBase, ISt
     }
   }
 
-  bool CanEditMonitoredProcess(MonitoredProcess? p) 
+  bool CanEditMonitoredProcess(MonitoredProcess? p)
     => UseOldSchoolAddEditStyle
       ? SelectedProcesses is [_]
       : SelectedProcesses is [_] || p is not null;
-  
+
   [RelayCommand(CanExecute = nameof(CanEditMonitoredProcess))]
   async Task EditMonitoredProcess(MonitoredProcess? p)
   {
     p ??= SelectedProcesses.FirstOrDefault();
-    
+
     var configuredProcessToEdit = _appSettings
       .ConfiguredProcesses
       .FirstOrDefault(cp => cp.Name == p?.Name);
-    
+
     if (p is not null && configuredProcessToEdit is not null)
     {
       var addProcessVm = Locator.Current
@@ -327,7 +328,7 @@ public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupView
   [ObservableProperty] ObservableCollection<MonitoredProcess> _processes = new();
   [ObservableProperty] ReadOnlyCollection<MonitoredProcess> _selectedProcesses = new(Array.Empty<MonitoredProcess>());
   [ObservableProperty] bool _useOldSchoolAddEditStyle;
-  
+
   public DesignStartupViewModel()
   {
     Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
@@ -347,10 +348,10 @@ public sealed partial class DesignStartupViewModel : ViewModelBase, IStartupView
     UseOldSchoolAddEditStyle = !UseOldSchoolAddEditStyle;
     return Task.CompletedTask;
   }
-  
+
   [RelayCommand]
   Task RemoveMonitoredProcess(MonitoredProcess? p) => Task.CompletedTask;
-  
+
   [RelayCommand]
   Task RemoveAllSelectedMonitoredProcesses() => Task.CompletedTask;
 
