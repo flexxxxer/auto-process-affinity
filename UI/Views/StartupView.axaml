@@ -82,7 +82,8 @@
                 <Path VerticalAlignment="Center" Margin="0 0 0 0"
                       Height="20" Width="20" Tag="{Binding State}" />
                 <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                           ToolTip.Tip="{Binding State}"
+                           ToolTip.Tip="{Binding State, 
+                            Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}"
                            Fill="Transparent" />
               </Grid>
             </DataTemplate>
