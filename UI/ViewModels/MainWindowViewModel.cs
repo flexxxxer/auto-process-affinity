@@ -108,7 +108,8 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
           h => appSettingsService.AppSettingsChanged += h,
           h => appSettingsService.AppSettingsChanged -= h)
         .ObserveOn(RxApp.MainThreadScheduler)
-        .Subscribe(eventPattern => HandleAppSettingsChanged(eventPattern.EventArgs));
+        .Subscribe(eventPattern => HandleAppSettingsChanged(eventPattern.EventArgs))
+        .DisposeWith(d);
 
       if (locationValues is var (x, y))
       {
