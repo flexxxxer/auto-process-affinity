@@ -19,13 +19,34 @@ public partial class MainWindow : ReactiveWindow<IMainWindowViewModel>
 
     this.WhenActivated(d =>
     {
-      this.WhenAnyValue(w => w.ViewModel)
+      this.WhenAnyValue(v => v.ViewModel)
         .WhereNotNull()
         .Subscribe(vm =>
         {
           // can be bind in axaml after fix https://github.com/AvaloniaUI/Avalonia/issues/13300 
           WindowState = vm.WindowState;
+          ShowInTaskbar = vm.MinimizeToTrayAtStartup is false;
 
+          Observable
+            .FromEventPattern<WindowClosingEventArgs>(
+              h => Closing += h,
+              h => Closing -= h)
+            .Select(e => e.EventArgs)
+            .Subscribe(args =>
+            {
+              if (vm.HideInTrayInsteadOfClosing)
+              {
+                args.Cancel = true;
+                ShowInTaskbar = false;
+                WindowState = WindowState.Minimized;
+              }
+            })
+            .DisposeWith(d);
+
+          this.WhenAnyValue(v => v.WindowState)
+            .Subscribe(newState => ShowInTaskbar = newState is not WindowState.Minimized || ShowInTaskbar)
+            .DisposeWith(d);
+          
           vm.SetWindowPosition
             .RegisterHandler(interaction =>
             {

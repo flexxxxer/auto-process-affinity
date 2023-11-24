@@ -4,6 +4,7 @@ using Domain;
 using Domain.Infrastructure;
 
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Reactive;
@@ -24,7 +25,7 @@ using Hardware.Info;
 
 namespace UI.ViewModels;
 
-public interface IMainWindowViewModel : IScreen
+public interface IMainWindowViewModel : IScreen, INotifyPropertyChanged
 {
   PixelPoint WindowPosition { get; set; }
 
@@ -39,6 +40,10 @@ public interface IMainWindowViewModel : IScreen
   bool IsCustomTitleBarUsed { get; }
 
   WindowStartupLocation WindowStartupLocationMode { get; }
+  
+  bool HideInTrayInsteadOfClosing { get; }
+  
+  bool MinimizeToTrayAtStartup { get; }
 
   Interaction<PixelPoint, Unit> SetWindowPosition { get; }
 }
@@ -52,6 +57,8 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
   [ObservableProperty] WindowStartupLocation _windowStartupLocationMode;
   [ObservableProperty] WindowState _windowState;
   [ObservableProperty] bool _isCustomTitleBarUsed;
+  [ObservableProperty] bool _hideInTrayInsteadOfClosing;
+  [ObservableProperty] bool _minimizeToTrayAtStartup;
 
   public string DefaultWindowTitleText { get; }
 
@@ -66,6 +73,7 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
   {
     _appSettingsService = appSettingsService;
     var startupOptions = appSettingsService.CurrentAppSettings.StartupOptions;
+    var uxOptions = appSettingsService.CurrentAppSettings.UxOptions;
     IsCustomTitleBarUsed = appSettingsService.CurrentAppSettings.UiOptions.ShowSystemTitleBar is false;
     WindowTitleText = DefaultWindowTitleText = MakeDefaultTitlePostfix(privilegesStatus);
     (WindowHeight, WindowWidth) = startupOptions.StartupSizeMode switch
@@ -81,9 +89,14 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
       StartupLocationMode.Default => (null, WindowStartupLocation.Manual),
       _ => throw new ArgumentOutOfRangeException()
     };
-    WindowState = startupOptions.Minimized
-      ? WindowState.Minimized
-      : WindowState.Normal;
+
+    HideInTrayInsteadOfClosing = uxOptions.HideToTrayInsteadOfClosing;
+    (WindowState, MinimizeToTrayAtStartup) = startupOptions.StartupWindowState switch
+    {
+      StartupWindowState.Minimized => (WindowState.Minimized, false),
+      StartupWindowState.MinimizedToTray => (WindowState.Minimized, true),
+      _ => (WindowState.Normal, false),
+    };
 
     HandleAppSettingsChanged(appSettingsService.CurrentAppSettings);
 
@@ -170,6 +183,7 @@ public partial class MainWindowViewModel : ActivatableViewModelBase, IMainWindow
     };
 
     IsCustomTitleBarUsed = newAppSettings.UiOptions.ShowSystemTitleBar is false;
+    HideInTrayInsteadOfClosing = newAppSettings.UxOptions.HideToTrayInsteadOfClosing;
   }
 
   void HandleDeactivation()
@@ -231,6 +245,10 @@ public sealed class DesignMainWindowViewModel : ViewModelBase, IMainWindowViewMo
   public WindowStartupLocation WindowStartupLocationMode { get; } = WindowStartupLocation.Manual;
 
   public WindowState WindowState { get; } = WindowState.Normal;
+
+  public bool HideInTrayInsteadOfClosing { get; } = true;
+
+  public bool MinimizeToTrayAtStartup { get; } = false;
 
   public Interaction<PixelPoint, Unit> SetWindowPosition { get; } = new();
 
