@@ -41,9 +41,13 @@ public class App : Application
   void Init()
   {
     ConfigureUiServices();
-    if(!IsDesignMode) ConfigureMicrosoftHostServices();
-    if(!IsDesignMode) ConfigureCustomServices();
-    if(!IsDesignMode) SetupServices();
+    if (!IsDesignMode)
+    {
+      ConfigureMicrosoftHostServices();
+      ConfigureCustomServices();
+      SetupServices();
+      DataContext = Locator.Current.GetRequiredService<AppDataContext>();
+    }
   }
 
   void ConfigureMicrosoftHostServices()
@@ -72,6 +76,7 @@ public class App : Application
   void ConfigureUiServices()
   {
     SR.SetupIOC();
+    SR.RegisterLazySingleton<AppDataContext>();
     SR.RegisterLazySingleton<MainWindowViewModel>();
     SR.RegisterLazySingleton<MainViewModel>();
     SR.Register<StartupViewModel>();
