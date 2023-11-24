@@ -4,7 +4,7 @@ namespace Domain.Infrastructure;
 
 public enum AffinityMode
 {
-  AllEven,
+  AllEven = 1,
   FirstNEven,
   FirstN,
   LastN,
@@ -13,7 +13,7 @@ public enum AffinityMode
 
 public enum AffinityApplyingMode
 {
-  AllWithMatchedName,
+  AllWithMatchedName = 1,
   FirstWithMatchedName,
 }
 
@@ -32,28 +32,35 @@ public sealed record ConfiguredProcess
 
 public enum StartupLocationMode
 {
-  RememberLast,
+  RememberLast = 1,
   Default,
   CenterScreen,
 }
 
 public enum StartupSizeMode
 {
-  RememberLast,
+  RememberLast = 1,
   Specified,
   Optimal,
 }
 
+public enum StartupWindowState
+{
+  Normal = 1,
+  Minimized,
+  MinimizedToTray,
+}
+
 public enum AppTheme
 {
-  Dark,
+  Dark = 1,
   Light,
   System,
 }
 
 public enum AppDarkThemeVariant
 {
-  AmoledDark,
+  AmoledDark = 1,
   Dark,
   MediumDark,
   LowDark,
@@ -77,7 +84,7 @@ public sealed record StartupOptions
 
   public bool Autostart { get; init; }
 
-  public bool Minimized { get; init; }
+  public StartupWindowState StartupWindowState { get; init; }
 
   public StartupLocationMode StartupLocationMode { get; init; }
 
@@ -90,7 +97,7 @@ public sealed record StartupOptions
   public static StartupOptions Default => new()
   {
     Autostart = false,
-    Minimized = false,
+    StartupWindowState = StartupWindowState.Normal,
     StartupLocationMode = StartupLocationMode.CenterScreen,
     StartupLocation = new(),
     StartupSizeMode = StartupSizeMode.Optimal,

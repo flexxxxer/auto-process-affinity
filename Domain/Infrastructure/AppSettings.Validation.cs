@@ -77,10 +77,28 @@ public static class AppSettingsValidation
         }
       };
     }
+    
+    static AppSettings ValidateStartupWindowState(AppSettings appSettings)
+    {
+      var fixedStartupWindowState = appSettings.StartupOptions.StartupWindowState switch
+      {
+        not StartupWindowState.MinimizedToTray
+          and not StartupWindowState.Minimized
+          and not StartupWindowState.Normal => StartupWindowState.Normal,
+
+        var darkThemeVariant => darkThemeVariant,
+      };
+
+      return appSettings with
+      {
+        StartupOptions = appSettings.StartupOptions with { StartupWindowState = fixedStartupWindowState }
+      };
+    }
 
     return appSettings
       .Pipe(ValidateIsNotNull)
       .Pipe(ValidateStartupLocation)
+      .Pipe(ValidateStartupWindowState)
       .Pipe(ValidateStartupSize);
   }
 
