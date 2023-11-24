@@ -131,7 +131,8 @@
               <ToggleSwitch OnContent="On"
                             OffContent="Off"
                             IsChecked="{Binding HideInTrayInsteadOfClosing}"
-                            Margin="5" />
+                            Margin="5"
+                            x:Name="HideInTrayInsteadOfClosingToggle" />
             </StackPanel>
           </StackPanel>
         </Expander>
@@ -152,13 +153,19 @@
                             Margin="5" />
             </StackPanel>
             <StackPanel>
-              <TextBlock Classes="h2" Text="Minimized" />
+              <TextBlock Classes="h2" Text="Startup window state" />
               <TextBlock Classes="info"
-                         Text="The application will run in a minimised state." />
-              <ToggleSwitch OnContent="On"
-                            OffContent="Off"
-                            IsChecked="{Binding RunMinimized}"
-                            Margin="5" />
+                         Text="Specifying the application window state at startup." />
+              <StackPanel Orientation="Horizontal" Spacing="10" Margin="5">
+                <ComboBox ItemsSource="{Binding StartupWindowStates}"
+                          SelectedItem="{Binding StartupWindowState}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding ., Converter={x:Static cv:EnumConverters.AnyEnumToFriendlyString}}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </StackPanel>
             </StackPanel>
             <StackPanel>
               <TextBlock Classes="h2" Text="Startup location mode" />

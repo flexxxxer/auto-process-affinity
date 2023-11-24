@@ -7,6 +7,7 @@ using System;
 using System.Reactive.Linq;
 using System.Collections.ObjectModel;
 using System.Reactive.Disposables;
+using System.Linq;
 
 using Avalonia;
 using Avalonia.Styling;
@@ -29,7 +30,7 @@ public interface ISettingsViewModel
   bool HideProcessDescription { get; set; }
   bool HideInTrayInsteadOfClosing { get; set; }
   bool LoadOnSystemStartup { get; set; }
-  bool RunMinimized { get; set; }
+  StartupWindowState StartupWindowState { get; set; }
   StartupLocationMode StartupLocationMode { get; set; }
   StartupSizeMode StartupSizeMode { get; set; }
   double? StartupWindowWidth { get; set; }
@@ -42,6 +43,7 @@ public interface ISettingsViewModel
   ReadOnlyObservableCollection<StartupSizeMode> StartupSizeModes { get; }
   ReadOnlyObservableCollection<AppTheme> AppThemes { get; }
   ReadOnlyObservableCollection<AppDarkThemeVariant> DarkThemeVariants { get; }
+  ObservableCollection<StartupWindowState> StartupWindowStates { get; }
 
   IRelayCommand GoBackCommand { get; }
 }
@@ -53,7 +55,7 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
   [ObservableProperty] bool _hideProcessDescription;
   [ObservableProperty] bool _hideInTrayInsteadOfClosing;
   [ObservableProperty] bool _loadOnSystemStartup;
-  [ObservableProperty] bool _runMinimized;
+  [ObservableProperty] StartupWindowState _startupWindowState;
   [ObservableProperty] StartupLocationMode _startupLocationMode;
   [ObservableProperty] StartupSizeMode _startupSizeMode;
   [ObservableProperty] double? _startupWindowWidth;
@@ -66,6 +68,7 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
   [ObservableProperty] ReadOnlyObservableCollection<StartupSizeMode> _startupSizeModes;
   [ObservableProperty] ReadOnlyObservableCollection<AppTheme> _appThemes;
   [ObservableProperty] ReadOnlyObservableCollection<AppDarkThemeVariant> _darkThemeVariants;
+  [ObservableProperty] ObservableCollection<StartupWindowState> _startupWindowStates;
 
   readonly AppSettingChangeService _settingChangeService;
 
@@ -76,6 +79,7 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
     StartupSizeModes = new(new(Enum.GetValues<StartupSizeMode>()));
     AppThemes = new(new(Enum.GetValues<AppTheme>()));
     DarkThemeVariants = new(new(Enum.GetValues<AppDarkThemeVariant>()));
+    StartupWindowStates = new(Enum.GetValues<StartupWindowState>().Except(new[] {StartupWindowState.MinimizedToTray}));
 
     FillFromAppSettings(settingChangeService.CurrentAppSettings);
     this.WhenActivated(d =>
@@ -94,7 +98,7 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
     HideProcessDescription = appSettings.UxOptions.HideProcessDescriptionFromSelectingProcessView;
     HideInTrayInsteadOfClosing = appSettings.UxOptions.HideToTrayInsteadOfClosing;
     LoadOnSystemStartup = appSettings.StartupOptions.Autostart;
-    RunMinimized = appSettings.StartupOptions.Minimized;
+    StartupWindowState = appSettings.StartupOptions.StartupWindowState;
     StartupLocationMode = appSettings.StartupOptions.StartupLocationMode;
     StartupSizeMode = appSettings.StartupOptions.StartupSizeMode;
     StartupWindowWidth = appSettings.StartupOptions.StartupSize.Width;
@@ -103,6 +107,22 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
     ShowSystemTitleBar = appSettings.UiOptions.ShowSystemTitleBar;
     Theme = appSettings.UiOptions.Theme;
     DarkThemeVariant = appSettings.UiOptions.DarkThemeVariant;
+  }
+
+  partial void OnHideInTrayInsteadOfClosingChanged(bool value)
+  {
+    if (value)
+    {
+      StartupWindowStates.Add(StartupWindowState.MinimizedToTray);
+    }
+    else
+    {
+      if (StartupWindowState is StartupWindowState.MinimizedToTray)
+      {
+        StartupWindowState = StartupWindowState.Minimized;
+      }
+      StartupWindowStates.Remove(StartupWindowState.MinimizedToTray);
+    }
   }
 
   void UpdateAppSettings()
@@ -128,7 +148,7 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
       StartupOptions = appSettings.StartupOptions with
       {
         Autostart = LoadOnSystemStartup,
-        Minimized = RunMinimized,
+        StartupWindowState = StartupWindowState,
         StartupLocationMode = StartupLocationMode,
         StartupSizeMode = StartupSizeMode,
         StartupSize = StartupWindowHeight is not { } notNullH || StartupWindowWidth is not { } notNullW
@@ -160,7 +180,7 @@ public sealed partial class DesignSettingsViewModel : ViewModelBase, ISettingsVi
   [ObservableProperty] bool _hideProcessDescription;
   [ObservableProperty] bool _hideInTrayInsteadOfClosing;
   [ObservableProperty] bool _loadOnSystemStartup;
-  [ObservableProperty] bool _runMinimized;
+  [ObservableProperty] StartupWindowState _startupWindowState;
   [ObservableProperty] StartupLocationMode _startupLocationMode;
   [ObservableProperty] StartupSizeMode _startupSizeMode;
   [ObservableProperty] double? _startupWindowWidth;
@@ -173,13 +193,15 @@ public sealed partial class DesignSettingsViewModel : ViewModelBase, ISettingsVi
   [ObservableProperty] ReadOnlyObservableCollection<StartupSizeMode> _startupSizeModes;
   [ObservableProperty] ReadOnlyObservableCollection<AppTheme> _appThemes;
   [ObservableProperty] ReadOnlyObservableCollection<AppDarkThemeVariant> _darkThemeVariants;
-
+  [ObservableProperty] ObservableCollection<StartupWindowState> _startupWindowStates;
+  
   public DesignSettingsViewModel()
   {
     StartupLocationModes = new(new(Enum.GetValues<StartupLocationMode>()));
     StartupSizeModes = new(new(Enum.GetValues<StartupSizeMode>()));
     AppThemes = new(new(Enum.GetValues<AppTheme>()));
     DarkThemeVariants = new(new(Enum.GetValues<AppDarkThemeVariant>()));
+    StartupWindowStates = new(Enum.GetValues<StartupWindowState>());
     Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
   }
 
