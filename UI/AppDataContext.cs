@@ -52,6 +52,16 @@ public partial class AppDataContext : ActivatableViewModelBase
   void Show() => _mainWindow.WindowState = WindowState.Normal;
 
   [RelayCommand]
+  void SwitchWindowState() => _mainWindow.WindowState = _mainWindow.WindowState switch
+  {
+    WindowState.Maximized 
+      or WindowState.FullScreen 
+      or WindowState.Normal => WindowState.Minimized,
+    
+    _ => WindowState.Normal,
+  };
+
+  [RelayCommand]
   void ShowSettings()
   {
     _hostScreen.Router.NavigateAndReset.Execute(Locator.Current.GetRequiredService<StartupViewModel>());

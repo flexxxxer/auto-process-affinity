@@ -9,7 +9,8 @@
     <TrayIcons>
       <TrayIcon Icon="/Assets/app-logo.ico" 
                 ToolTipText="Auto Process Affinity"
-                IsVisible="{Binding IsTrayIconVisible}">
+                IsVisible="{Binding IsTrayIconVisible}"
+                Command="{Binding SwitchWindowStateCommand}">
         <TrayIcon.Menu>
           <NativeMenu>
             <NativeMenuItem Header="Show" Command="{Binding ShowCommand}">
