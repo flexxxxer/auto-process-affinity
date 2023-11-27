@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Avalonia;
 using Avalonia.ReactiveUI;
+using Domain;
 
 namespace UI.Desktop;
 
@@ -11,6 +13,11 @@ static class Program
   [STAThread]
   public static int Main(string[] args)
   {
+    if (IsAnotherInstanceExists())
+    {
+      return 0;
+    }
+
     var builder = BuildAvaloniaApp();
     if (args.Contains("--drm"))
     {
@@ -43,4 +50,9 @@ static class Program
 
     new Thread(Start) { IsBackground = true }.Start();
   }
+
+  static bool IsAnotherInstanceExists()
+    => Process.GetCurrentProcess().ProcessName
+      .Pipe(Process.GetProcessesByName)
+      .Length > 1;
 }
