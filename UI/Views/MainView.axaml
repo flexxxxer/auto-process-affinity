@@ -25,6 +25,13 @@
           </MultiBinding>
         </MultiBinding>
       </DockPanel.IsVisible>
+      <Grid DockPanel.Dock="Right" VerticalAlignment="Center" 
+            IsVisible="{Binding IsAppRunningWithAdmin}"
+            Margin="5 0 0 0">
+        <Path Data="{StaticResource ShieldRegularIcon}" Fill="Gray"/>
+        <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                   ToolTip.Tip="App running as Admin" Fill="Transparent" />
+      </Grid>
       <Menu DockPanel.Dock="Top" IsVisible="{Binding IsMenuVisible}">
         <MenuItem Header="_App">
           <MenuItem Header="Export config to...">
@@ -38,7 +45,7 @@
             </MenuItem>
             <MenuItem Header="Folder">
               <MenuItem.Icon>
-                <Path Data="{StaticResource FolderRegular}" Fill="{DynamicResource NeutralBrush}" />
+                <Path Data="{StaticResource FolderRegularIcon}" Fill="{DynamicResource NeutralBrush}" />
               </MenuItem.Icon>
             </MenuItem>
           </MenuItem>
@@ -63,6 +70,15 @@
           </MenuItem>
         </MenuItem>
         <MenuItem Header="A_bout" />
+        <MenuItem IsVisible="{Binding !IsAppRunningWithAdmin}"
+                  Command="{Binding RunAsAdminCommand}">
+          <MenuItem.Header>
+            <StackPanel Orientation="Horizontal" Spacing="3" Margin="-5 0 0 0">
+              <Image Source="/Assets/icons8-microsoft-admin.ico" Margin="4"/>
+              <AccessText Text="As admin" VerticalAlignment="Center"/>
+            </StackPanel>
+          </MenuItem.Header>
+        </MenuItem>
       </Menu>
     </DockPanel>
     

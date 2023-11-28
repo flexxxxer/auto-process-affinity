@@ -24,22 +24,28 @@ namespace UI.ViewModels;
 public interface IMainViewModel : IScreen
 {
   IAsyncRelayCommand GoToSettingsCommand { get; }
+  
+  IRelayCommand RunAsAdminCommand { get; }
 
   IRelayCommand ExitCommand { get; }
   
   bool IsCustomTitleBarUsed { get; }
   
   bool IsMenuVisible { get; }
+  
+  bool IsAppRunningWithAdmin { get; }
 }
 
 public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
 {
   [ObservableProperty] bool _isCustomTitleBarUsed;
   [ObservableProperty] bool _isMenuVisible;
+  [ObservableProperty] bool _isAppRunningWithAdmin;
   
   public RoutingState Router { get; } = new();
 
-  public MainViewModel(MainWindowViewModel mainWindowViewModel, AppSettingChangeService appSettingsService) 
+  public MainViewModel(MainWindowViewModel mainWindowViewModel, AppSettingChangeService appSettingsService,
+    AdminPrivilegesStatus privilegesStatus) 
   {
     var routeVmChanged = Router
       .CurrentViewModel
@@ -53,6 +59,7 @@ public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
       .Select(eventPattern => eventPattern.EventArgs.UiOptions.ShowSystemTitleBar);
 
     IsCustomTitleBarUsed = appSettingsService.CurrentAppSettings.UiOptions.ShowSystemTitleBar is false;
+    IsAppRunningWithAdmin = privilegesStatus.IsAdmin;
     
     // ReSharper disable once AsyncVoidLambda
     this.WhenActivated(async d =>
@@ -90,6 +97,12 @@ public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
       .RouteThrough(this);
 
   [RelayCommand]
+  void RunAsAdmin()
+  {
+    
+  }
+
+  [RelayCommand]
   void Exit() => Application.Current
     ?.ApplicationLifetime
     ?.TryCastTo<IClassicDesktopStyleApplicationLifetime>()
@@ -100,6 +113,7 @@ public sealed partial class DesignMainViewModel : ViewModelBase, IMainViewModel
 {
   [ObservableProperty] bool _isCustomTitleBarUsed = true;
   [ObservableProperty] bool _isMenuVisible = true;
+  [ObservableProperty] bool _isAppRunningWithAdmin;
   
   public RoutingState Router { get; } = new();
   
@@ -110,6 +124,9 @@ public sealed partial class DesignMainViewModel : ViewModelBase, IMainViewModel
 
   [RelayCommand]
   Task GoToSettings() => Task.CompletedTask;
+  
+  [RelayCommand]
+  void RunAsAdmin() => IsAppRunningWithAdmin = !IsAppRunningWithAdmin;
 
   [RelayCommand]
   void Exit() { }
