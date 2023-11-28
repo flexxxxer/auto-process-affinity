@@ -34,6 +34,13 @@
       </Grid>
       <Menu DockPanel.Dock="Top" IsVisible="{Binding IsMenuVisible}">
         <MenuItem Header="_App">
+          <MenuItem Header="Run as Admin"
+                    IsVisible="{Binding !IsAppRunningWithAdmin}"
+                    Command="{Binding RunAsAdminCommand}">
+            <MenuItem.Icon>
+              <Image Source="/Assets/icons8-microsoft-admin.ico"/>
+            </MenuItem.Icon>
+          </MenuItem>
           <MenuItem Header="Export config to...">
             <MenuItem.Icon>
               <Path Data="{StaticResource ExportIcon}" Fill="{DynamicResource NeutralBrush}" />
@@ -70,15 +77,6 @@
           </MenuItem>
         </MenuItem>
         <MenuItem Header="A_bout" />
-        <MenuItem IsVisible="{Binding !IsAppRunningWithAdmin}"
-                  Command="{Binding RunAsAdminCommand}">
-          <MenuItem.Header>
-            <StackPanel Orientation="Horizontal" Spacing="3" Margin="-5 0 0 0">
-              <Image Source="/Assets/icons8-microsoft-admin.ico" Margin="4"/>
-              <AccessText Text="As admin" VerticalAlignment="Center"/>
-            </StackPanel>
-          </MenuItem.Header>
-        </MenuItem>
       </Menu>
     </DockPanel>
     
