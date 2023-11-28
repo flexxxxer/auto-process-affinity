@@ -9,7 +9,7 @@
         WindowStartupLocation="{Binding WindowStartupLocationMode}"
         Height="{Binding WindowHeight, Mode=TwoWay}"
         Width="{Binding WindowWidth, Mode=TwoWay}"
-        MinHeight="250" MinWidth="300"
+        MinHeight="250" MinWidth="370"
 
         x:Class="UI.Views.MainWindow"
         Icon="/Assets/app-logo.ico"
