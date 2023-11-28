@@ -1,39 +1,10 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:app="clr-namespace:UI"
+             xmlns:cv="clr-namespace:UI.Converters"
              x:Class="UI.App"
              x:DataType="app:AppDataContext"
              RequestedThemeVariant="Default">
-  
-  <TrayIcon.Icons>
-    <TrayIcons>
-      <TrayIcon Icon="/Assets/app-logo.ico" 
-                ToolTipText="Auto Process Affinity"
-                IsVisible="{Binding IsTrayIconVisible}"
-                Command="{Binding SwitchWindowStateCommand}">
-        <TrayIcon.Menu>
-          <NativeMenu>
-            <NativeMenuItem Header="Show" Command="{Binding ShowCommand}">
-              <NativeMenuItem.Icon>
-                <!-- TODO -->
-              </NativeMenuItem.Icon>
-            </NativeMenuItem>
-            <NativeMenuItem Header="Settings" Command="{Binding ShowSettingsCommand}">
-              <NativeMenuItem.Icon>
-                <!-- TODO -->
-              </NativeMenuItem.Icon>
-            </NativeMenuItem>
-            <NativeMenuItemSeparator />
-            <NativeMenuItem Header="Exit" Command="{Binding ExitCommand}">
-              <NativeMenuItem.Icon>
-                <!-- TODO -->
-              </NativeMenuItem.Icon>
-            </NativeMenuItem>
-          </NativeMenu>
-        </TrayIcon.Menu>
-      </TrayIcon>
-    </TrayIcons>
-  </TrayIcon.Icons>
   
   <Application.Resources>
     <ResourceDictionary>
@@ -43,7 +14,7 @@
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>
-
+  
   <Application.Styles>
     <FluentTheme />
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
@@ -51,4 +22,32 @@
     <StyleInclude Source="/Assets/GlobalAvaloniaFixes.axaml" />
     <StyleInclude Source="/Assets/ForAvaloniaControlsStyles.axaml" />
   </Application.Styles>
+  
+  <TrayIcon.Icons>
+    <TrayIcons>
+      <TrayIcon Icon="/Assets/app-logo.ico" 
+                ToolTipText="Auto Process Affinity"
+                IsVisible="{Binding IsTrayIconVisible}"
+                Command="{Binding SwitchWindowStateCommand}">
+        <TrayIcon.Menu>
+          <NativeMenu>
+            <NativeMenuItem Header="Show app" Command="{Binding ShowCommand}"
+                            Icon="/Assets/app-logo.ico">
+            </NativeMenuItem>
+            <NativeMenuItem Header="Settings" Command="{Binding ShowSettingsCommand}"
+                            Icon="{cv:SteamGeometryToBitmapExtension 
+                              Geometry={StaticResource SettingsIcon},
+                              Fill=DimGray}">
+            </NativeMenuItem>
+            <NativeMenuItemSeparator />
+            <NativeMenuItem Header="Exit" Command="{Binding ExitCommand}"
+                            Icon="{cv:SteamGeometryToBitmapExtension 
+                              Geometry={StaticResource ExitIcon},
+                              Fill=DimGray}"/>
+          </NativeMenu>
+        </TrayIcon.Menu>
+      </TrayIcon>
+    </TrayIcons>
+  </TrayIcon.Icons>
+ 
 </Application>
