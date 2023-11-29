@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Domain.Infrastructure;
+
+using System;
 using System.IO;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection;
 using System.Security.Principal;
-using Domain.Infrastructure;
 
 namespace Domain;
 
