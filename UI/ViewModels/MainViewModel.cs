@@ -1,4 +1,5 @@
-﻿using Domain.Infrastructure;
+﻿using Domain;
+using Domain.Infrastructure;
 
 using UI.DomainWrappers;
 
@@ -99,7 +100,7 @@ public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
   [RelayCommand]
   void RunAsAdmin()
   {
-    
+    _ = ProcessApi.RestartWithAdminPrivileges();
   }
 
   [RelayCommand]

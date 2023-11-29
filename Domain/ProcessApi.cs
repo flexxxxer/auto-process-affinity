@@ -2,6 +2,7 @@
 using System.IO;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reflection;
 using System.Security.Principal;
 using Domain.Infrastructure;
 
@@ -113,6 +114,55 @@ public static class ProcessApi
       {
         return null;
       }
+    }
+  }
+
+  public static bool RestartWithAdminPrivileges()
+  {
+    ProcessStartInfo? startInfo = OsTypeApi.CurrentOs switch
+    {
+      OsType.Windows => StartInfoForWindows(),
+      OsType.Linux => StartInfoForLinux(),
+      _ => null
+    };
+
+    if (startInfo is null)
+    {
+      return false;
+    }
+    try
+    {
+      Process.Start(startInfo);
+      Environment.Exit(0);
+    }
+    catch
+    {
+      return false;
+    }
+    return true;
+
+    static string GetExecutingAppFile() 
+      => Environment.ProcessPath 
+         ?? Process.GetCurrentProcess().MainModule?.FileName 
+         ?? Environment.CommandLine;
+
+    static ProcessStartInfo StartInfoForWindows()
+    {
+      return new()
+      {
+        FileName = GetExecutingAppFile(),
+        Verb = "runas",
+        UseShellExecute = true,
+      };
+    }
+    
+    static ProcessStartInfo StartInfoForLinux()
+    {
+      return new()
+      {
+        FileName = "sudo",
+        Arguments = GetExecutingAppFile()
+      };
     }
   }
 }
