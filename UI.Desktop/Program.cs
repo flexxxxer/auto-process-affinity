@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Domain;
+
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+
 using Avalonia;
 using Avalonia.ReactiveUI;
-using Domain;
 
 namespace UI.Desktop;
 
@@ -13,10 +16,13 @@ static class Program
   [STAThread]
   public static int Main(string[] args)
   {
-    if (IsAnotherInstanceExists())
-    {
-      return 0;
-    }
+    var isAnotherInstanceExists = Enumerable
+      .Range(0, 5)
+      .Select(_ => IsAnotherInstanceExists() ? Task.Delay(TimeSpan.FromSeconds(1)) : null)
+      .ForEachDo(t => t?.Wait())
+      .Contains(null) is false;
+    
+    if (isAnotherInstanceExists) return 0;
 
     var builder = BuildAvaloniaApp();
     if (args.Contains("--drm"))
