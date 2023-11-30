@@ -100,6 +100,10 @@ public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
   [RelayCommand]
   void RunAsAdmin()
   {
+    Application.Current
+      ?.ApplicationLifetime
+      ?.TryCastTo<IClassicDesktopStyleApplicationLifetime>()
+      ?.Shutdown();
     _ = ProcessApi.RestartWithAdminPrivileges();
   }
 

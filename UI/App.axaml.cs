@@ -6,6 +6,7 @@ using UI.Views;
 using UI.DomainWrappers;
 
 using System;
+using System.IO;
 
 using Avalonia;
 using Avalonia.Controls;
@@ -52,10 +53,16 @@ public class App : Application
 
   void ConfigureMicrosoftHostServices()
   {
+    var appFolderPath = ProcessApi
+      .GetExecutingAppFilePath()
+      .Pipe(Path.GetDirectoryName)!;
+    
     var host = Host
       .CreateDefaultBuilder()
+      .UseContentRoot(appFolderPath)
       .ConfigureAppConfiguration((_, cb) =>
       {
+        cb.SetBasePath(appFolderPath);
         cb.AddJsonFile("appsettings.json", false, true);
       })
       .ConfigureServices((hb, scs) =>
@@ -99,6 +106,7 @@ public class App : Application
     SR.RegisterLazySingleton<CurrentlyRunnableProcessesServiceWrapper>();
     SR.RegisterLazySingleton<AppSettingChangeService>();
     SR.RegisterLazySingleton<ThemeUpdaterService>();
+    SR.RegisterLazySingleton<AutostartChangeService>();
 
     Locator.CurrentMutable
       .RegisterLazySingletonAnd<HardwareInfo>(() => new())
@@ -123,6 +131,7 @@ public class App : Application
     {
       typeof(CurrentlyRunnableProcessesServiceWrapper),
       typeof(ThemeUpdaterService),
+      typeof(AutostartChangeService),
     }.ForEach(serviceType => _ = Locator.Current.GetService(serviceType));
   }
 

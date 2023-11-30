@@ -116,6 +116,11 @@ public static class ProcessApi
       }
     }
   }
+  
+  public static string GetExecutingAppFilePath() 
+    => Environment.ProcessPath 
+       ?? Process.GetCurrentProcess().MainModule?.FileName 
+       ?? Environment.CommandLine;
 
   public static bool RestartWithAdminPrivileges()
   {
@@ -133,7 +138,6 @@ public static class ProcessApi
     try
     {
       Process.Start(startInfo);
-      Environment.Exit(0);
     }
     catch
     {
@@ -141,16 +145,11 @@ public static class ProcessApi
     }
     return true;
 
-    static string GetExecutingAppFile() 
-      => Environment.ProcessPath 
-         ?? Process.GetCurrentProcess().MainModule?.FileName 
-         ?? Environment.CommandLine;
-
     static ProcessStartInfo StartInfoForWindows()
     {
       return new()
       {
-        FileName = GetExecutingAppFile(),
+        FileName = GetExecutingAppFilePath(),
         Verb = "runas",
         UseShellExecute = true,
       };
@@ -161,7 +160,7 @@ public static class ProcessApi
       return new()
       {
         FileName = "sudo",
-        Arguments = GetExecutingAppFile()
+        Arguments = GetExecutingAppFilePath()
       };
     }
   }
