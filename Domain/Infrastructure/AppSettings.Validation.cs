@@ -159,13 +159,6 @@ public static class AppSettingsValidation
       .Pipe(ValidateDarkThemeVariant);
   }
 
-  static AppSettings ValidateSystemLevelStartupOptions(AppSettings appSettings)
-    => appSettings.SystemLevelStartupOptions switch
-    {
-      null => appSettings with { SystemLevelStartupOptions = SystemLevelStartupOptions.Default },
-      _ => appSettings
-    };
-
   static AppSettings ValidateConfiguredProcesses(AppSettings appSettings)
   {
     static ConfiguredProcess? ValidateConfiguredProcess(ConfiguredProcess? cp)
@@ -195,6 +188,5 @@ public static class AppSettingsValidation
       .Pipe(ValidateStartupOptions)
       .Pipe(ValidateUxOptions)
       .Pipe(ValidateUiOptions)
-      .Pipe(ValidateConfiguredProcesses)
-      .Pipe(ValidateSystemLevelStartupOptions);
+      .Pipe(ValidateConfiguredProcesses);
 }

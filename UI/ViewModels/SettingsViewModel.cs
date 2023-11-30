@@ -35,7 +35,6 @@ public interface ISettingsViewModel
   StartupSizeMode StartupSizeMode { get; set; }
   double? StartupWindowWidth { get; set; }
   double? StartupWindowHeight { get; set; }
-  bool RunWithAdministratorOrRootPrivileges { get; set; }
   bool ShowSystemTitleBar { get; set; }
   AppTheme Theme { get; set; }
   AppDarkThemeVariant DarkThemeVariant { get; set; }
@@ -60,7 +59,6 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
   [ObservableProperty] StartupSizeMode _startupSizeMode;
   [ObservableProperty] double? _startupWindowWidth;
   [ObservableProperty] double? _startupWindowHeight;
-  [ObservableProperty] bool _runWithAdministratorOrRootPrivileges;
   [ObservableProperty] bool _showSystemTitleBar;
   [ObservableProperty] AppTheme _theme;
   [ObservableProperty] AppDarkThemeVariant _darkThemeVariant;
@@ -103,7 +101,6 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
     StartupSizeMode = appSettings.StartupOptions.StartupSizeMode;
     StartupWindowWidth = appSettings.StartupOptions.StartupSize.Width;
     StartupWindowHeight = appSettings.StartupOptions.StartupSize.Height;
-    RunWithAdministratorOrRootPrivileges = appSettings.SystemLevelStartupOptions.RunWithAdminOrRootPrivileges;
     ShowSystemTitleBar = appSettings.UiOptions.ShowSystemTitleBar;
     Theme = appSettings.UiOptions.Theme;
     DarkThemeVariant = appSettings.UiOptions.DarkThemeVariant;
@@ -155,10 +152,6 @@ public sealed partial class SettingsViewModel : RoutableAndActivatableViewModelB
           ? appSettings.StartupOptions.StartupSize
           : new() { Height = notNullH, Width = notNullW }
       },
-      SystemLevelStartupOptions = appSettings.SystemLevelStartupOptions with
-      {
-        RunWithAdminOrRootPrivileges = RunWithAdministratorOrRootPrivileges,
-      }
     };
 
     _settingChangeService
@@ -185,7 +178,6 @@ public sealed partial class DesignSettingsViewModel : ViewModelBase, ISettingsVi
   [ObservableProperty] StartupSizeMode _startupSizeMode;
   [ObservableProperty] double? _startupWindowWidth;
   [ObservableProperty] double? _startupWindowHeight;
-  [ObservableProperty] bool _runWithAdministratorOrRootPrivileges;
   [ObservableProperty] bool _showSystemTitleBar;
   [ObservableProperty] AppTheme _theme;
   [ObservableProperty] AppDarkThemeVariant _darkThemeVariant;

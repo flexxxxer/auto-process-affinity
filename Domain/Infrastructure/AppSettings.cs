@@ -137,16 +137,6 @@ public sealed record UiOptions
   };
 }
 
-public sealed record SystemLevelStartupOptions
-{
-  public required bool RunWithAdminOrRootPrivileges { get; init; }
-
-  public static SystemLevelStartupOptions Default => new()
-  {
-    RunWithAdminOrRootPrivileges = false,
-  };
-}
-
 public sealed record AppSettings
 {
   public required TimeSpan RunningProcessesUpdatePeriod { get; init; }
@@ -159,8 +149,6 @@ public sealed record AppSettings
 
   public required UiOptions UiOptions { get; init; }
 
-  public required SystemLevelStartupOptions SystemLevelStartupOptions { get; init; }
-
   public static AppSettings Default => new()
   {
     RunningProcessesUpdatePeriod = TimeSpan.FromSeconds(2),
@@ -168,7 +156,6 @@ public sealed record AppSettings
     StartupOptions = StartupOptions.Default,
     UxOptions = UxOptions.Default,
     UiOptions = UiOptions.Default,
-    SystemLevelStartupOptions = SystemLevelStartupOptions.Default,
   };
 }
 

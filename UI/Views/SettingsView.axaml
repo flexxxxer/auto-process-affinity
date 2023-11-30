@@ -220,20 +220,6 @@
                 </StackPanel>
               </StackPanel>
             </StackPanel>
-            <StackPanel>
-              <!-- TODO: remove when linux autostart will be supported -->
-              <StackPanel.IsVisible>
-                <MultiBinding Converter="{x:Static cv:ObjectConverters.IsEquals}">
-                  <Binding Source="{x:Static domain:OsTypeApi.CurrentOs}"/>
-                  <Binding Source="{x:Static domain:OsType.Windows}" /> 
-                </MultiBinding>
-              </StackPanel.IsVisible>
-              <TextBlock Classes="h2" Text="Run with administrator or root privileges" />
-              <ToggleSwitch OnContent="On"
-                            OffContent="Off"
-                            IsChecked="{Binding RunWithAdministratorOrRootPrivileges}"
-                            Margin="5" />
-            </StackPanel>
           </StackPanel>
         </Expander>
 
