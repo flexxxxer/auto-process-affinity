@@ -25,9 +25,24 @@
              Watermark="Search by name, id or description" AcceptsTab="False" AcceptsReturn="False" />
 
     <TextBlock Grid.Row="1" Text="No match found"
-               IsVisible="{Binding !CurrentlyRunningProcesses.Count}"
                HorizontalAlignment="Center" FontSize="14"
-               Margin="0 40 0 0" />
+               Margin="0 40 0 0" >
+      <TextBlock.IsVisible>
+        <MultiBinding Converter="{x:Static BoolConverters.And}">
+          <Binding Path="!CurrentlyRunningProcesses.Count" />
+          <Binding Path="!!SearchText.Length" />
+        </MultiBinding>
+      </TextBlock.IsVisible>
+    </TextBlock>
+    
+    <ProgressBar Grid.Row="1" IsIndeterminate="True" HorizontalAlignment="Center" Margin="20 0 20 0">
+      <ProgressBar.IsVisible>
+        <MultiBinding Converter="{x:Static BoolConverters.And}">
+          <Binding Path="!SearchText.Length" />
+          <Binding Path="!CurrentlyRunningProcesses.Count" />
+        </MultiBinding>
+      </ProgressBar.IsVisible>
+    </ProgressBar>
 
     <DataGrid Grid.Row="1" x:Name="ProcessesDataGrid" SelectionMode="Single"
               ItemsSource="{Binding CurrentlyRunningProcesses}"
