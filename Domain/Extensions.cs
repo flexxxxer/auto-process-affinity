@@ -142,7 +142,7 @@ public static partial class Ext
     .Pipe(enumAsStr => enumAsStr[0].ToUpper() + enumAsStr[1..]);
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-  public static Action MakeDegalate(Action action) => action;
+  public static Action MakeDelegate(Action action) => action;
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public static Action<T> MakeDelegate<T>(Action<T> action) => action;
