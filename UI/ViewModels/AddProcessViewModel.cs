@@ -63,7 +63,7 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] int? _firstNAffinityModeValue;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] int? _lastNAffinityModeValue;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] long? _customAffinityModeValue;
-  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isAllWithMatchedNameAffinityApplyingModeChosen;
+  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isAllWithMatchedNameAffinityApplyingModeChosen = true;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isFirstWithMatchedNameAffinityApplyingModeChosen;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isCaseSensitiveAffinityApplyingMode;
 
