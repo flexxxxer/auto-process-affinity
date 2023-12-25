@@ -90,6 +90,7 @@ public class App : Application
     SR.Register<AddProcessViewModel>();
     SR.Register<SelectCurrentlyRunnableProcessViewModel>();
     SR.Register<SettingsViewModel>();
+    SR.Register<AboutViewModel>();
 
     Locator.CurrentMutable
       .RegisterLazySingletonAnd<MainWindow>(() => new() { DataContext = Locator.Current.GetRequiredService<MainWindowViewModel>() })

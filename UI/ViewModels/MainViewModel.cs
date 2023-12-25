@@ -25,7 +25,9 @@ namespace UI.ViewModels;
 public interface IMainViewModel : IScreen
 {
   IAsyncRelayCommand GoToSettingsCommand { get; }
-  
+
+  IAsyncRelayCommand GoToAboutCommand { get; }
+
   IRelayCommand RunAsAdminCommand { get; }
 
   IRelayCommand ExitCommand { get; }
@@ -98,6 +100,12 @@ public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
       .RouteThrough(this);
 
   [RelayCommand]
+  async Task GoToAbout()
+    => await Locator.Current
+      .GetRequiredService<AboutViewModel>()
+      .RouteThrough(this);
+
+  [RelayCommand]
   void RunAsAdmin()
   {
     Application.Current
@@ -129,7 +137,10 @@ public sealed partial class DesignMainViewModel : ViewModelBase, IMainViewModel
 
   [RelayCommand]
   Task GoToSettings() => Task.CompletedTask;
-  
+
+  [RelayCommand]
+  Task GoToAbout() => Task.CompletedTask;
+
   [RelayCommand]
   void RunAsAdmin() => IsAppRunningWithAdmin = !IsAppRunningWithAdmin;
 

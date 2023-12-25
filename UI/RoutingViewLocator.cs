@@ -17,6 +17,7 @@ public class RoutingViewLocator : IViewLocator
       SelectCurrentlyRunnableProcessViewModel vm => new SelectCurrentlyRunnableProcessView { DataContext = vm },
       StartupViewModel vm => new StartupView { DataContext = vm },
       SettingsViewModel vm => new SettingsView { DataContext = vm },
+      AboutViewModel vm => new AboutView { DataContext = vm },
       _ => throw new IndexOutOfRangeException()
     };
 }

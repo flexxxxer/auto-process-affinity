@@ -76,7 +76,7 @@
             </MenuItem.Icon>
           </MenuItem>
         </MenuItem>
-        <MenuItem Header="A_bout" />
+        <MenuItem Header="A_bout" Command="{Binding GoToAboutCommand}"/>
       </Menu>
     </DockPanel>
     

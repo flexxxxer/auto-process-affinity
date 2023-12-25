@@ -1,0 +1,198 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:UI.ViewModels"
+             xmlns:controls="clr-namespace:UI.Controls"
+
+             mc:Ignorable="d" d:DesignWidth="375" d:DesignHeight="450"
+             x:Class="UI.Views.AboutView"
+             x:DataType="vm:IAboutViewModel">
+
+  <Design.DataContext>
+    <vm:DesignAboutViewModel />
+  </Design.DataContext>
+
+  <Grid RowDefinitions="*,Auto">
+    <Border Grid.Row="1" BorderThickness="0,1,0,0"
+            BorderBrush="{DynamicResource SystemBaseHighColor}" />
+
+    <TabControl Grid.Row="0">
+      <TabItem Header="About">
+        <StackPanel VerticalAlignment="Center" Spacing="5">
+          <TextBlock Text="An open source app for setting process affinity."
+                     TextWrapping="Wrap" />
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Source code available "
+                       TextWrapping="Wrap" />
+            <Button Content="here" Classes="link"
+                    Command="{Binding OpenUrlCommand}"
+                    CommandParameter="https://github.com/flexxxxer/auto-process-affinity" />
+          </StackPanel>
+          <TextBlock Text="Copyright © 2023-2024 flexxxxer Aleksandr." />
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="License: "
+                       TextWrapping="Wrap" />
+            <Button Content="MIT" Classes="link"
+                    Command="{Binding OpenUrlCommand}"
+                    CommandParameter="https://github.com/flexxxxer/auto-process-affinity/blob/master/LICENSE" />
+          </StackPanel>
+        </StackPanel>
+      </TabItem>
+      <TabItem Header="Components">
+        <ScrollViewer AllowAutoHide="True">
+          <StackPanel Spacing="10">
+            <StackPanel>
+              <TextBlock Text="Avalonia UI" FontWeight="Bold" />
+              <TextBlock Text="Version 11.0.6" />
+              <TextBlock Text="Open source cross-platform UI framework for dotnet."
+                         TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal">
+                <Button Content="GitHub repo" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/AvaloniaUI/Avalonia" />
+                <TextBlock Text=", " />
+                <Button Content="License (MIT)" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/AvaloniaUI/Avalonia/blob/master/licence.md" />
+              </StackPanel>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="DynamicData" FontWeight="Bold" />
+              <TextBlock Text="Version 8.3.27" />
+              <TextBlock Text="Reactive collections based on Rx.Net."
+                         TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal">
+                <Button Content="GitHub repo" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/reactivemarbles/DynamicData" />
+                <TextBlock Text=", " />
+                <Button Content="License (MIT)" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/reactivemarbles/DynamicData/blob/main/LICENSE" />
+              </StackPanel>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="securifybv.ShellLink" FontWeight="Bold" />
+              <TextBlock Text="Version 0.1.0" />
+              <TextBlock Text="A .NET Class Library for processing ShellLink (LNK) files."
+                         TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal">
+                <Button Content="GitHub repo" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/securifybv/ShellLink" />
+                <TextBlock Text=", " />
+                <Button Content="License (MIT)" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/securifybv/ShellLink/blob/master/LICENSE.txt" />
+              </StackPanel>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="Avalonia.Xaml.Behaviors" FontWeight="Bold" />
+              <TextBlock Text="Version 11.0.6" />
+              <TextBlock Text="Port of Windows UWP Xaml Behaviors for Avalonia Xaml."
+                         TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal">
+                <Button Content="GitHub repo" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/AvaloniaUI/Avalonia.Xaml.Behaviors" />
+                <TextBlock Text=", " />
+                <Button Content="License (MIT)" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/AvaloniaUI/Avalonia.Xaml.Behaviors/blob/master/LICENSE.TXT" />
+              </StackPanel>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="CommunityToolkit.Mvvm" FontWeight="Bold" />
+              <TextBlock Text="Version 8.2.2" />
+              <TextBlock
+                Text="A fast, modular, platform-agnostic MVVM library, which is the official successor of MvvmLight."
+                TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal">
+                <Button Content="GitHub repo" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/CommunityToolkit/dotnet" />
+                <TextBlock Text=", " />
+                <Button Content="License (MIT)" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/CommunityToolkit/dotnet/blob/main/License.md" />
+              </StackPanel>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="Hardware.Info" FontWeight="Bold" />
+              <TextBlock Text="Version 100.0.1" />
+              <TextBlock
+                Text="Battery, BIOS, CPU - processor, storage drive, keyboard, RAM - memory, monitor, motherboard, mouse, NIC - network adapter, printer, sound card - audio card, graphics card - video card. Hardware.Info is a .NET Standard 2.0 library and uses WMI on Windows, /dev, /proc, /sys on Linux and sysctl, system_profiler on macOS."
+                TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal">
+                <Button Content="GitHub repo" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/Jinjinov/Hardware.Info" />
+                <TextBlock Text=", " />
+                <Button Content="License (MIT)" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/Jinjinov/Hardware.Info/blob/master/LICENSE" />
+              </StackPanel>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="Microsoft.Extensions.Hosting" FontWeight="Bold" />
+              <TextBlock Text="Version 8.0.0" />
+              <TextBlock Text="Hosting and startup infrastructures for applications."
+                         TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal">
+                <Button Content="GitHub repo" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/dotnet/runtime/tree/main/src/libraries/Microsoft.Extensions.Hosting" />
+                <TextBlock Text=", " />
+                <Button Content="License (MIT)" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://licenses.nuget.org/MIT" />
+              </StackPanel>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="Microsoft.Extensions.Configuration.Json" FontWeight="Bold" />
+              <TextBlock Text="Version 8.0.0" />
+              <TextBlock Text="JSON configuration provider implementation for Microsoft.Extensions.Configuration."
+                         TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal">
+                <Button Content="GitHub repo" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/dotnet/runtime/tree/main/src/libraries/Microsoft.Extensions.Configuration.Json" />
+                <TextBlock Text=", " />
+                <Button Content="License (MIT)" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://licenses.nuget.org/MIT" />
+              </StackPanel>
+            </StackPanel>
+            <StackPanel>
+              <TextBlock Text="Splat.DependencyInjection.SourceGenerator" FontWeight="Bold" />
+              <TextBlock Text="Version 1.1.93" />
+              <TextBlock
+                Text="Source generator which produces Splat based registrations for both constructor and property injection."
+                TextWrapping="Wrap" />
+              <StackPanel Orientation="Horizontal">
+                <Button Content="GitHub repo" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/reactiveui/Splat.DI.SourceGenerator" />
+                <TextBlock Text=", " />
+                <Button Content="License (MIT)" Classes="link"
+                        Command="{Binding OpenUrlCommand}"
+                        CommandParameter="https://github.com/reactiveui/Splat.DI.SourceGenerator/blob/main/LICENSE" />
+              </StackPanel>
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
+    <Grid Grid.Row="1" HorizontalAlignment="Stretch" Margin="0 10 0 7">
+      <controls:IconedButton HorizontalAlignment="Center"
+                             IconMargin="3" Padding="0 1.6 6 0"
+                             IconRenderTransformOrigin="50%,40%"
+                             Content="Go back" IconFill="{DynamicResource NeutralBrush}"
+                             IconStroke="{DynamicResource NeutralBrush}" IconStrokeThickness="1"
+                             IconGeometry="{StaticResource ArrowLeftIcon}"
+                             Command="{Binding GoBackCommand}" HotKey="Escape" />
+    </Grid>
+  </Grid>
+
+</UserControl>
