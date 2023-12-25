@@ -17,11 +17,12 @@
   
   <Application.Styles>
     <FluentTheme />
-    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
     <StyleInclude Source="/Controls/IconedButtonStyle.axaml" />
     <StyleInclude Source="/Assets/GlobalAvaloniaFixes.axaml" />
     <StyleInclude Source="/Assets/ForAvaloniaControlsStyles.axaml" />
-  </Application.Styles>
+    <StyleInclude Source="/Assets/HyperlinkButtonStyle.axaml" />
+	</Application.Styles>
   
   <TrayIcon.Icons>
     <TrayIcons>
