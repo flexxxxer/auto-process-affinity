@@ -11,7 +11,7 @@ using DynamicData;
 
 namespace Domain;
 
-public sealed class CurrentlyRunnedProcessDto
+public sealed class CurrentlyRunningProcessDto
 {
   public string Name { get; }
 
@@ -21,7 +21,7 @@ public sealed class CurrentlyRunnedProcessDto
 
   internal Process SourceProcess { get; }
 
-  public CurrentlyRunnedProcessDto(Process sourceProcess)
+  public CurrentlyRunningProcessDto(Process sourceProcess)
   {
     SourceProcess = sourceProcess;
     Name = sourceProcess.ProcessName();
@@ -36,11 +36,11 @@ public sealed class CurrentlyRunnedProcessDto
 public sealed class CurrentlyRunnableProcessesService : IDisposable
 {
   readonly System.Timers.Timer _refreshProcessesTimer;
-  readonly List<CurrentlyRunnedProcessDto> _currentlyRunningProcesses;
-  readonly Dictionary<int, CurrentlyRunnedProcessDto> _currentlyRunningProcessesProcessIdKeyed;
+  readonly List<CurrentlyRunningProcessDto> _currentlyRunningProcesses;
+  readonly Dictionary<int, CurrentlyRunningProcessDto> _currentlyRunningProcessesProcessIdKeyed;
   readonly object _syncObj = new();
 
-  public record UpdateChangeset(CurrentlyRunnedProcessDto[] Dead, CurrentlyRunnedProcessDto[] Created);
+  public record UpdateChangeset(CurrentlyRunningProcessDto[] Dead, CurrentlyRunningProcessDto[] Created);
 
   EventHandler<UpdateChangeset>? _updateEvent;
   public event EventHandler<UpdateChangeset>? Update
@@ -63,7 +63,7 @@ public sealed class CurrentlyRunnableProcessesService : IDisposable
     }
   }
 
-  public List<CurrentlyRunnedProcessDto> CurrentlyRunningProcesses
+  public List<CurrentlyRunningProcessDto> CurrentlyRunningProcesses
   {
     get
     {
@@ -129,7 +129,7 @@ public sealed class CurrentlyRunnableProcessesService : IDisposable
       processesToRemove.ForEach(p => _currentlyRunningProcessesProcessIdKeyed.Remove(p.ProcessId));
 
       var processesToAdd = Process.GetProcesses()
-        .Select(p => new CurrentlyRunnedProcessDto(p))
+        .Select(p => new CurrentlyRunningProcessDto(p))
         .AsParallel().WithExecutionMode(ParallelExecutionMode.ForceParallelism)
         .Where(p => !ProcessNamesToExclude.ContainsKey(p.Name)
           && !_currentlyRunningProcessesProcessIdKeyed.ContainsKey(p.ProcessId)

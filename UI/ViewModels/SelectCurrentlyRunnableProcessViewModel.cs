@@ -30,9 +30,9 @@ public interface ISelectCurrentlyRunnableProcessViewModel
 
   bool ShouldDescriptionColumnBeHidden { get; }
 
-  CurrentlyRunnedProcessDto? SelectedRunningProcess { get; set; }
+  CurrentlyRunningProcessDto? SelectedRunningProcess { get; set; }
 
-  ReadOnlyObservableCollection<CurrentlyRunnedProcessDto> CurrentlyRunningProcesses { get; }
+  ReadOnlyObservableCollection<CurrentlyRunningProcessDto> CurrentlyRunningProcesses { get; }
 
   IRelayCommand ConfirmChoiceCommand { get; }
 
@@ -44,20 +44,20 @@ public partial class SelectCurrentlyRunnableProcessViewModel : RoutableAndActiva
 {
   [ObservableProperty] string _searchText = "";
   [ObservableProperty] bool _shouldDescriptionColumnBeHidden;
-  [ObservableProperty] ReadOnlyObservableCollection<CurrentlyRunnedProcessDto> _currentlyRunningProcesses;
-  readonly SourceList<CurrentlyRunnedProcessDto> _currentlyRunningProcessesSource = new();
+  [ObservableProperty] ReadOnlyObservableCollection<CurrentlyRunningProcessDto> _currentlyRunningProcesses;
+  readonly SourceList<CurrentlyRunningProcessDto> _currentlyRunningProcessesSource = new();
 
   [ObservableProperty]
   [NotifyCanExecuteChangedFor(nameof(ConfirmChoiceCommand))]
-  CurrentlyRunnedProcessDto? _selectedRunningProcess;
+  CurrentlyRunningProcessDto? _selectedRunningProcess;
 
-  readonly TaskCompletionSource<CurrentlyRunnedProcessDto?> _resultSource = new();
-  public Task<CurrentlyRunnedProcessDto?> Result => _resultSource.Task;
+  readonly TaskCompletionSource<CurrentlyRunningProcessDto?> _resultSource = new();
+  public Task<CurrentlyRunningProcessDto?> Result => _resultSource.Task;
 
   public SelectCurrentlyRunnableProcessViewModel(CurrentlyRunnableProcessesService processesService,
     AppSettingChangeService appSettingsService)
   {
-    static Func<CurrentlyRunnedProcessDto, bool> BuildFilter(string? searchText)
+    static Func<CurrentlyRunningProcessDto, bool> BuildFilter(string? searchText)
         => string.IsNullOrWhiteSpace(searchText)
             ? (_ => true)
             : (p => p.Name.ContainsText(searchText)
@@ -144,8 +144,8 @@ public sealed partial class DesignSelectCurrentlyRunnableProcessViewModel : View
 {
   [ObservableProperty] string _searchText = "";
   [ObservableProperty] bool _shouldDescriptionColumnBeHidden;
-  [ObservableProperty] ReadOnlyObservableCollection<CurrentlyRunnedProcessDto> _currentlyRunningProcesses = new(new());
-  [ObservableProperty] CurrentlyRunnedProcessDto? _selectedRunningProcess;
+  [ObservableProperty] ReadOnlyObservableCollection<CurrentlyRunningProcessDto> _currentlyRunningProcesses = new(new());
+  [ObservableProperty] CurrentlyRunningProcessDto? _selectedRunningProcess;
 
   public DesignSelectCurrentlyRunnableProcessViewModel()
   {
@@ -155,7 +155,7 @@ public sealed partial class DesignSelectCurrentlyRunnableProcessViewModel : View
       .OrderBy(p => p.ProcessName)
       .Skip(5)
       .Take(15)
-      .Select(p => new CurrentlyRunnedProcessDto(p));
+      .Select(p => new CurrentlyRunningProcessDto(p));
 
     CurrentlyRunningProcesses = new(new(exampleProcesses));
   }
