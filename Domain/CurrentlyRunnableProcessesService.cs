@@ -11,23 +11,15 @@ using DynamicData;
 
 namespace Domain;
 
-public sealed class CurrentlyRunningProcessDto
+public sealed class CurrentlyRunningProcessDto(Process sourceProcess)
 {
-  public string Name { get; }
+  public string Name { get; } = sourceProcess.ProcessName();
 
-  public int ProcessId { get; }
+  public int ProcessId { get; } = sourceProcess.Id;
 
-  public string Description { get; }
+  public string Description { get; } = sourceProcess.ProcessDescription() ?? "";
 
-  internal Process SourceProcess { get; }
-
-  public CurrentlyRunningProcessDto(Process sourceProcess)
-  {
-    SourceProcess = sourceProcess;
-    Name = sourceProcess.ProcessName();
-    ProcessId = sourceProcess.Id;
-    Description = sourceProcess.ProcessDescription() ?? "";
-  }
+  internal Process SourceProcess { get; } = sourceProcess;
 }
 
 /// <summary>
