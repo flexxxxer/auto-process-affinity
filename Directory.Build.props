@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <AvaloniaVersion>11.0.5</AvaloniaVersion>
+    <AvaloniaVersion>11.0.6</AvaloniaVersion>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
