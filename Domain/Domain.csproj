@@ -1,16 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <IsWindows Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</IsWindows>
     <IsLinux Condition="$([MSBuild]::IsOSPlatform('Linux'))">true</IsLinux>
   </PropertyGroup>
-  
+
   <ItemGroup>
-		<SupportedPlatform Include="windows" />
-		<SupportedPlatform Include="linux" />
-	</ItemGroup>
-  
+    <SupportedPlatform Include="windows" />
+    <SupportedPlatform Include="linux" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(IsWindows)'=='true'">
     <DefineConstants>IS_WINDOWS</DefineConstants>
   </PropertyGroup>
@@ -19,12 +19,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Collections.Pooled" Version="2.0.0-preview.27" />
-    <PackageReference Include="DynamicData" Version="7.14.2" />
-  </ItemGroup>
-  
-  <ItemGroup Condition="'$(IsWindows)'=='true'">
-    <PackageReference Include="securifybv.ShellLink" Version="0.1.0" />
+    <PackageReference Include="DynamicData" Version="8.3.27" />
+    <PackageReference Include="securifybv.ShellLink" Version="0.1.0" Condition="'$(IsWindows)'=='true'" />
   </ItemGroup>
 
 </Project>
