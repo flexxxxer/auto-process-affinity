@@ -1,9 +1,4 @@
-# XML Files
-[*.xml]
-indent_style = space
-indent_size = 2
-
-[*.csproj]
+[*.{csproj,xml,axaml}]
 indent_style = space
 indent_size = 2
 
