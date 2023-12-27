@@ -20,9 +20,11 @@
                   MinWidth="260" Spacing="20">
         <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,5,Auto"
               IsVisible="{Binding ToEdit, Converter={x:Static ObjectConverters.IsNull}}">
-          <TextBox Text="{Binding ProcessName, Mode=TwoWay}"
-                   Watermark="Enter process name" Grid.Column="0"
-                   x:Name="ProcessNameTextBox" />
+          <AutoCompleteBox Text="{Binding ProcessName, Mode=TwoWay}"
+                           Watermark="Enter process name" Grid.Column="0"
+                           FilterMode="ContainsOrdinal"
+                           ItemsSource="{Binding CurrentlyRunningProcessNames}"
+                           x:Name="ProcessNameTextBox" />
           <Button Content="Or choose..." Grid.Column="2"
                   Command="{Binding ChooseProcessCommand}" />
         </Grid>

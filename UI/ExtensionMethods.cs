@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 using Avalonia.Threading;
 
+using ReactiveUI;
+
 using Splat;
 
 namespace UI;
@@ -45,6 +47,24 @@ public static class ExtensionMethods
       .Subscribe(action);
 
     return methodPick.OnNext;
+  }
+
+  public static void WhenFirstTimeActivated(this IActivatableViewModel viewModel, Action activationAction)
+  {
+    var firstActivationDisposable = new SingleAssignmentDisposable();
+
+    viewModel.WhenActivated(disposables =>
+    {
+      // Check if this is the first activation
+      if (!firstActivationDisposable.IsDisposed)
+      {
+        // Call the activation action and pass the firstActivationDisposable
+        activationAction();
+      }
+
+      // Dispose the disposable after first activation
+      disposables.Add(firstActivationDisposable);
+    });
   }
 
   public static Action InvokeOn(this Func<Task> action, Dispatcher dispatcher)

@@ -2,8 +2,10 @@
 using Domain.Infrastructure;
 
 using System;
+using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Linq;
 
 using Avalonia;
 using Avalonia.Styling;
@@ -15,12 +17,19 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 using Splat;
 
+using DynamicData;
+using DynamicData.Binding;
+
+using ReactiveUI;
+
 namespace UI.ViewModels;
 
 public interface IAddProcessViewModel
 {
   string ProcessName { get; set; }
-
+  
+  ReadOnlyObservableCollection<string> CurrentlyRunningProcessNames { get; }
+  
   bool IsEvenAffinityModeChosen { get; set; }
 
   bool IsFirstNAffinityModeChosen { get; set; }
@@ -55,6 +64,7 @@ public interface IAddProcessViewModel
 public sealed partial class AddProcessViewModel : RoutableAndActivatableViewModelBase, IAddProcessViewModel
 {
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] string _processName = "";
+  [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] ReadOnlyObservableCollection<string> _currentlyRunningProcessNames;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isEvenAffinityModeChosen;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isFirstNAffinityModeChosen;
   [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddProcessCommand))] bool _isLastNAffinityModeChosen;
@@ -72,9 +82,44 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
   readonly TaskCompletionSource<ConfiguredProcess?> _resultSource = new();
   public Task<ConfiguredProcess?> Result => _resultSource.Task;
 
+  readonly SourceList<string> _currentlyRunningProcessNamesSource = new();
   AffinityApplyingMode _affinityApplyingMode;
   AffinityMode _affinityMode;
   long _affinityValue;
+
+  public AddProcessViewModel(CurrentlyRunnableProcessesService processesService)
+  {
+    Observable
+      .FromEventPattern<CurrentlyRunnableProcessesService.UpdateChangeset>(
+        h => processesService.Update += h,
+        h => processesService.Update -= h)
+      .Select(e => e.EventArgs)
+      .ObserveOn(RxApp.MainThreadScheduler)
+      .Subscribe(HandleCurrentlyRunningProcessesChangeset);
+
+    _currentlyRunningProcessNamesSource
+      .Connect()
+      .RefCount()
+      .DistinctValues(name => name)
+      .Sort(SortExpressionComparer<string>.Ascending(name => name))
+      .ObserveOn(RxApp.MainThreadScheduler)
+      .Bind(out _currentlyRunningProcessNames)
+      .DisposeMany()
+      .Subscribe(_ => { }, RxApp.DefaultExceptionHandler.OnNext);
+
+    // ReSharper disable once AsyncVoidLambda
+    this.WhenFirstTimeActivated(async () =>
+    {
+      await processesService.InitAsync();
+      _currentlyRunningProcessNamesSource.AddRange(processesService.CurrentlyRunningProcesses.Select(p => p.Name));
+    });
+  }
+
+  void HandleCurrentlyRunningProcessesChangeset(CurrentlyRunnableProcessesService.UpdateChangeset changeset)
+  {
+    if (changeset.Dead is not []) _currentlyRunningProcessNamesSource.RemoveMany(changeset.Dead.Select(p => p.Name));
+    if (changeset.Created is not []) _currentlyRunningProcessNamesSource.AddRange(changeset.Created.Select(p => p.Name));
+  }
 
   void HandleAffinityModeChange()
   {
@@ -214,6 +259,7 @@ public sealed partial class AddProcessViewModel : RoutableAndActivatableViewMode
 public sealed partial class DesignAddProcessViewModel : ViewModelBase, IAddProcessViewModel
 {
   [ObservableProperty] string _processName = "";
+  [ObservableProperty] ReadOnlyObservableCollection<string> _currentlyRunningProcessNames = new([]);
   [ObservableProperty] bool _isEvenAffinityModeChosen;
   [ObservableProperty] bool _isFirstNAffinityModeChosen;
   [ObservableProperty] bool _isLastNAffinityModeChosen;
@@ -244,7 +290,5 @@ public sealed partial class DesignAddProcessViewModel : ViewModelBase, IAddProce
   }
 
   [RelayCommand]
-  void Cancel()
-  {
-  }
+  void Cancel() { }
 }
