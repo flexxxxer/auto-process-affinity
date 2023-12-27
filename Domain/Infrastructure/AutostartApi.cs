@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 
+#if IS_WINDOWS
 using ShellLink;
+#endif
 
 namespace Domain.Infrastructure;
 
