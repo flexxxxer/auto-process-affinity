@@ -10,9 +10,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D378E223-AC2C-49A0-B1C1-06B6337C4D72}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		BuildReleaseLinux-x64.sh = BuildReleaseLinux-x64.sh
+		BuildReleaseWindows-x64.ps1 = BuildReleaseWindows-x64.ps1
 		Directory.Build.props = Directory.Build.props
 		RemoveBinAndObj.ps1 = RemoveBinAndObj.ps1
-		BuildReleaseWindows.ps1 = BuildReleaseWindows.ps1
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{CF808529-7C5B-46F5-9945-4B14937FE96F}"
