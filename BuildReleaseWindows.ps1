@@ -5,7 +5,9 @@ dotnet publish $csprojPath `
   --configuration Release `
   --runtime win-x64 `
   --self-contained true `
-  /p:PublishSingleFile=true
+  --output .\.builds\win-x64 `
+  /p:PublishSingleFile=true `
+  /p:DebugType=None `
+  /p:DebugSymbols=false
 
 Write-Output "Done."
-Invoke-Item -Path (Join-Path $scriptPath "UI.Desktop\bin\Release\net7.0\win-x64\publish")
