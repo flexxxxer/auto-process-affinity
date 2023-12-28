@@ -6,10 +6,12 @@ using UI.DomainWrappers;
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 
 using ReactiveUI;
@@ -29,6 +31,12 @@ public interface IMainViewModel : IScreen
   IAsyncRelayCommand GoToAboutCommand { get; }
 
   IRelayCommand RunAsAdminCommand { get; }
+  
+  IAsyncRelayCommand ExportSettingsToFileCommand { get; }
+  
+  IAsyncRelayCommand ExportSettingsToFolderCommand { get; }
+  
+  IAsyncRelayCommand ImportSettingsFromFileCommand { get; }
 
   IRelayCommand ExitCommand { get; }
   
@@ -47,9 +55,13 @@ public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
   
   public RoutingState Router { get; } = new();
 
-  public MainViewModel(MainWindowViewModel mainWindowViewModel, AppSettingChangeService appSettingsService,
-    AdminPrivilegesStatus privilegesStatus) 
+  readonly AppSettingChangeService _appSettingsService;
+  
+  public MainViewModel(MainWindowViewModel mainWindowViewModel, 
+    AppSettingChangeService appSettingsService,
+    AdminPrivilegesStatus privilegesStatus)
   {
+    _appSettingsService = appSettingsService;
     var routeVmChanged = Router
       .CurrentViewModel
       .WhereNotNull();
@@ -116,6 +128,62 @@ public partial class MainViewModel : ActivatableViewModelBase, IMainViewModel
   }
 
   [RelayCommand]
+  async Task ExportSettingsToFile()
+  {
+    var storageProvider = Locator.Current.GetRequiredService<IStorageProvider>();
+    var pickedFiles = await storageProvider.OpenFilePickerAsync(new()
+    {
+      AllowMultiple = false,
+    });
+
+    if (pickedFiles is [var file])
+    {
+      var appSettings = _appSettingsService.CurrentAppSettings.WrapBeforeSerialization();
+      await using var writeStream = await file.OpenWriteAsync();
+      await JsonSerializer.SerializeAsync(writeStream, appSettings, SerializerOptions.Default);
+    }
+  }
+  
+  [RelayCommand]
+  async Task ExportSettingsToFolder()
+  {
+    var storageProvider = Locator.Current.GetRequiredService<IStorageProvider>();
+    var pickedFolders = await storageProvider.OpenFolderPickerAsync(new()
+    {
+      AllowMultiple = false,
+    });
+
+    if (pickedFolders is [var folder]
+        && await folder.CreateFileAsync("appsettings.json") is {} file)
+    {
+      var appSettings = _appSettingsService.CurrentAppSettings.WrapBeforeSerialization();
+      await using var writeStream = await file.OpenWriteAsync();
+      await JsonSerializer.SerializeAsync(writeStream, appSettings, SerializerOptions.Default);
+    }
+  }
+  
+  [RelayCommand]
+  async Task ImportSettingsFromFile()
+  {
+    var storageProvider = Locator.Current.GetRequiredService<IStorageProvider>();
+    var pickedFiles = await storageProvider.OpenFilePickerAsync(new()
+    {
+      AllowMultiple = false,
+    });
+
+    if (pickedFiles is [var file])
+    {
+      await using var readStream = await file.OpenReadAsync();
+      var newAppSettings = await JsonSerializer.DeserializeAsync<AppSettingsWrapperForHostOptions>(readStream, SerializerOptions.Default);
+      if (newAppSettings is not null)
+      {
+        var fixedAppSettings = newAppSettings.AppSettings.ValidateAndFix();
+        await _appSettingsService.MakeChangeAsync(_ => fixedAppSettings);
+      }
+    }
+  }
+
+  [RelayCommand]
   void Exit() => Application.Current
     ?.ApplicationLifetime
     ?.TryCastTo<IClassicDesktopStyleApplicationLifetime>()
@@ -143,7 +211,16 @@ public sealed partial class DesignMainViewModel : ViewModelBase, IMainViewModel
 
   [RelayCommand]
   void RunAsAdmin() => IsAppRunningWithAdmin = !IsAppRunningWithAdmin;
+  
+  [RelayCommand]
+  Task ExportSettingsToFile() => Task.CompletedTask;
+  
+  [RelayCommand]
+  Task ExportSettingsToFolder() => Task.CompletedTask;
 
+  [RelayCommand]
+  Task ImportSettingsFromFile() => Task.CompletedTask;
+  
   [RelayCommand]
   void Exit() { }
 }

@@ -45,18 +45,21 @@
             <MenuItem.Icon>
               <Path Data="{StaticResource ExportIcon}" Fill="{DynamicResource NeutralBrush}" />
             </MenuItem.Icon>
-            <MenuItem Header="File">
+            <MenuItem Header="File"
+                      Command="{Binding ExportSettingsToFileCommand}">
               <MenuItem.Icon>
                 <Path Data="{StaticResource DocumentIcon}" Fill="{DynamicResource NeutralBrush}" />
               </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="Folder">
+            <MenuItem Header="Folder"
+                      Command="{Binding ExportSettingsToFolderCommand}">
               <MenuItem.Icon>
                 <Path Data="{StaticResource FolderRegularIcon}" Fill="{DynamicResource NeutralBrush}" />
               </MenuItem.Icon>
             </MenuItem>
           </MenuItem>
-          <MenuItem Header="Import config from file">
+          <MenuItem Header="Import config from file"
+                    Command="{Binding ImportSettingsFromFileCommand}">
             <MenuItem.Icon>
               <Path Data="{StaticResource ExportIcon}" Fill="{DynamicResource NeutralBrush}">
                 <Path.RenderTransform>

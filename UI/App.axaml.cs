@@ -12,7 +12,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-
+using Avalonia.Platform.Storage;
 using ReactiveUI;
 
 using Splat;
@@ -112,6 +112,19 @@ public class App : Application
     Locator.CurrentMutable
       .RegisterLazySingletonAnd<HardwareInfo>(() => new())
       .RegisterLazySingletonAnd<AdminPrivilegesStatus>()
+      .RegisterLazySingletonAnd<IStorageProvider>(() => ApplicationLifetime switch
+      {
+        IClassicDesktopStyleApplicationLifetime => Locator.Current
+          .GetRequiredService<MainWindow>()
+          .StorageProvider,
+          
+        ISingleViewApplicationLifetime => Locator.Current
+          .GetRequiredService<MainView>()
+          .Pipe(TopLevel.GetTopLevel)
+          !.StorageProvider,
+          
+        _ => throw new PlatformNotSupportedException()
+      })
       ;
   }
   
