@@ -24,7 +24,7 @@ public sealed partial class AboutViewModel : RoutableAndActivatableViewModelBase
     var currentOs = OsTypeApi.CurrentOs;
     var startInfo = new ProcessStartInfo(url)
       .DoIf(currentOs is OsType.Windows, si => si.UseShellExecute = true)
-      .DoIf(currentOs is OsType.Linux, si => (si.FileName, si.Arguments) = ("x-www-browser", url));
+      .DoIf(currentOs is OsType.Linux, si => (si.FileName, si.Arguments) = ("xdg-open", url));
 
     using var _ = Process.Start(startInfo);
   }
