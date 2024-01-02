@@ -18,6 +18,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{CF808529-7C5B-46F5-9945-4B14937FE96F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{D0FEAE33-2F20-4C81-B0D7-8EF893583FBB}"
+EndProject
+Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "Installer.Win.Wix", "Installer-Win-Wix\Installer.Win.Wix.wixproj", "{6514F152-27EF-4336-8DBB-C4BE8964CDEE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,11 +40,18 @@ Global
 		{CF808529-7C5B-46F5-9945-4B14937FE96F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF808529-7C5B-46F5-9945-4B14937FE96F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF808529-7C5B-46F5-9945-4B14937FE96F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6514F152-27EF-4336-8DBB-C4BE8964CDEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6514F152-27EF-4336-8DBB-C4BE8964CDEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6514F152-27EF-4336-8DBB-C4BE8964CDEE}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{6514F152-27EF-4336-8DBB-C4BE8964CDEE}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22B51631-585E-4D02-BD8E-7096CB70E28E}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6514F152-27EF-4336-8DBB-C4BE8964CDEE} = {D0FEAE33-2F20-4C81-B0D7-8EF893583FBB}
 	EndGlobalSection
 EndGlobal
